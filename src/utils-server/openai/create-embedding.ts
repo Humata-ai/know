@@ -4,6 +4,7 @@ export async function createEmbeddings(
   input: string[],
   options?: { dimensions: number }
 ): Promise<Array<Embedding>> {
+  'use server';
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY was not set');
   }
