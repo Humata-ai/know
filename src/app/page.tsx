@@ -27,17 +27,7 @@ export default async function Home() {
   const [{ embedding: catEmbeddingFull }] = await createEmbeddings(['cat'])
   const [{ embedding: catEmbeddingThree }] = await createEmbeddings(['cat'], { dimensions: 3 })
   const words = [
-    "apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew",
-    "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry",
-    "strawberry", "tangerine", "ugli", "vanilla", "watermelon", "xigua", "yam", "zucchini",
-    "airplane", "balloon", "cat", "dog", "elephant", "frog", "giraffe", "hat", "igloo",
-    "jellyfish", "kite", "lamp", "moon", "notebook", "ocean", "pencil", "queen", "robot",
-    "sun", "tree", "umbrella", "vase", "window", "xylophone", "yacht", "zebra", "ant",
-    "bear", "cloud", "dolphin", "engine", "feather", "garden", "house", "island",
-    "jacket", "kangaroo", "ladder", "mountain", "nest", "octopus", "penguin", "quilt",
-    "ring", "ship", "turtle", "unicorn", "violin", "whale", "xenon", "yogurt", "zipper",
-    "acorn", "bottle", "camera", "desk", "egg", "forest", "globe", "horizon", "iceberg",
-    "jungle", "key", "lantern", "mirror", "nectar", "owl", "peach", "quasar", "rainbow"
+    "cat", "cats", "dimensions"
   ];
 
   const wordsWithEmbeddings = await addCoordinatesToWords(words)
