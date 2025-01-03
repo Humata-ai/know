@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 export default async function Home() {
   const [{ embedding: catEmbedding }] = await createEmbeddings(['cat'])
   const [{ embedding: catEmbeddingThree }] = await createEmbeddings(['cat'], { dimensions: 3 })
+  const [{ embedding: cat }, { embedding: dog }, { embedding: baseball }] = await createEmbeddings(['cat', 'dog', 'baseball'], { dimensions: 3 })
 
   return (
     <div>
@@ -14,6 +15,14 @@ export default async function Home() {
       <div>
         cat (reduced to 3 dimensions): {JSON.stringify(catEmbeddingThree)}
       </div>
+
+      <br />
+      <br />
+
+      <div>{JSON.stringify(cat)}</div>
+      <div>{JSON.stringify(dog)}</div>
+      <div>{JSON.stringify(baseball)}</div>
+
     </div>
   );
 }
