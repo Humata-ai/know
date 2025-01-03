@@ -1,4 +1,4 @@
-import { createEmbeddings } from '@/utils/openai/create-embedding';
+import { createEmbeddings } from '@/utils-server/openai/create-embedding';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
