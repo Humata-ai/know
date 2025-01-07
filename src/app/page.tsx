@@ -2,6 +2,7 @@ import React from "react";
 import { createEmbeddings } from "@/utils-server/openai/create-embedding";
 import styles from "./page.module.css";
 import { PlotExample } from "./plot.tsx";
+import { EmbeddingDistance } from "./embedding-distance.component.tsx";
 
 async function addCoordinatesToWords(words: string[]): Promise<{ text: string, x: number, y: number, z: number }[]> {
   const embeddings = await createEmbeddings(words, { dimensions: 3 })
@@ -57,6 +58,10 @@ export default async function Home() {
       <br />
 
       <PlotExample points={points} />
+
+      <EmbeddingDistance wordOne="banana" wordTwo="Mormon" />
+      <EmbeddingDistance wordOne="banana" wordTwo="Jesus" />
+      <EmbeddingDistance wordOne="Jesus" wordTwo="Mormon" />
 
 
     </div>
