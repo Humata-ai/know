@@ -36,6 +36,7 @@ export default async function Home() {
 
   return (
     <div style={styles}>
+      <div>0.12312319719871</div>
       <h3>Why are apple and pineapple close, while apple and banana far?</h3>
       <br />
       <br />
@@ -47,6 +48,19 @@ export default async function Home() {
       <EmbeddingDistance wordOne="apple" wordTwo="apple" />
       <EmbeddingDistance wordOne="apple" wordTwo="banana" />
       <EmbeddingDistance wordOne="apple" wordTwo="pineapple" />
+      <br />
+      <br />
+      <div>Dot Product Distance on 1536 dimension embedding vectors</div>
+      <EmbeddingDistance wordOne="apple" wordTwo="apple" dimensions={1536} />
+      <EmbeddingDistance wordOne="apple" wordTwo="banana" dimensions={1536} />
+      <EmbeddingDistance wordOne="apple" wordTwo="pineapple" dimensions={1536} />
+
+      <br />
+      <br />
+      <div>Dot Product Distance on 256 dimension embedding vectors</div>
+      <EmbeddingDistance wordOne="apple" wordTwo="apple" dimensions={256} />
+      <EmbeddingDistance wordOne="apple" wordTwo="banana" dimensions={256} />
+      <EmbeddingDistance wordOne="apple" wordTwo="pineapple" dimensions={256} />
 
       <br />
       <br />
