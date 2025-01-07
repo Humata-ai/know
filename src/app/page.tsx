@@ -3,7 +3,7 @@ import { createEmbeddings } from "@/utils-server/openai/create-embedding";
 import styles from "./page.module.css";
 import { PlotExample } from "./plot.tsx";
 
-async function addCoordinatesToWords(words: string[]): { text: string, x: number, y: number, z: number }[] {
+async function addCoordinatesToWords(words: string[]): Promise<{ text: string, x: number, y: number, z: number }[]> {
   const embeddings = await createEmbeddings(words, { dimensions: 3 })
   return embeddings.map(({ embedding }, index) => {
     const [x, y, z] = embedding;
