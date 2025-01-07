@@ -25,21 +25,12 @@ function addColor<T>(word: T) {
 }
 
 export default async function Home() {
-  const [{ embedding: catEmbeddingFull }] = await createEmbeddings(['cat'])
-  const [{ embedding: catEmbeddingThree }] = await createEmbeddings(['cat'], { dimensions: 3 })
   const words = [
     "cat",
     "cats",
-    "dog",
-
-    "pineapple",
-    "banana",
     "apple",
-
-    "dimensions",
+    "banana",
     "Jesus",
-    "Christian",
-    "Mormon",
   ];
 
   const wordsWithEmbeddings = await addCoordinatesToWords(words)
@@ -47,25 +38,19 @@ export default async function Home() {
 
   return (
     <div style={styles}>
-      <div>
-        cat (dimensions {catEmbeddingFull.length})<span style={{ marginLeft: '54px' }}></span>: {JSON.stringify(catEmbeddingFull).slice(0, 200)}...
-      </div>
-      <div>
-        cat (reduced to 3 dimensions): {JSON.stringify(catEmbeddingThree)}
-      </div>
-
+      <h3>- [ ] Question: Cat and Apple appear very closely while apple and banana appear very far apart. Why?</h3>
       <br />
       <br />
-
       <PlotExample points={points} />
 
-      <EmbeddingDistance wordOne="banana" wordTwo="banana" />
-      <EmbeddingDistance wordOne="banana" wordTwo="Mormon" />
-      <EmbeddingDistance wordOne="banana" wordTwo="Jesus" />
-      <EmbeddingDistance wordOne="dog" wordTwo="cat" />
-      <EmbeddingDistance wordOne="Jesus" wordTwo="Mormon" />
-      <EmbeddingDistance wordOne="Jesus" wordTwo="Christ" />
+      <EmbeddingDistance wordOne="cat" wordTwo="cat" />
+      <EmbeddingDistance wordOne="cat" wordTwo="cats" />
+      <EmbeddingDistance wordOne="cat" wordTwo="apple" />
+      <EmbeddingDistance wordOne="cat" wordTwo="banana" />
+      <EmbeddingDistance wordOne="cat" wordTwo="Jesus" />
 
+      <br />
+      <EmbeddingDistance wordOne="banana" wordTwo="apple" />
 
     </div>
   );
