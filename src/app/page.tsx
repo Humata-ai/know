@@ -59,9 +59,12 @@ export default async function Home() {
 
       <PlotExample points={points} />
 
+      <EmbeddingDistance wordOne="banana" wordTwo="banana" />
       <EmbeddingDistance wordOne="banana" wordTwo="Mormon" />
       <EmbeddingDistance wordOne="banana" wordTwo="Jesus" />
+      <EmbeddingDistance wordOne="dog" wordTwo="cat" />
       <EmbeddingDistance wordOne="Jesus" wordTwo="Mormon" />
+      <EmbeddingDistance wordOne="Jesus" wordTwo="Christ" />
 
 
     </div>
