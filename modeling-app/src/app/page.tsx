@@ -26,9 +26,11 @@ function addColor<T>(word: T) {
 
 export default async function Home() {
   const words = [
-    "apple",
-    "pineapple",
-    "banana",
+    "programming languages",
+    "python",
+    "javascript",
+    "java",
+    "sheep",
   ];
 
   const wordsWithEmbeddings = await addCoordinatesToWords(words)
@@ -45,9 +47,10 @@ export default async function Home() {
 
       <br />
       <div>Dot Product Distance on 3072 dimension embedding vectors</div>
-      <EmbeddingDistance wordOne="apple" wordTwo="apple" />
-      <EmbeddingDistance wordOne="apple" wordTwo="banana" />
-      <EmbeddingDistance wordOne="apple" wordTwo="pineapple" />
+      <EmbeddingDistance wordOne="programming languages" wordTwo="python" />
+      <EmbeddingDistance wordOne="programming languages" wordTwo="javascript" />
+      <EmbeddingDistance wordOne="programming languages" wordTwo="java" />
+      <EmbeddingDistance wordOne="programming languages" wordTwo="sheep" />
       <br />
       <br />
       <div>Dot Product Distance on 1536 dimension embedding vectors</div>
