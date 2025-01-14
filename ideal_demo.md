@@ -1,6 +1,6 @@
 Hey @Cyrus and @Zach,
 
-I believe if we are able to build the below two demos we will prove that it is now possible for us to quickly and accurately represent human knowledge in mathematically digital space and to use this representation of knowledge to solve real world problems.
+I believe if we are able to build the below two demos we will prove that it is now possible for us to quickly and accurately represent human knowledge in mathematically digital space and for us to use this representation of knowledge to solve real world problems.
 
 The demos below require us to build the knowledge primitatives for `encode`, `diffing`, `searching`, `subtracting` and `filtering`. Each demo demonstrates an outcome that is economically valueable.
 
