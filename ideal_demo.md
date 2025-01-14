@@ -31,3 +31,7 @@ Needed Operations
   - output: `gis_lc832006_pipe_coating_requirements.know`
 - Question: Does `pipe_coating.know` meet `gis_lc832006_pipe_coating_requirements.know`?
   -TODO: Meet
+
+Here is where I'm working and developing: https://github.com/Humata-ai/the-know-file-format
+
+Feedback welcome
