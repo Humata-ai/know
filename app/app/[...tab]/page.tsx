@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { use } from 'react'
 
 const VALID_TABS = ['scene', 'library', 'import-export'] as const
-const VALID_LIBRARY_SECTIONS = ['dictionary', 'quality-domains', 'quality-dimensions'] as const
+const VALID_LIBRARY_SECTIONS = ['concepts', 'quality-domains', 'quality-dimensions'] as const
 
 export default function TabPage({ params }: { params: Promise<{ tab: string[] }> }) {
   const { tab } = use(params)
@@ -14,15 +14,15 @@ export default function TabPage({ params }: { params: Promise<{ tab: string[] }>
     notFound()
   }
 
-  // Handle library sub-routes: /library/dictionary, /library/quality-domains, etc.
+  // Handle library sub-routes: /library/concepts, /library/quality-domains, etc.
   if (mainTab === 'library' && tab.length > 1) {
     const section = tab[1]
     if (!VALID_LIBRARY_SECTIONS.includes(section as typeof VALID_LIBRARY_SECTIONS[number])) {
       notFound()
     }
     
-    // Dictionary supports deeper nesting: /library/dictionary/<word> and /library/dictionary/<word>/edit
-    if (section === 'dictionary') {
+    // Concepts supports deeper nesting: /library/concepts/<word> and /library/concepts/<word>/edit
+    if (section === 'concepts') {
       if (tab.length > 4) {
         notFound()
       }

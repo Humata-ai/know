@@ -14,18 +14,18 @@ import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SidebarPanel from './SidebarPanel'
-import { getLibrarySectionFromPathname, getDictionaryWordFromPathname, LIBRARY_SECTION_LABELS } from './types'
+import { getLibrarySectionFromPathname, getConceptsWordFromPathname, LIBRARY_SECTION_LABELS } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
 import { WORD_CLASS_LABELS } from '../../shared/types'
-import AddWordModal from '../../dictionary/AddWordModal'
-import WordEditView from '../../dictionary/WordEditView'
-import type { WordEditViewHandle } from '../../dictionary/WordEditView'
-import WordDetailView from '../../dictionary/WordDetailView'
+import AddWordModal from '../../concepts/AddWordModal'
+import WordEditView from '../../concepts/WordEditView'
+import type { WordEditViewHandle } from '../../concepts/WordEditView'
+import WordDetailView from '../../concepts/WordDetailView'
 import DomainModal from '../../quality-domain/DomainModal'
 
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
-  { section: 'dictionary', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'concepts', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-domains', icon: <CategoryIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-dimensions', icon: <TuneIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
 ]
@@ -52,7 +52,7 @@ function LibraryMenu({ onNavigate }: { onNavigate: (section: LibrarySection) => 
   )
 }
 
-function DictionaryView() {
+function ConceptsView() {
   const router = useRouter()
   const { state } = useAppStore()
 
@@ -71,7 +71,7 @@ function DictionaryView() {
         return (
           <button
             key={word.id}
-            onClick={() => router.push(`/library/dictionary/${encodeURIComponent(slug)}`)}
+            onClick={() => router.push(`/library/concepts/${encodeURIComponent(slug)}`)}
             className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
           >
             <h3 className="font-medium">{word.name}</h3>
@@ -127,7 +127,7 @@ function QualityDimensionsView() {
 }
 
 const SECTION_VIEWS: Record<LibrarySection, React.ComponentType> = {
-  'dictionary': DictionaryView,
+  'concepts': ConceptsView,
   'quality-domains': QualityDomainsView,
   'quality-dimensions': QualityDimensionsView,
 }
@@ -136,7 +136,7 @@ export default function LibraryPanel() {
   const pathname = usePathname()
   const router = useRouter()
   const activeSection = getLibrarySectionFromPathname(pathname)
-  const wordRoute = getDictionaryWordFromPathname(pathname)
+  const wordRoute = getConceptsWordFromPathname(pathname)
   const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
   const wordEditRef = useRef<WordEditViewHandle>(null)
@@ -149,11 +149,11 @@ export default function LibraryPanel() {
     router.push(href)
   }
 
-  // Word detail or edit view: /library/dictionary/<word> or /library/dictionary/<word>/edit
+  // Word detail or edit view: /library/concepts/<word> or /library/concepts/<word>/edit
   if (wordRoute) {
     const titleSegments = [
       { label: 'Library', href: '/library' },
-      { label: 'Dictionary', href: '/library/dictionary' },
+      { label: 'Concepts', href: '/library/concepts' },
       { label: decodeURIComponent(wordRoute.wordSlug) },
     ]
 
@@ -171,7 +171,7 @@ export default function LibraryPanel() {
       <Tooltip title="Edit">
         <IconButton
           size="small"
-          onClick={() => router.push(`/library/dictionary/${encodeURIComponent(wordRoute.wordSlug)}/edit`)}
+          onClick={() => router.push(`/library/concepts/${encodeURIComponent(wordRoute.wordSlug)}/edit`)}
           sx={{ color: 'text.secondary' }}
         >
           <EditIcon fontSize="small" />
@@ -198,7 +198,7 @@ export default function LibraryPanel() {
   if (activeSection) {
     const SectionView = SECTION_VIEWS[activeSection]
 
-    const headerAction = activeSection === 'dictionary' ? (
+    const headerAction = activeSection === 'concepts' ? (
       <Tooltip title="Add Word">
         <span>
           <Button

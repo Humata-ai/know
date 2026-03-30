@@ -117,7 +117,7 @@ export const ConceptualStructureSchema = z.object({
   instances: z.array(ConceptInstanceSchema),
 })
 
-// ===== Dictionary Word Types =====
+// ===== Concepts Word Types =====
 
 export const WordClassSchema = z.enum(['noun', 'adjective', 'verb', 'adverb', 'preposition'])
 
