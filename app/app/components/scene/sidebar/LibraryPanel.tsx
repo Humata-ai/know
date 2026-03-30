@@ -14,7 +14,7 @@ import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SidebarPanel from './SidebarPanel'
-import { getLibrarySectionFromPathname, getConceptsWordFromPathname, LIBRARY_SECTION_LABELS } from './types'
+import { getLibrarySectionFromPathname, getConceptsWordFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
 import { WORD_CLASS_LABELS } from '../../shared/types'
@@ -84,6 +84,7 @@ function ConceptsView() {
 }
 
 function QualityDomainsView() {
+  const router = useRouter()
   const { state } = useAppStore()
 
   if (state.library.domains.length === 0) {
@@ -96,22 +97,82 @@ function QualityDomainsView() {
 
   return (
     <div className="px-4 py-2 space-y-2">
-      {state.library.domains.map((domain) => (
-        <div
-          key={domain.id}
-          className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors text-left"
-        >
-          <h3 className="font-medium">{domain.name}</h3>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-gray-500">
-              {domain.dimensions.length}D
-            </span>
-            <span className="text-xs text-gray-500">
-              {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
-            </span>
+      {state.library.domains.map((domain) => {
+        const slug = domain.name.toLowerCase().replace(/\s+/g, '-')
+        return (
+          <button
+            key={domain.id}
+            onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
+            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
+          >
+            <h3 className="font-medium">{domain.name}</h3>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-gray-500">
+                {domain.dimensions.length}D
+              </span>
+              <span className="text-xs text-gray-500">
+                {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
+              </span>
+            </div>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function DomainDetailView({ domainSlug }: { domainSlug: string }) {
+  const { state } = useAppStore()
+
+  const domain = state.library.domains.find(
+    (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainSlug
+  )
+
+  if (!domain) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">Domain not found.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="px-4 py-4 space-y-4">
+      <div className="flex items-center gap-2">
+        <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
+          {domain.dimensions.length}D
+        </span>
+        <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
+          {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
+        </span>
+      </div>
+
+      {domain.dimensions.length > 0 && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Dimensions</h4>
+          <div className="space-y-1">
+            {domain.dimensions.map((dim) => (
+              <div key={dim.id} className="text-sm text-gray-700 flex items-center justify-between">
+                <span>{dim.name}</span>
+                <span className="text-xs text-gray-400">[{dim.range[0]}, {dim.range[1]}]</span>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
+      )}
+
+      {domain.labels.length > 0 && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Labels</h4>
+          <div className="space-y-1">
+            {domain.labels.map((label) => (
+              <div key={label.id} className="text-sm text-gray-700">
+                {label.name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -137,6 +198,7 @@ export default function LibraryPanel() {
   const router = useRouter()
   const activeSection = getLibrarySectionFromPathname(pathname)
   const wordRoute = getConceptsWordFromPathname(pathname)
+  const domainRoute = getQualityDomainFromPathname(pathname)
   const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
   const wordEditRef = useRef<WordEditViewHandle>(null)
@@ -190,6 +252,24 @@ export default function LibraryPanel() {
         ) : (
           <WordDetailView wordSlug={wordRoute.wordSlug} />
         )}
+      </SidebarPanel>
+    )
+  }
+
+  // Domain detail view: /library/quality-domains/<domain-slug>
+  if (domainRoute) {
+    const titleSegments = [
+      { label: 'Library', href: '/library' },
+      { label: 'Quality Domains', href: '/library/quality-domains' },
+      { label: decodeURIComponent(domainRoute.domainSlug) },
+    ]
+
+    return (
+      <SidebarPanel
+        title={titleSegments}
+        onNavigate={handleBreadcrumbNavigate}
+      >
+        <DomainDetailView domainSlug={domainRoute.domainSlug} />
       </SidebarPanel>
     )
   }

@@ -47,3 +47,18 @@ export function getConceptsWordFromPathname(pathname: string): ConceptsWordRoute
   }
   return null
 }
+
+export interface QualityDomainRoute {
+  domainSlug: string
+}
+
+export function getQualityDomainFromPathname(pathname: string): QualityDomainRoute | null {
+  const segments = pathname.replace(/^\//, '').split('/')
+  // /library/quality-domains/<domain-slug>
+  if (segments[0] === 'library' && segments[1] === 'quality-domains' && segments.length >= 3 && segments[2]) {
+    return {
+      domainSlug: decodeURIComponent(segments[2]),
+    }
+  }
+  return null
+}

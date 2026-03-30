@@ -29,6 +29,11 @@ export default function TabPage({ params }: { params: Promise<{ tab: string[] }>
       if (tab.length === 4 && tab[3] !== 'edit') {
         notFound()
       }
+    } else if (section === 'quality-domains') {
+      // Quality domains supports: /library/quality-domains/<domain-slug>
+      if (tab.length > 3) {
+        notFound()
+      }
     } else {
       // No further nesting allowed for other sections
       if (tab.length > 2) {
