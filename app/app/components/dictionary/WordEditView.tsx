@@ -22,12 +22,10 @@ const WordEditView = forwardRef<WordEditViewHandle, WordEditViewProps>(function 
     (w) => w.name.toLowerCase().replace(/\s+/g, '-') === wordSlug
   )
 
-  const [definition, setDefinition] = useState('')
   const [wordClass, setWordClass] = useState<WordClass>('noun')
 
   useEffect(() => {
     if (word) {
-      setDefinition(word.definition)
       setWordClass(word.wordClass)
     }
   }, [word])
@@ -43,7 +41,6 @@ const WordEditView = forwardRef<WordEditViewHandle, WordEditViewProps>(function 
   const handleSave = () => {
     updateWord({
       ...word,
-      definition,
       wordClass,
     })
     router.push(`/library/dictionary/${encodeURIComponent(wordSlug)}`)
@@ -77,18 +74,7 @@ const WordEditView = forwardRef<WordEditViewHandle, WordEditViewProps>(function 
         </div>
       </div>
 
-      <div>
-        <label htmlFor="word-definition" className="block text-sm font-medium mb-1">
-          Definition
-        </label>
-        <textarea
-          id="word-definition"
-          value={definition}
-          onChange={(e) => setDefinition(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none min-h-[120px] resize-y"
-          placeholder="Enter the definition of this word..."
-        />
-      </div>
+
     </div>
   )
 })

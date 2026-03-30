@@ -382,7 +382,6 @@
       "id": "1774451147761-8lfvln8",
       "name": "Follow",
       "wordClass": "verb",
-      "definition": "",
       "conceptualStructure": {
         "domains": [],
         "concepts": [],
@@ -394,7 +393,6 @@
       "id": "1774500000000-hb01word",
       "name": "Human Being",
       "wordClass": "noun",
-      "definition": "A member of the species Homo sapiens, characterized by a lifespan of 0-125 years, human-scale size, a gendered or neutral name, and existence at any spatial location.",
       "conceptualStructure": {
         "domains": [
           {
