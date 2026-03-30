@@ -207,6 +207,10 @@ export default function LibraryPanel() {
     router.push(`/library/${section}`)
   }
 
+  const handleBreadcrumbNavigate = (href: string) => {
+    router.push(href)
+  }
+
   // Word detail or edit view: /library/concepts/<word> or /library/concepts/<word>/edit
   if (wordRoute) {
     const wordHeaderAction = wordRoute.isEdit ? (
@@ -234,7 +238,11 @@ export default function LibraryPanel() {
     return (
       <SidebarPanel
         title={decodeURIComponent(wordRoute.wordSlug)}
-        onBack={() => router.push('/library/concepts')}
+        breadcrumbs={[
+          { label: 'Library', href: '/library' },
+          { label: 'Concepts', href: '/library/concepts' },
+        ]}
+        onNavigate={handleBreadcrumbNavigate}
         headerAction={wordHeaderAction}
       >
         {wordRoute.isEdit ? (
@@ -251,7 +259,11 @@ export default function LibraryPanel() {
     return (
       <SidebarPanel
         title={decodeURIComponent(domainRoute.domainSlug)}
-        onBack={() => router.push('/library/quality-domains')}
+        breadcrumbs={[
+          { label: 'Library', href: '/library' },
+          { label: 'Quality Domains', href: '/library/quality-domains' },
+        ]}
+        onNavigate={handleBreadcrumbNavigate}
       >
         <DomainDetailView domainSlug={domainRoute.domainSlug} />
       </SidebarPanel>
@@ -296,7 +308,10 @@ export default function LibraryPanel() {
       <>
         <SidebarPanel
           title={LIBRARY_SECTION_LABELS[activeSection]}
-          onBack={() => router.push('/library')}
+          breadcrumbs={[
+            { label: 'Library', href: '/library' },
+          ]}
+          onNavigate={handleBreadcrumbNavigate}
           headerAction={headerAction}
         >
           <SectionView />
