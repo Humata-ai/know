@@ -22,6 +22,7 @@ import AddWordModal from '../../dictionary/AddWordModal'
 import WordEditView from '../../dictionary/WordEditView'
 import type { WordEditViewHandle } from '../../dictionary/WordEditView'
 import WordDetailView from '../../dictionary/WordDetailView'
+import DomainModal from '../../quality-domain/DomainModal'
 
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
   { section: 'dictionary', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
@@ -83,11 +84,34 @@ function DictionaryView() {
 }
 
 function QualityDomainsView() {
-  return (
-    <div className="px-4 py-2">
-      <div className="text-center py-8 text-gray-500">
-        <p className="text-sm">Quality Domains library coming soon.</p>
+  const { state } = useAppStore()
+
+  if (state.scene.domains.length === 0) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">No quality domains yet. Click + to add one.</p>
       </div>
+    )
+  }
+
+  return (
+    <div className="px-4 py-2 space-y-2">
+      {state.scene.domains.map((domain) => (
+        <div
+          key={domain.id}
+          className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors text-left"
+        >
+          <h3 className="font-medium">{domain.name}</h3>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-gray-500">
+              {domain.dimensions.length}D
+            </span>
+            <span className="text-xs text-gray-500">
+              {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -114,6 +138,7 @@ export default function LibraryPanel() {
   const activeSection = getLibrarySectionFromPathname(pathname)
   const wordRoute = getDictionaryWordFromPathname(pathname)
   const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
+  const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
   const wordEditRef = useRef<WordEditViewHandle>(null)
 
   const handleNavigateToSection = (section: LibrarySection) => {
@@ -187,6 +212,20 @@ export default function LibraryPanel() {
           </Button>
         </span>
       </Tooltip>
+    ) : activeSection === 'quality-domains' ? (
+      <Tooltip title="Add Quality Domain">
+        <span>
+          <Button
+            onClick={() => setIsDomainModalOpen(true)}
+            color="secondary"
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: 0, p: 0.5 }}
+          >
+            <AddIcon sx={{ fontSize: 16 }} />
+          </Button>
+        </span>
+      </Tooltip>
     ) : undefined
 
     return (
@@ -204,6 +243,11 @@ export default function LibraryPanel() {
         <AddWordModal
           isOpen={isAddWordModalOpen}
           onClose={() => setIsAddWordModalOpen(false)}
+        />
+        <DomainModal
+          isOpen={isDomainModalOpen}
+          editingDomainId={null}
+          onClose={() => setIsDomainModalOpen(false)}
         />
       </>
     )
