@@ -125,7 +125,6 @@ export const WordSchema = z.object({
   id: z.string(),
   name: z.string(),
   wordClass: WordClassSchema,
-  definition: z.string(),
   conceptualStructure: ConceptualStructureSchema,
   createdAt: z.date(),
 })

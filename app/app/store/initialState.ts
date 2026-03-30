@@ -67,7 +67,6 @@ interface JsonWord {
   id: string
   name: string
   wordClass: string
-  definition: string
   conceptualStructure: JsonConceptualStructure
   createdAt: string
 }

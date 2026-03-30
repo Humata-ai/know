@@ -30,12 +30,7 @@ export default function WordDetailView({ wordSlug }: WordDetailViewProps) {
         </span>
       </div>
 
-      <div>
-        <h4 className="text-sm font-medium text-gray-500 mb-1">Definition</h4>
-        <p className="text-sm text-gray-800">
-          {word.definition || <span className="italic text-gray-400">No definition yet.</span>}
-        </p>
-      </div>
+
     </div>
   )
 }
