@@ -1,67 +1,35 @@
 'use client'
 
 import Typography from '@mui/material/Typography'
-
-interface BreadcrumbSegment {
-  label: string
-  href?: string
-}
+import IconButton from '@mui/material/IconButton'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 interface SidebarPanelProps {
-  title: string | BreadcrumbSegment[]
+  title: string
   children: React.ReactNode
   headerAction?: React.ReactNode
-  onNavigate?: (href: string) => void
+  onBack?: () => void
 }
 
-export default function SidebarPanel({ title, children, headerAction, onNavigate }: SidebarPanelProps) {
-  const renderTitle = () => {
-    if (typeof title === 'string') {
-      return (
-        <Typography variant="subtitle1" fontWeight="bold">
-          {title}
-        </Typography>
-      )
-    }
-
-    return (
-      <div className="flex items-center gap-1">
-        {title.map((segment, index) => (
-          <span key={index} className="flex items-center gap-1">
-            {index > 0 && (
-              <Typography variant="subtitle1" sx={{ color: 'text.secondary', mx: 0.25 }}>
-                /
-              </Typography>
-            )}
-            {segment.href && onNavigate ? (
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  color: 'text.secondary',
-                  cursor: 'pointer',
-                  '&:hover': { color: 'text.primary' },
-                  transition: 'color 0.15s',
-                }}
-                onClick={() => onNavigate(segment.href!)}
-              >
-                {segment.label}
-              </Typography>
-            ) : (
-              <Typography variant="subtitle1" fontWeight="bold">
-                {segment.label}
-              </Typography>
-            )}
-          </span>
-        ))}
-      </div>
-    )
-  }
-
+export default function SidebarPanel({ title, children, headerAction, onBack }: SidebarPanelProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-        {renderTitle()}
-        {headerAction}
+        <div className="flex items-center gap-1 min-w-0">
+          {onBack && (
+            <IconButton
+              size="small"
+              onClick={onBack}
+              sx={{ color: 'text.secondary', mr: 0.5, flexShrink: 0 }}
+            >
+              <ArrowBackIcon fontSize="small" />
+            </IconButton>
+          )}
+          <Typography variant="subtitle1" fontWeight="bold" noWrap>
+            {title}
+          </Typography>
+        </div>
+        {headerAction && <div className="flex-shrink-0 ml-2">{headerAction}</div>}
       </div>
       <div className="flex-1 overflow-y-auto">
         {children}

@@ -207,18 +207,8 @@ export default function LibraryPanel() {
     router.push(`/library/${section}`)
   }
 
-  const handleBreadcrumbNavigate = (href: string) => {
-    router.push(href)
-  }
-
   // Word detail or edit view: /library/concepts/<word> or /library/concepts/<word>/edit
   if (wordRoute) {
-    const titleSegments = [
-      { label: 'Library', href: '/library' },
-      { label: 'Concepts', href: '/library/concepts' },
-      { label: decodeURIComponent(wordRoute.wordSlug) },
-    ]
-
     const wordHeaderAction = wordRoute.isEdit ? (
       <Tooltip title="Save">
         <IconButton
@@ -243,8 +233,8 @@ export default function LibraryPanel() {
 
     return (
       <SidebarPanel
-        title={titleSegments}
-        onNavigate={handleBreadcrumbNavigate}
+        title={decodeURIComponent(wordRoute.wordSlug)}
+        onBack={() => router.push('/library/concepts')}
         headerAction={wordHeaderAction}
       >
         {wordRoute.isEdit ? (
@@ -258,23 +248,17 @@ export default function LibraryPanel() {
 
   // Domain detail view: /library/quality-domains/<domain-slug>
   if (domainRoute) {
-    const titleSegments = [
-      { label: 'Library', href: '/library' },
-      { label: 'Quality Domains', href: '/library/quality-domains' },
-      { label: decodeURIComponent(domainRoute.domainSlug) },
-    ]
-
     return (
       <SidebarPanel
-        title={titleSegments}
-        onNavigate={handleBreadcrumbNavigate}
+        title={decodeURIComponent(domainRoute.domainSlug)}
+        onBack={() => router.push('/library/quality-domains')}
       >
         <DomainDetailView domainSlug={domainRoute.domainSlug} />
       </SidebarPanel>
     )
   }
 
-  // Sub-section view with breadcrumb
+  // Sub-section view
   if (activeSection) {
     const SectionView = SECTION_VIEWS[activeSection]
 
@@ -311,11 +295,8 @@ export default function LibraryPanel() {
     return (
       <>
         <SidebarPanel
-          title={[
-            { label: 'Library', href: '/library' },
-            { label: LIBRARY_SECTION_LABELS[activeSection] },
-          ]}
-          onNavigate={handleBreadcrumbNavigate}
+          title={LIBRARY_SECTION_LABELS[activeSection]}
+          onBack={() => router.push('/library')}
           headerAction={headerAction}
         >
           <SectionView />
