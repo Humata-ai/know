@@ -11,7 +11,7 @@ import type { QualityDomain, Concept } from '../shared/types'
 import { normalizeToRange } from '@/app/utils/positionCalculations'
 import { Vector3 } from 'three'
 import type { SidebarView } from './sidebar/types'
-import { getDictionaryWordFromPathname } from './sidebar/types'
+import { getConceptsWordFromPathname } from './sidebar/types'
 
 /**
  * Determines which visualization mode the 3D viewer should be in
@@ -425,7 +425,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
   // Find the selected word from the URL when in library mode
   const selectedWord = useMemo(() => {
     if (mode !== 'library') return null
-    const wordRoute = getDictionaryWordFromPathname(pathname)
+    const wordRoute = getConceptsWordFromPathname(pathname)
     if (!wordRoute) return null
     return state.library.words.find(
       (w) => w.name.toLowerCase().replace(/\s+/g, '-') === wordRoute.wordSlug

@@ -76,7 +76,7 @@ export type ConceptInstance = z.infer<typeof ConceptInstanceSchema>
  */
 export type ConceptualStructure = z.infer<typeof ConceptualStructureSchema>
 
-// ===== Dictionary Word Types =====
+// ===== Concepts Word Types =====
 
 export type WordClass = z.infer<typeof WordClassSchema>
 

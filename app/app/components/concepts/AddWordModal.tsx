@@ -54,7 +54,7 @@ export default function AddWordModal({ isOpen, onClose }: AddWordModalProps) {
     })
 
     onClose()
-    router.push(`/library/dictionary/${encodeURIComponent(slug)}/edit`)
+    router.push(`/library/concepts/${encodeURIComponent(slug)}/edit`)
   }
 
   return (

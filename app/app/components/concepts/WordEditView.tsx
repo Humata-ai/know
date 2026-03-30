@@ -46,7 +46,7 @@ const WordEditView = forwardRef<WordEditViewHandle, WordEditViewProps>(function 
       definition,
       wordClass,
     })
-    router.push(`/library/dictionary/${encodeURIComponent(wordSlug)}`)
+    router.push(`/library/concepts/${encodeURIComponent(wordSlug)}`)
   }
 
   useImperativeHandle(ref, () => ({
