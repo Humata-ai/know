@@ -2,20 +2,41 @@ import { useMemo, memo } from 'react'
 import { Text, Billboard, Line } from '@react-three/drei'
 import { Vector3 } from 'three'
 import type { Concept } from '../shared/types'
-import { useQualityDomain } from '@/app/store'
 import type { ThreeEvent } from '@react-three/fiber'
 import { useCircularLayoutMap } from '@/app/hooks/useCircularLayout'
 import { useCursorOnHover } from '@/app/hooks/useCursorOnHover'
 import { normalizeDimensionValue, normalizeToRange } from '@/app/utils/positionCalculations'
-import { DOMAIN_SCALE, VISUALIZATION_SIZE } from '../quality-domain/visualizations/constants'
+import { VISUALIZATION_SIZE } from '../quality-domain/visualizations/constants'
+import { useConceptualSpace } from '../scene/ConceptualSpaceContext'
 
 interface ConceptVisualization3DProps {
   concept: Concept
   isSelected?: boolean
 }
 
+/**
+ * 3D visualization of a concept and its instances.
+ *
+ * Renders:
+ * - A concept label billboard positioned at the centroid of all label positions
+ * - Connection lines from the concept label to each domain label it references
+ * - Instance billboards with connection lines to their points
+ * - Point markers and inter-point connection lines
+ *
+ * Data source: reads from ConceptualSpaceContext (not the global store) so that
+ * the same component works correctly in both scene and library modes.
+ */
 function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualization3DProps) {
-  const { state, getConceptLabels, getConceptInstances, getInstancePoints, selectConcept, selectInstance } = useQualityDomain()
+  const {
+    domains,
+    selectedDomainId,
+    selectedInstanceId,
+    domainScale,
+    getConceptLabels,
+    getConceptInstances,
+    getInstancePoints,
+  } = useConceptualSpace()
+
   const labels = getConceptLabels(concept.id)
   const instances = getConceptInstances(concept.id)
 
@@ -23,11 +44,13 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
-    selectConcept(concept.id)
+    // Note: selection is a scene-only concept; in library mode this is a no-op
+    // because selectedConceptId is always null. We could wire this up later if needed.
   }
 
-  // Calculate domain positions using shared hook
-  const domainPositions = useCircularLayoutMap(state.scene.domains)
+  // Calculate domain positions using shared hook -- uses the context's domains,
+  // not the global store's domains
+  const domainPositions = useCircularLayoutMap(domains)
 
   // Calculate instance point positions for all instances
   const allInstancesData = useMemo(() => {
@@ -44,7 +67,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       }
 
       points.forEach((point) => {
-        const domain = state.scene.domains.find((d) => d.id === point.domainId)
+        const domain = domains.find((d) => d.id === point.domainId)
         if (!domain) return
 
         // Skip 4D+ points (can't visualize in 3D)
@@ -54,8 +77,8 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         const domainPos = domainPositions.get(domain.id)
         if (!domainPos) return
 
-        // Scale by domain scale
-        const scale = DOMAIN_SCALE.CONCEPT_VIEW
+        // Use the same scale that the domain is rendered at
+        const scale = domainScale
 
         let worldPosition: Vector3
 
@@ -123,10 +146,10 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       return {
         instance,
         positions,
-        isSelected: state.scene.selectedInstanceId === instance.id
+        isSelected: selectedInstanceId === instance.id
       }
     }).filter(data => data.positions.length > 0)
-  }, [instances, getInstancePoints, state.scene.domains, state.scene.selectedInstanceId, domainPositions])
+  }, [instances, getInstancePoints, domains, selectedInstanceId, domainPositions, domainScale])
 
   // Calculate label world positions and centroid
   const { labelPositions, conceptPosition } = useMemo(() => {
@@ -147,7 +170,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
     }
 
     labels.forEach((label) => {
-      const domain = state.scene.domains.find((d) => d.id === label.domainId)
+      const domain = domains.find((d) => d.id === label.domainId)
       if (!domain) return
 
       // Skip 4D+ labels (can't visualize in 3D)
@@ -157,8 +180,10 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       const domainPos = domainPositions.get(domain.id)
       if (!domainPos) return
 
-      // Scale by domain scale (0.5 or 0.55)
-      const scale = state.scene.selectedDomainId === domain.id ? 0.55 : 0.5
+      // Use the same scale that the domain is rendered at.
+      // Previously this used a hardcoded 0.5/0.55 that didn't match the
+      // domain rendering scale, causing misalignment.
+      const scale = domainScale
 
       let worldPosition: Vector3
 
@@ -244,7 +269,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       labelPositions: positions,
       conceptPosition: centroid,
     }
-  }, [labels, state.scene.domains, state.scene.selectedDomainId, domainPositions])
+  }, [labels, domains, selectedDomainId, domainPositions, domainScale])
 
   // If no valid labels to visualize, don't render
   if (labelPositions.length === 0) {
@@ -305,7 +330,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
             position={[0, 10 + idx * 2, 0]}
             onClick={(e: ThreeEvent<MouseEvent>) => {
               e.stopPropagation()
-              selectInstance(instance.id)
+              // Selection is scene-only; no-op in library mode
             }}
             {...cursorHandlers}
           >

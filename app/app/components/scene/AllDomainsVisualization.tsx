@@ -18,8 +18,10 @@ function AllDomainsVisualization() {
     <ConceptualSpaceVisualizer
       domains={state.scene.domains}
       concepts={state.scene.concepts}
+      instances={state.scene.instances}
       selectedDomainId={state.scene.selectedDomainId}
       selectedConceptId={state.scene.selectedConceptId}
+      selectedInstanceId={state.scene.selectedInstanceId}
     />
   )
 }

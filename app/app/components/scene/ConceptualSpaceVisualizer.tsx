@@ -2,9 +2,10 @@ import { useMemo, memo } from 'react'
 import { Text } from '@react-three/drei'
 import DomainVisualization from '../quality-domain/DomainVisualization'
 import ConceptVisualization3D from '../concept/ConceptVisualization3D'
-import type { QualityDomain, Concept } from '../shared/types'
+import type { QualityDomain, Concept, ConceptInstance } from '../shared/types'
 import { useCircularLayout } from '@/app/hooks/useCircularLayout'
 import { DOMAIN_SCALE } from '../quality-domain/visualizations/constants'
+import { ConceptualSpaceProvider } from './ConceptualSpaceContext'
 
 /**
  * Props for the ConceptualSpaceVisualizer.
@@ -16,8 +17,10 @@ import { DOMAIN_SCALE } from '../quality-domain/visualizations/constants'
 export interface ConceptualSpaceVisualizerProps {
   domains: QualityDomain[]
   concepts: Concept[]
+  instances: ConceptInstance[]
   selectedDomainId: string | null
   selectedConceptId: string | null
+  selectedInstanceId: string | null
   /** Text shown when there are no domains to visualize */
   emptyMessage?: string
 }
@@ -85,14 +88,18 @@ SelectedDomainItem.displayName = 'SelectedDomainItem'
 function ConceptualSpaceVisualizer({
   domains,
   concepts,
+  instances,
   selectedDomainId,
   selectedConceptId,
+  selectedInstanceId,
   emptyMessage = 'No domains yet. Click "+ Add Domain" to create one.',
 }: ConceptualSpaceVisualizerProps) {
   // Calculate positions using shared hook
   const domainPositions = useCircularLayout(domains.length)
 
   const emptyPosition = useMemo(() => [0, 0, 0] as const, [])
+
+  const domainScale = DOMAIN_SCALE.ALL_DOMAINS_VIEW
 
   // Handle empty state
   if (domains.length === 0) {
@@ -104,39 +111,49 @@ function ConceptualSpaceVisualizer({
   }
 
   return (
-    <group>
-      {/* Render each domain at its position */}
-      {domains.map((domain, index) => {
-        // Skip 4D+ domains as they're handled by TableView
-        if (domain.dimensions.length >= 4) {
-          return null
-        }
+    <ConceptualSpaceProvider
+      domains={domains}
+      concepts={concepts}
+      instances={instances}
+      selectedDomainId={selectedDomainId}
+      selectedConceptId={selectedConceptId}
+      selectedInstanceId={selectedInstanceId}
+      domainScale={domainScale}
+    >
+      <group>
+        {/* Render each domain at its position */}
+        {domains.map((domain, index) => {
+          // Skip 4D+ domains as they're handled by TableView
+          if (domain.dimensions.length >= 4) {
+            return null
+          }
 
-        const position = domainPositions[index]
-        const isSelected = selectedDomainId === domain.id
-        const scale = DOMAIN_SCALE.ALL_DOMAINS_VIEW
+          const position = domainPositions[index]
+          const isSelected = selectedDomainId === domain.id
+          const scale = domainScale
 
-        const Component = isSelected ? SelectedDomainItem : DomainItem
+          const Component = isSelected ? SelectedDomainItem : DomainItem
 
-        return (
-          <Component
-            key={domain.id}
-            domain={domain}
-            position={position}
-            scale={scale}
+          return (
+            <Component
+              key={domain.id}
+              domain={domain}
+              position={position}
+              scale={scale}
+            />
+          )
+        })}
+
+        {/* Render all concepts */}
+        {concepts.map((concept) => (
+          <ConceptVisualization3D
+            key={concept.id}
+            concept={concept}
+            isSelected={selectedConceptId === concept.id}
           />
-        )
-      })}
-
-      {/* Render all concepts */}
-      {concepts.map((concept) => (
-        <ConceptVisualization3D
-          key={concept.id}
-          concept={concept}
-          isSelected={selectedConceptId === concept.id}
-        />
-      ))}
-    </group>
+        ))}
+      </group>
+    </ConceptualSpaceProvider>
   )
 }
 

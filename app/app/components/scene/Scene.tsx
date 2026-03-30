@@ -7,7 +7,7 @@ import { OrbitControls } from '@react-three/drei'
 import ConceptualSpaceVisualizer from './ConceptualSpaceVisualizer'
 import { useQualityDomain } from '@/app/store'
 import { isRegion } from '../shared/types'
-import type { QualityDomain, Concept } from '../shared/types'
+import type { QualityDomain, Concept, ConceptInstance } from '../shared/types'
 import { normalizeToRange } from '@/app/utils/positionCalculations'
 import { Vector3 } from 'three'
 import type { SidebarView } from './sidebar/types'
@@ -408,8 +408,10 @@ function LibraryCameraControls() {
 const EMPTY_CONCEPTUAL_SPACE = {
   domains: [] as QualityDomain[],
   concepts: [] as Concept[],
+  instances: [] as ConceptInstance[],
   selectedDomainId: null,
   selectedConceptId: null,
+  selectedInstanceId: null,
 }
 
 interface SceneProps {
@@ -441,8 +443,10 @@ export default function Scene({ activeTab = null }: SceneProps) {
         return {
           domains: selectedWord.conceptualStructure.domains,
           concepts: selectedWord.conceptualStructure.concepts,
+          instances: selectedWord.conceptualStructure.instances,
           selectedDomainId: null,
           selectedConceptId: null,
+          selectedInstanceId: null,
         }
       }
       return EMPTY_CONCEPTUAL_SPACE
@@ -451,10 +455,12 @@ export default function Scene({ activeTab = null }: SceneProps) {
     return {
       domains: state.scene.domains,
       concepts: state.scene.concepts,
+      instances: state.scene.instances,
       selectedDomainId: state.scene.selectedDomainId,
       selectedConceptId: state.scene.selectedConceptId,
+      selectedInstanceId: state.scene.selectedInstanceId,
     }
-  }, [mode, selectedWord, state.scene.domains, state.scene.concepts, state.scene.selectedDomainId, state.scene.selectedConceptId])
+  }, [mode, selectedWord, state.scene.domains, state.scene.concepts, state.scene.instances, state.scene.selectedDomainId, state.scene.selectedConceptId, state.scene.selectedInstanceId])
 
   const CameraControls = mode === 'library' ? LibraryCameraControls : SceneCameraControls
 
@@ -472,8 +478,10 @@ export default function Scene({ activeTab = null }: SceneProps) {
         <ConceptualSpaceVisualizer
           domains={visualizationData.domains}
           concepts={visualizationData.concepts}
+          instances={visualizationData.instances}
           selectedDomainId={visualizationData.selectedDomainId}
           selectedConceptId={visualizationData.selectedConceptId}
+          selectedInstanceId={visualizationData.selectedInstanceId}
           emptyMessage={mode === 'library'
             ? (selectedWord
               ? 'This word has no conceptual structure defined yet.'
