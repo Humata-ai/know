@@ -2,6 +2,8 @@ import type { SceneState, LibraryState } from './types'
 import type { QualityDomain, QualityDomainLabel, QualityDomainPoint, ConceptInstance, Word } from '../components/shared/types'
 import { isPoint } from '../components/shared/types'
 
+// Re-export for convenience
+
 /**
  * Scene Selectors
  * 
@@ -137,4 +139,18 @@ export function getWordById(state: LibraryState, wordId: string): Word | null {
 export function getSelectedWord(state: LibraryState): Word | null {
   if (!state.selectedWordId) return null
   return state.words.find((w) => w.id === state.selectedWordId) || null
+}
+
+/**
+ * Get all library domains
+ */
+export function getAllLibraryDomains(state: LibraryState): QualityDomain[] {
+  return state.domains
+}
+
+/**
+ * Get a library domain by ID
+ */
+export function getLibraryDomainById(state: LibraryState, domainId: string): QualityDomain | null {
+  return state.domains.find((d) => d.id === domainId) || null
 }

@@ -86,7 +86,7 @@ function ConceptsView() {
 function QualityDomainsView() {
   const { state } = useAppStore()
 
-  if (state.scene.domains.length === 0) {
+  if (state.library.domains.length === 0) {
     return (
       <div className="px-4 py-8 text-center text-gray-500">
         <p className="text-sm">No quality domains yet. Click + to add one.</p>
@@ -96,7 +96,7 @@ function QualityDomainsView() {
 
   return (
     <div className="px-4 py-2 space-y-2">
-      {state.scene.domains.map((domain) => (
+      {state.library.domains.map((domain) => (
         <div
           key={domain.id}
           className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors text-left"
@@ -248,6 +248,7 @@ export default function LibraryPanel() {
           isOpen={isDomainModalOpen}
           editingDomainId={null}
           onClose={() => setIsDomainModalOpen(false)}
+          useLibraryState
         />
       </>
     )

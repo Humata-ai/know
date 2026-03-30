@@ -199,9 +199,9 @@ export default function StateDebugPanel() {
       const isLibraryOnly = parsed.exportType === 'library'
 
       if (isLibraryOnly) {
-        // Library-only import
+        // Library-only import — preserve existing library domains
         const words = parseWords(parsed.words || [])
-        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { words } })
+        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { words, domains: state.library.domains } })
         setSuccess(`Library state imported! (${words.length} word${words.length !== 1 ? 's' : ''})`)
         setJsonInput("")
         setTimeout(() => setSuccess(null), 2000)
@@ -246,7 +246,7 @@ export default function StateDebugPanel() {
       })
       dispatch({
         type: 'RESTORE_LIBRARY_STATE',
-        payload: { words },
+        payload: { words, domains },
       })
 
       setSuccess("State imported successfully!")

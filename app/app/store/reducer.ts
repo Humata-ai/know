@@ -236,10 +236,32 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
         selectedWordId: action.payload,
       }
 
+    // Library quality domain actions
+    case 'ADD_LIBRARY_DOMAIN':
+      return {
+        ...state,
+        domains: [...state.domains, action.payload],
+      }
+
+    case 'UPDATE_LIBRARY_DOMAIN':
+      return {
+        ...state,
+        domains: state.domains.map((domain) =>
+          domain.id === action.payload.id ? action.payload : domain
+        ),
+      }
+
+    case 'DELETE_LIBRARY_DOMAIN':
+      return {
+        ...state,
+        domains: state.domains.filter((domain) => domain.id !== action.payload),
+      }
+
     case 'RESTORE_LIBRARY_STATE':
       return {
         ...state,
         words: action.payload.words || [],
+        domains: action.payload.domains || [],
       }
 
     default:
@@ -265,6 +287,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
   const libraryActionTypes = [
     'ADD_WORD', 'UPDATE_WORD', 'DELETE_WORD', 'SELECT_WORD',
+    'ADD_LIBRARY_DOMAIN', 'UPDATE_LIBRARY_DOMAIN', 'DELETE_LIBRARY_DOMAIN',
     'RESTORE_LIBRARY_STATE',
   ]
 

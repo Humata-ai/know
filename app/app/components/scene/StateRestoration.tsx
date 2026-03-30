@@ -23,9 +23,10 @@ export function StateRestoration() {
         instances: savedState.instances,
       } })
 
-      // Restore library state
+      // Restore library state (including library domains)
       dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: {
         words: savedState.words,
+        domains: savedState.libraryDomains,
       } })
 
       // Show toast with undo button

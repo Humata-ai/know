@@ -264,7 +264,8 @@ export default function ImportExportSection() {
         if (!validateWords(rawWords)) return
 
         const words = parseWords(rawWords)
-        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { words } })
+        // Preserve existing library domains when importing library-only
+        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { words, domains: state.library.domains } })
 
         setSuccess(`Library state imported successfully! (${words.length} word${words.length !== 1 ? 's' : ''})`)
         setTimeout(() => setSuccess(null), 3000)
@@ -306,7 +307,7 @@ export default function ImportExportSection() {
       })
       dispatch({
         type: 'RESTORE_LIBRARY_STATE',
-        payload: { words },
+        payload: { words, domains },
       })
 
       const parts: string[] = []

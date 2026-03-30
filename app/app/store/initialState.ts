@@ -203,5 +203,6 @@ export const initialState: AppState = {
       createdAt: new Date(word.createdAt),
     })),
     selectedWordId: null,
+    domains: parseDomains(jsonData.domains),
   },
 }

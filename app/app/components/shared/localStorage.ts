@@ -2,7 +2,7 @@ import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, Qual
 import type { AppState } from '@/app/store'
 
 const STORAGE_KEY = 'quality-domain-state'
-const STATE_VERSION = 4 // Version 4 adds nested scene/library state structure
+const STATE_VERSION = 5 // Version 5 adds library quality domains as independent state
 
 // Migration: Convert old Property to QualityDomainLabel (Region)
 function migratePropertyToLabel(oldProperty: Property): QualityDomainLabel {
@@ -178,7 +178,7 @@ function parseWords(rawWords: any[]): Word[] {
 }
 
 // Deserialize with migration support
-export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], words: Word[] } {
+export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], words: Word[], libraryDomains: QualityDomain[] } {
   const parsed = JSON.parse(jsonString)
   const version = parsed.version || 1 // Default to version 1 if not specified
 
@@ -188,7 +188,11 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
     const concepts = parseConcepts(parsed.scene.concepts || [], version)
     const instances = parseInstances(parsed.scene.instances || [])
     const words = parseWords(parsed.library?.words || [])
-    return { domains, concepts, instances, words }
+    // Version 5+ has library domains; for version 4, migrate by copying scene domains
+    const libraryDomains = parsed.library?.domains
+      ? parseDomains(parsed.library.domains, version)
+      : parseDomains(parsed.scene.domains || [], version)
+    return { domains, concepts, instances, words, libraryDomains }
   }
 
   // Versions 1-3: flat structure (backwards compatible migration)
@@ -196,8 +200,10 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
   const concepts = parseConcepts(parsed.concepts || [], version)
   const instances = parseInstances(parsed.instances || [])
   const words = parseWords(parsed.words || [])
+  // For old versions, library domains mirror scene domains
+  const libraryDomains = parseDomains(parsed.domains || [], version)
 
-  return { domains, concepts, instances, words }
+  return { domains, concepts, instances, words, libraryDomains }
 }
 
 export function saveToLocalStorage(state: AppState): void {
@@ -209,7 +215,7 @@ export function saveToLocalStorage(state: AppState): void {
   }
 }
 
-export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], words: Word[] } | null {
+export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], words: Word[], libraryDomains: QualityDomain[] } | null {
   try {
     const serialized = localStorage.getItem(STORAGE_KEY)
     if (!serialized) return null

@@ -40,7 +40,7 @@ export type SceneAction =
 /**
  * Library Action Types
  * 
- * Actions for state mutations related to the library (words).
+ * Actions for state mutations related to the library (words and quality domains).
  */
 export type LibraryAction =
   // Word actions
@@ -49,8 +49,13 @@ export type LibraryAction =
   | { type: 'DELETE_WORD'; payload: string }
   | { type: 'SELECT_WORD'; payload: string | null }
   
+  // Library quality domain actions
+  | { type: 'ADD_LIBRARY_DOMAIN'; payload: QualityDomain }
+  | { type: 'UPDATE_LIBRARY_DOMAIN'; payload: QualityDomain }
+  | { type: 'DELETE_LIBRARY_DOMAIN'; payload: string }
+  
   // State restoration
-  | { type: 'RESTORE_LIBRARY_STATE'; payload: { words: Word[] } }
+  | { type: 'RESTORE_LIBRARY_STATE'; payload: { words: Word[]; domains: QualityDomain[] } }
 
 /**
  * App Action
@@ -80,11 +85,12 @@ export interface SceneState {
 /**
  * Library State
  * 
- * State for the library view containing words and word selection.
+ * State for the library view containing words, word selection, and quality domains.
  */
 export interface LibraryState {
   words: Word[]
   selectedWordId: string | null
+  domains: QualityDomain[]
 }
 
 /**

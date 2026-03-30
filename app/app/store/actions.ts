@@ -137,9 +137,26 @@ export const selectWord = (wordId: string | null): LibraryAction => ({
   payload: wordId,
 })
 
+// Library quality domain action creators
+export const addLibraryDomain = (domain: QualityDomain): LibraryAction => ({
+  type: 'ADD_LIBRARY_DOMAIN',
+  payload: domain,
+})
+
+export const updateLibraryDomain = (domain: QualityDomain): LibraryAction => ({
+  type: 'UPDATE_LIBRARY_DOMAIN',
+  payload: domain,
+})
+
+export const deleteLibraryDomain = (id: string): LibraryAction => ({
+  type: 'DELETE_LIBRARY_DOMAIN',
+  payload: id,
+})
+
 export const restoreLibraryState = (
-  words: Word[] = []
+  words: Word[] = [],
+  domains: QualityDomain[] = [],
 ): LibraryAction => ({
   type: 'RESTORE_LIBRARY_STATE',
-  payload: { words },
+  payload: { words, domains },
 })

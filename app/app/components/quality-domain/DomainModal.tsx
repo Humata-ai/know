@@ -13,16 +13,19 @@ interface DomainModalProps {
   isOpen: boolean
   editingDomainId: string | null
   onClose: () => void
+  /** When true, operates on library state instead of scene state */
+  useLibraryState?: boolean
 }
 
-export default function DomainModal({ isOpen, editingDomainId, onClose }: DomainModalProps) {
-  const { state, addDomain, updateDomain } = useQualityDomain()
+export default function DomainModal({ isOpen, editingDomainId, onClose, useLibraryState = false }: DomainModalProps) {
+  const { state, addDomain, updateDomain, addLibraryDomain, updateLibraryDomain } = useQualityDomain()
   const [name, setName] = useState('')
   const [dimensions, setDimensions] = useState<QualityDimension[]>([])
   const [errors, setErrors] = useState<string[]>([])
 
+  const domains = useLibraryState ? state.library.domains : state.scene.domains
   const editingDomain = editingDomainId
-    ? state.scene.domains.find((d) => d.id === editingDomainId)
+    ? domains.find((d) => d.id === editingDomainId)
     : null
 
   useEffect(() => {
@@ -99,10 +102,18 @@ export default function DomainModal({ isOpen, editingDomainId, onClose }: Domain
       createdAt: editingDomain?.createdAt || new Date(),
     }
 
-    if (editingDomain) {
-      updateDomain(domain)
+    if (useLibraryState) {
+      if (editingDomain) {
+        updateLibraryDomain(domain)
+      } else {
+        addLibraryDomain(domain)
+      }
     } else {
-      addDomain(domain)
+      if (editingDomain) {
+        updateDomain(domain)
+      } else {
+        addDomain(domain)
+      }
     }
 
     onClose()

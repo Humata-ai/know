@@ -55,6 +55,11 @@ interface AppStoreContextType {
   deleteWord: (id: string) => void
   selectWord: (wordId: string | null) => void
   
+  // Library quality domain methods
+  addLibraryDomain: (domain: QualityDomain) => void
+  updateLibraryDomain: (domain: QualityDomain) => void
+  deleteLibraryDomain: (id: string) => void
+  
   // Selector methods (operate on scene state)
   getSelectedDomain: () => QualityDomain | null
   getConceptLabels: (conceptId: string) => QualityDomainLabel[]
@@ -164,6 +169,18 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SELECT_WORD', payload: wordId })
   }, [])
 
+  const addLibraryDomainMethod = useCallback((domain: QualityDomain) => {
+    dispatch({ type: 'ADD_LIBRARY_DOMAIN', payload: domain })
+  }, [])
+
+  const updateLibraryDomainMethod = useCallback((domain: QualityDomain) => {
+    dispatch({ type: 'UPDATE_LIBRARY_DOMAIN', payload: domain })
+  }, [])
+
+  const deleteLibraryDomainMethod = useCallback((id: string) => {
+    dispatch({ type: 'DELETE_LIBRARY_DOMAIN', payload: id })
+  }, [])
+
   // Memoize selector methods - selectors now operate on scene state
   const getSelectedDomainMethod = useCallback(() => {
     return getSelectedDomain(state.scene)
@@ -206,6 +223,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     updateWord: updateWordMethod,
     deleteWord: deleteWordMethod,
     selectWord: selectWordMethod,
+    addLibraryDomain: addLibraryDomainMethod,
+    updateLibraryDomain: updateLibraryDomainMethod,
+    deleteLibraryDomain: deleteLibraryDomainMethod,
     getSelectedDomain: getSelectedDomainMethod,
     getConceptLabels: getConceptLabelsMethod,
     getInstancePoints: getInstancePointsMethod,
@@ -233,6 +253,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     updateWordMethod,
     deleteWordMethod,
     selectWordMethod,
+    addLibraryDomainMethod,
+    updateLibraryDomainMethod,
+    deleteLibraryDomainMethod,
     getSelectedDomainMethod,
     getConceptLabelsMethod,
     getInstancePointsMethod,
