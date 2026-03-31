@@ -124,11 +124,6 @@ export default function LibraryPanel() {
     setIsConceptModalOpen(true)
   }
 
-  const handleOpenEditConcept = (conceptId: string) => {
-    setEditingConceptId(conceptId)
-    setIsConceptModalOpen(true)
-  }
-
   // Concept detail view: /library/concepts/<concept-id>
   if (conceptRoute && !conceptRoute.isEdit) {
     const conceptId = conceptRoute.wordSlug
@@ -247,7 +242,7 @@ export default function LibraryPanel() {
         headerAction={headerAction}
       >
         {activeSection === 'dictionary' && <DictionaryView />}
-        {activeSection === 'concepts' && <ConceptsView onEdit={handleOpenEditConcept} />}
+        {activeSection === 'concepts' && <ConceptsView />}
         {activeSection === 'actions' && <ActionsView />}
         {activeSection === 'quality-domains' && <QualityDomainsView />}
         {activeSection === 'properties' && <PropertiesView />}
