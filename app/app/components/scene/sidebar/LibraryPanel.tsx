@@ -10,14 +10,17 @@ import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import BubbleChartIcon from '@mui/icons-material/BubbleChart'
 import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
 import LabelIcon from '@mui/icons-material/Label'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SidebarPanel from './SidebarPanel'
-import { getLibrarySectionFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
+import { getLibrarySectionFromPathname, getDictionaryWordFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
+import AddDictionaryWordModal from '../../dictionary/AddDictionaryWordModal'
+import { getDictionaryWordName, getDictionaryWordType } from '../../dictionary/utils'
 import ConceptModal from '../../concept/ConceptModal'
 import { isRegion } from '../../shared/types'
 import DomainModal from '../../quality-domain/DomainModal'
@@ -25,7 +28,8 @@ import DomainPickerModal from '../../quality-domain/DomainPickerModal'
 import LabelModal from '../../quality-domain/LabelModal'
 
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
-  { section: 'concepts', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'dictionary', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'concepts', icon: <BubbleChartIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-domains', icon: <CategoryIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-dimensions', icon: <TuneIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'properties', icon: <LabelIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
@@ -49,6 +53,119 @@ function LibraryMenu({ onNavigate }: { onNavigate: (section: LibrarySection) => 
           <ChevronRightIcon fontSize="small" sx={{ color: 'text.secondary' }} />
         </button>
       ))}
+    </div>
+  )
+}
+
+function DictionaryView() {
+  const router = useRouter()
+  const { state } = useAppStore()
+
+  if (state.library.dictionaryWords.length === 0) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">No words registered yet. Click + to add one.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="px-4 py-2 space-y-2">
+      {state.library.dictionaryWords.map((word) => {
+        const pointerName = getDictionaryWordName(word, state.library.domains, state.library.concepts)
+        const typeLabel = getDictionaryWordType(word, state.library.domains)
+        return (
+          <button
+            key={word.id}
+            onClick={() => router.push(`/library/dictionary/${encodeURIComponent(word.id)}`)}
+            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
+          >
+            <h3 className="font-medium">{word.name}</h3>
+            <span className="text-xs text-gray-500">
+              {typeLabel}: {pointerName}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function DictionaryWordDetailView({ wordId }: { wordId: string }) {
+  const { state, deleteDictionaryWord } = useAppStore()
+  const router = useRouter()
+
+  const word = state.library.dictionaryWords.find((w) => w.id === wordId)
+
+  if (!word) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">Word not found.</p>
+      </div>
+    )
+  }
+
+  const typeLabel = getDictionaryWordType(word, state.library.domains)
+
+  const linkedConcept = word.conceptId
+    ? state.library.concepts.find((c) => c.id === word.conceptId)
+    : null
+
+  const linkedLabel = word.labelRef
+    ? (() => {
+        const domain = state.library.domains.find((d) => d.id === word.labelRef!.domainId)
+        if (!domain) return null
+        const label = domain.labels.find((l) => l.id === word.labelRef!.labelId)
+        return label ? { label, domain } : null
+      })()
+    : null
+
+  const handleDelete = () => {
+    deleteDictionaryWord(word.id)
+    router.push('/library/dictionary')
+  }
+
+  return (
+    <div className="px-4 py-4 space-y-4">
+      <div>
+        <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
+          {typeLabel}
+        </span>
+      </div>
+
+      {linkedLabel && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Label</h4>
+          <p className="text-sm text-gray-700">{linkedLabel.label.name}</p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            in {linkedLabel.domain.name}
+          </p>
+        </div>
+      )}
+
+      {linkedConcept && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Concept</h4>
+          <p className="text-sm text-gray-700">{linkedConcept.name}</p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            {linkedConcept.labelRefs.length} {linkedConcept.labelRefs.length === 1 ? 'label' : 'labels'}
+          </p>
+        </div>
+      )}
+
+      <div>
+        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Added</h4>
+        <p className="text-sm text-gray-700">{word.createdAt.toLocaleDateString()}</p>
+      </div>
+
+      <div className="pt-2">
+        <button
+          onClick={handleDelete}
+          className="text-sm text-red-600 hover:text-red-700 transition-colors"
+        >
+          Remove from dictionary
+        </button>
+      </div>
     </div>
   )
 }
@@ -332,7 +449,9 @@ export default function LibraryPanel() {
   const router = useRouter()
   const { state, addLibraryConcept, updateLibraryConcept } = useAppStore()
   const activeSection = getLibrarySectionFromPathname(pathname)
+  const dictionaryWordRoute = getDictionaryWordFromPathname(pathname)
   const domainRoute = getQualityDomainFromPathname(pathname)
+  const [isAddDictWordModalOpen, setIsAddDictWordModalOpen] = useState(false)
   const [isConceptModalOpen, setIsConceptModalOpen] = useState(false)
   const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
@@ -359,6 +478,25 @@ export default function LibraryPanel() {
     setIsConceptModalOpen(true)
   }
 
+  // Dictionary word detail view: /library/dictionary/<word-id>
+  if (dictionaryWordRoute) {
+    const wordId = dictionaryWordRoute.wordSlug
+    const dictWord = state.library.dictionaryWords.find((w) => w.id === wordId)
+    const dictWordTitle = dictWord?.name || 'Word'
+    return (
+      <SidebarPanel
+        title={dictWordTitle}
+        breadcrumbs={[
+          { label: 'Library', href: '/library' },
+          { label: 'Dictionary', href: '/library/dictionary' },
+        ]}
+        onNavigate={handleBreadcrumbNavigate}
+      >
+        <DictionaryWordDetailView wordId={wordId} />
+      </SidebarPanel>
+    )
+  }
+
   // Domain detail view: /library/quality-domains/<domain-slug>
   if (domainRoute) {
     return (
@@ -377,7 +515,21 @@ export default function LibraryPanel() {
 
   // Sub-section view
   if (activeSection) {
-    const headerAction = activeSection === 'concepts' ? (
+    const headerAction = activeSection === 'dictionary' ? (
+      <Tooltip title="Add Word">
+        <span>
+          <Button
+            onClick={() => setIsAddDictWordModalOpen(true)}
+            color="secondary"
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: 0, p: 0.5 }}
+          >
+            <AddIcon sx={{ fontSize: 16 }} />
+          </Button>
+        </span>
+      </Tooltip>
+    ) : activeSection === 'concepts' ? (
       <Tooltip title="Add Concept">
         <span>
           <Button
@@ -431,6 +583,7 @@ export default function LibraryPanel() {
           onNavigate={handleBreadcrumbNavigate}
           headerAction={headerAction}
         >
+          {activeSection === 'dictionary' && <DictionaryView />}
           {activeSection === 'concepts' && (
             <ConceptsView onEdit={handleOpenEditConcept} />
           )}
@@ -438,6 +591,10 @@ export default function LibraryPanel() {
           {activeSection === 'properties' && <PropertiesView />}
           {activeSection === 'quality-dimensions' && <QualityDimensionsView />}
         </SidebarPanel>
+        <AddDictionaryWordModal
+          isOpen={isAddDictWordModalOpen}
+          onClose={() => setIsAddDictWordModalOpen(false)}
+        />
         <ConceptModal
           isOpen={isConceptModalOpen}
           editingConceptId={editingConceptId}

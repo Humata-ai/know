@@ -1,12 +1,13 @@
 export type SidebarView = 'scene' | 'import-export' | 'library'
 
-export type LibrarySection = 'concepts' | 'quality-domains' | 'quality-dimensions' | 'properties'
+export type LibrarySection = 'dictionary' | 'concepts' | 'quality-domains' | 'quality-dimensions' | 'properties'
 
 export const VALID_TABS: SidebarView[] = ['scene', 'import-export', 'library']
 
-export const VALID_LIBRARY_SECTIONS: LibrarySection[] = ['concepts', 'quality-domains', 'quality-dimensions', 'properties']
+export const VALID_LIBRARY_SECTIONS: LibrarySection[] = ['dictionary', 'concepts', 'quality-domains', 'quality-dimensions', 'properties']
 
 export const LIBRARY_SECTION_LABELS: Record<LibrarySection, string> = {
+  'dictionary': 'Dictionary',
   'concepts': 'Concepts',
   'quality-domains': 'Quality Domains',
   'quality-dimensions': 'Quality Dimensions',
@@ -27,6 +28,23 @@ export function getLibrarySectionFromPathname(pathname: string): LibrarySection 
     const section = segments[1]
     if (VALID_LIBRARY_SECTIONS.includes(section as LibrarySection)) {
       return section as LibrarySection
+    }
+  }
+  return null
+}
+
+export interface DictionaryWordRoute {
+  wordSlug: string
+  isEdit: boolean
+}
+
+export function getDictionaryWordFromPathname(pathname: string): DictionaryWordRoute | null {
+  const segments = pathname.replace(/^\//, '').split('/')
+  // /library/dictionary/<word-slug> or /library/dictionary/<word-slug>/edit
+  if (segments[0] === 'library' && segments[1] === 'dictionary' && segments.length >= 3 && segments[2]) {
+    return {
+      wordSlug: decodeURIComponent(segments[2]),
+      isEdit: segments[3] === 'edit',
     }
   }
   return null

@@ -1,4 +1,4 @@
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord } from '../components/shared/types'
 
 /**
  * Scene Action Types
@@ -50,6 +50,11 @@ export type LibrarySelectionType = 'concept' | 'quality-domain'
  * Actions for state mutations related to the library (words and quality domains).
  */
 export type LibraryAction =
+  // Dictionary word actions
+  | { type: 'ADD_DICTIONARY_WORD'; payload: DictionaryWord }
+  | { type: 'UPDATE_DICTIONARY_WORD'; payload: DictionaryWord }
+  | { type: 'DELETE_DICTIONARY_WORD'; payload: string }
+  
   // Library concept actions
   | { type: 'ADD_LIBRARY_CONCEPT'; payload: Concept }
   | { type: 'UPDATE_LIBRARY_CONCEPT'; payload: Concept }
@@ -70,7 +75,7 @@ export type LibraryAction =
   | { type: 'CLEAR_LIBRARY_SELECTION' }
   
   // State restoration
-  | { type: 'RESTORE_LIBRARY_STATE'; payload: { concepts: Concept[]; domains: QualityDomain[] } }
+  | { type: 'RESTORE_LIBRARY_STATE'; payload: { dictionaryWords: DictionaryWord[]; concepts: Concept[]; domains: QualityDomain[] } }
 
 /**
  * App Action
@@ -104,6 +109,7 @@ export interface SceneState {
  * and the currently selected item for 3D viewing.
  */
 export interface LibraryState {
+  dictionaryWords: DictionaryWord[]
   concepts: Concept[]
   domains: QualityDomain[]
   selectedItemId: string | null

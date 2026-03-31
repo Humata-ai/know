@@ -129,6 +129,18 @@ export const WordSchema = z.object({
   createdAt: z.date(),
 })
 
+// ===== Dictionary Word =====
+
+export const DictionaryWordSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  /** Reference to a label (region/point) in a quality domain */
+  labelRef: LabelReferenceSchema.optional(),
+  /** Reference to a concept */
+  conceptId: z.string().optional(),
+  createdAt: z.date(),
+})
+
 // ===== Generate Label API Schemas =====
 // These schemas are used for OpenAI structured output in the generate-label API.
 

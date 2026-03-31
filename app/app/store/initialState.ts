@@ -196,6 +196,7 @@ export const initialState: AppState = {
     hasRestoredState: false,
   },
   library: {
+    dictionaryWords: [],
     concepts: [],
     domains: parseDomains(jsonData.domains),
     selectedItemId: null,
