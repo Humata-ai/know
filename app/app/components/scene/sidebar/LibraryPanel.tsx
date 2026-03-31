@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
@@ -9,8 +9,6 @@ import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
@@ -77,7 +75,14 @@ function ConceptsView({
         return (
           <div
             key={concept.id}
-            className={`w-full p-3 rounded-lg border transition-colors text-left ${
+            onClick={() => {
+              if (isViewing) {
+                clearLibrarySelection()
+              } else {
+                selectLibraryItem(concept.id, 'concept')
+              }
+            }}
+            className={`w-full p-3 rounded-lg border transition-colors text-left cursor-pointer ${
               isViewing
                 ? 'bg-blue-50 border-blue-400'
                 : 'bg-white border-gray-300 hover:bg-gray-50'
@@ -86,25 +91,10 @@ function ConceptsView({
             <div className="flex items-center justify-between">
               <h3 className="font-medium">{concept.name}</h3>
               <div className="flex items-center gap-1">
-                <Tooltip title={isViewing ? 'Hide from 3D viewer' : 'View in 3D'}>
-                  <IconButton
-                    size="small"
-                    onClick={() => {
-                      if (isViewing) {
-                        clearLibrarySelection()
-                      } else {
-                        selectLibraryItem(concept.id, 'concept')
-                      }
-                    }}
-                    sx={{ color: isViewing ? 'primary.main' : 'text.secondary' }}
-                  >
-                    {isViewing ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-                  </IconButton>
-                </Tooltip>
                 <Tooltip title="Edit">
                   <IconButton
                     size="small"
-                    onClick={() => onEdit(concept.id)}
+                    onClick={(e) => { e.stopPropagation(); onEdit(concept.id) }}
                     sx={{ color: 'text.secondary' }}
                   >
                     <EditIcon fontSize="small" />
@@ -113,7 +103,7 @@ function ConceptsView({
                 <Tooltip title="Delete">
                   <IconButton
                     size="small"
-                    onClick={() => deleteLibraryConcept(concept.id)}
+                    onClick={(e) => { e.stopPropagation(); deleteLibraryConcept(concept.id) }}
                     sx={{ color: 'text.secondary' }}
                   >
                     <DeleteIcon fontSize="small" />
@@ -133,7 +123,7 @@ function ConceptsView({
 
 function QualityDomainsView() {
   const router = useRouter()
-  const { state, selectLibraryItem, clearLibrarySelection } = useAppStore()
+  const { state } = useAppStore()
 
   if (state.library.domains.length === 0) {
     return (
@@ -147,39 +137,13 @@ function QualityDomainsView() {
     <div className="px-4 py-2 space-y-2">
       {state.library.domains.map((domain) => {
         const slug = domain.name.toLowerCase().replace(/\s+/g, '-')
-        const isViewing = state.library.selectedItemType === 'quality-domain' && state.library.selectedItemId === domain.id
         return (
-          <div
+          <button
             key={domain.id}
-            className={`w-full p-3 rounded-lg border transition-colors text-left ${
-              isViewing
-                ? 'bg-blue-50 border-blue-400'
-                : 'bg-white border-gray-300 hover:bg-gray-50'
-            }`}
+            onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
+            className="w-full p-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-left cursor-pointer"
           >
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
-                className="font-medium hover:underline cursor-pointer text-left flex-1"
-              >
-                {domain.name}
-              </button>
-              <Tooltip title={isViewing ? 'Hide from 3D viewer' : 'View in 3D'}>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    if (isViewing) {
-                      clearLibrarySelection()
-                    } else {
-                      selectLibraryItem(domain.id, 'quality-domain')
-                    }
-                  }}
-                  sx={{ color: isViewing ? 'primary.main' : 'text.secondary' }}
-                >
-                  {isViewing ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-                </IconButton>
-              </Tooltip>
-            </div>
+            <div className="font-medium">{domain.name}</div>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-gray-500">
                 {domain.dimensions.length}D
@@ -188,7 +152,7 @@ function QualityDomainsView() {
                 {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
               </span>
             </div>
-          </div>
+          </button>
         )
       })}
     </div>
@@ -196,11 +160,21 @@ function QualityDomainsView() {
 }
 
 function DomainDetailView({ domainSlug }: { domainSlug: string }) {
-  const { state } = useAppStore()
+  const { state, selectLibraryItem, clearLibrarySelection } = useAppStore()
 
   const domain = state.library.domains.find(
     (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainSlug
   )
+
+  // Auto-select domain for 3D visualization when detail page is open
+  useEffect(() => {
+    if (domain) {
+      selectLibraryItem(domain.id, 'quality-domain')
+    }
+    return () => {
+      clearLibrarySelection()
+    }
+  }, [domain?.id, selectLibraryItem, clearLibrarySelection])
 
   if (!domain) {
     return (
