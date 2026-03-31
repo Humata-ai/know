@@ -27,8 +27,8 @@ import LabelModal from '../../quality-domain/LabelModal'
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
   { section: 'concepts', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-domains', icon: <CategoryIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
-  { section: 'properties', icon: <LabelIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-dimensions', icon: <TuneIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'properties', icon: <LabelIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
 ]
 
 function LibraryMenu({ onNavigate }: { onNavigate: (section: LibrarySection) => void }) {
@@ -82,11 +82,10 @@ function ConceptsView({
                 selectLibraryItem(concept.id, 'concept')
               }
             }}
-            className={`w-full p-3 rounded-lg border transition-colors text-left cursor-pointer ${
-              isViewing
-                ? 'bg-blue-50 border-blue-400'
-                : 'bg-white border-gray-300 hover:bg-gray-50'
-            }`}
+            className={`w-full p-3 rounded-lg border transition-colors text-left cursor-pointer ${isViewing
+              ? 'bg-blue-50 border-blue-400'
+              : 'bg-white border-gray-300 hover:bg-gray-50'
+              }`}
           >
             <div className="flex items-center justify-between">
               <h3 className="font-medium">{concept.name}</h3>
