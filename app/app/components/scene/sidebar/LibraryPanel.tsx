@@ -5,10 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import BubbleChartIcon from '@mui/icons-material/BubbleChart'
 import CategoryIcon from '@mui/icons-material/Category'
@@ -17,7 +14,7 @@ import TuneIcon from '@mui/icons-material/Tune'
 import LabelIcon from '@mui/icons-material/Label'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SidebarPanel from './SidebarPanel'
-import { getLibrarySectionFromPathname, getDictionaryWordFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
+import { getLibrarySectionFromPathname, getDictionaryWordFromPathname, getQualityDomainFromPathname, getConceptsWordFromPathname, LIBRARY_SECTION_LABELS } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
 import AddDictionaryWordModal from '../../dictionary/AddDictionaryWordModal'
@@ -173,12 +170,9 @@ function DictionaryWordDetailView({ wordId }: { wordId: string }) {
   )
 }
 
-function ConceptsView({
-  onEdit,
-}: {
-  onEdit: (conceptId: string) => void
-}) {
-  const { state, deleteLibraryConcept, selectLibraryItem, clearLibrarySelection } = useAppStore()
+function ConceptsView() {
+  const router = useRouter()
+  const { state } = useAppStore()
 
   if (state.library.concepts.length === 0) {
     return (
@@ -191,49 +185,19 @@ function ConceptsView({
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.concepts.map((concept) => {
-        const isViewing = state.library.selectedItemType === 'concept' && state.library.selectedItemId === concept.id
         return (
-          <div
+          <button
             key={concept.id}
-            onClick={() => {
-              if (isViewing) {
-                clearLibrarySelection()
-              } else {
-                selectLibraryItem(concept.id, 'concept')
-              }
-            }}
-            className={`w-full p-3 rounded-lg border transition-colors text-left cursor-pointer ${isViewing
-              ? 'bg-blue-50 border-blue-400'
-              : 'bg-white border-gray-300 hover:bg-gray-50'
-              }`}
+            onClick={() => router.push(`/library/concepts/${encodeURIComponent(concept.id)}`)}
+            className="w-full p-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-left cursor-pointer"
           >
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium">{concept.name}</h3>
-              <div className="flex items-center gap-1">
-                <Tooltip title="Edit">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => { e.stopPropagation(); onEdit(concept.id) }}
-                    sx={{ color: 'text.secondary' }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => { e.stopPropagation(); deleteLibraryConcept(concept.id) }}
-                    sx={{ color: 'text.secondary' }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </div>
+            <div className="font-medium">{concept.name}</div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-gray-500">
+                {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'label' : 'labels'}
+              </span>
             </div>
-            <span className="text-xs text-gray-500">
-              {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'label' : 'labels'}
-            </span>
-          </div>
+          </button>
         )
       })}
     </div>
@@ -455,6 +419,65 @@ function QualityDimensionsView() {
   )
 }
 
+function ConceptDetailView({ conceptId }: { conceptId: string }) {
+  const { state, deleteLibraryConcept } = useAppStore()
+  const router = useRouter()
+
+  const concept = state.library.concepts.find((c) => c.id === conceptId)
+
+  if (!concept) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">Concept not found.</p>
+      </div>
+    )
+  }
+
+  const handleDelete = () => {
+    deleteLibraryConcept(concept.id)
+    router.push('/library/concepts')
+  }
+
+  return (
+    <div className="px-4 py-4 space-y-4">
+      <div className="flex items-center gap-2">
+        <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
+          {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'label' : 'labels'}
+        </span>
+      </div>
+
+      {concept.labelRefs.length > 0 && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Labels</h4>
+          <div className="space-y-2">
+            {concept.labelRefs.map((labelRef, index) => {
+              const domain = state.library.domains.find(d => d.id === labelRef.domainId)
+              const label = domain?.labels.find(l => l.id === labelRef.labelId)
+              if (!domain || !label) return null
+              
+              return (
+                <div key={index} className="text-sm text-gray-700 bg-gray-50 p-2 rounded border border-gray-200">
+                  <div className="font-medium">{label.name}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">in {domain.name}</div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2">
+        <button
+          onClick={handleDelete}
+          className="text-sm text-red-600 hover:text-red-700 transition-colors"
+        >
+          Delete concept
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function LibraryPanel() {
   const pathname = usePathname()
   const router = useRouter()
@@ -462,6 +485,7 @@ export default function LibraryPanel() {
   const activeSection = getLibrarySectionFromPathname(pathname)
   const dictionaryWordRoute = getDictionaryWordFromPathname(pathname)
   const domainRoute = getQualityDomainFromPathname(pathname)
+  const conceptRoute = getConceptsWordFromPathname(pathname)
   const [isAddDictWordModalOpen, setIsAddDictWordModalOpen] = useState(false)
   const [isConceptModalOpen, setIsConceptModalOpen] = useState(false)
   const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
@@ -485,26 +509,21 @@ export default function LibraryPanel() {
     setIsConceptModalOpen(true)
   }
 
-  const handleOpenEditConcept = (conceptId: string) => {
-    setEditingConceptId(conceptId)
-    setIsConceptModalOpen(true)
-  }
-
-  // Dictionary word detail view: /library/dictionary/<word-id>
-  if (dictionaryWordRoute) {
-    const wordId = dictionaryWordRoute.wordSlug
-    const dictWord = state.library.dictionaryWords.find((w) => w.id === wordId)
-    const dictWordTitle = dictWord?.name || 'Word'
+  // Concept detail view: /library/concepts/<concept-id>
+  if (conceptRoute && !conceptRoute.isEdit) {
+    const conceptId = conceptRoute.wordSlug
+    const concept = state.library.concepts.find((c) => c.id === conceptId)
+    const conceptTitle = concept?.name || 'Concept'
     return (
       <SidebarPanel
-        title={dictWordTitle}
+        title={conceptTitle}
         breadcrumbs={[
           { label: 'Library', href: '/library' },
-          { label: 'Dictionary', href: '/library/dictionary' },
+          { label: 'Concepts', href: '/library/concepts' },
         ]}
         onNavigate={handleBreadcrumbNavigate}
       >
-        <DictionaryWordDetailView wordId={wordId} />
+        <ConceptDetailView conceptId={conceptId} />
       </SidebarPanel>
     )
   }
@@ -610,9 +629,7 @@ export default function LibraryPanel() {
           headerAction={headerAction}
         >
           {activeSection === 'dictionary' && <DictionaryView />}
-          {activeSection === 'concepts' && (
-            <ConceptsView onEdit={handleOpenEditConcept} />
-          )}
+          {activeSection === 'concepts' && <ConceptsView />}
           {activeSection === 'actions' && <ActionsView />}
           {activeSection === 'quality-domains' && <QualityDomainsView />}
           {activeSection === 'properties' && <PropertiesView />}
