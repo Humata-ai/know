@@ -1,14 +1,15 @@
 export type SidebarView = 'scene' | 'import-export' | 'library'
 
-export type LibrarySection = 'dictionary' | 'concepts' | 'quality-domains' | 'quality-dimensions' | 'properties'
+export type LibrarySection = 'dictionary' | 'concepts' | 'actions' | 'quality-domains' | 'quality-dimensions' | 'properties'
 
 export const VALID_TABS: SidebarView[] = ['scene', 'import-export', 'library']
 
-export const VALID_LIBRARY_SECTIONS: LibrarySection[] = ['dictionary', 'concepts', 'quality-domains', 'quality-dimensions', 'properties']
+export const VALID_LIBRARY_SECTIONS: LibrarySection[] = ['dictionary', 'concepts', 'actions', 'quality-domains', 'quality-dimensions', 'properties']
 
 export const LIBRARY_SECTION_LABELS: Record<LibrarySection, string> = {
   'dictionary': 'Dictionary',
   'concepts': 'Concepts',
+  'actions': 'Actions',
   'quality-domains': 'Quality Domains',
   'quality-dimensions': 'Quality Dimensions',
   'properties': 'Properties',

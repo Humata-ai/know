@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import BubbleChartIcon from '@mui/icons-material/BubbleChart'
 import CategoryIcon from '@mui/icons-material/Category'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import TuneIcon from '@mui/icons-material/Tune'
 import LabelIcon from '@mui/icons-material/Label'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -26,10 +27,12 @@ import { isRegion } from '../../shared/types'
 import DomainModal from '../../quality-domain/DomainModal'
 import DomainPickerModal from '../../quality-domain/DomainPickerModal'
 import LabelModal from '../../quality-domain/LabelModal'
+import Modal from '../../common/Modal'
 
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
   { section: 'dictionary', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'concepts', icon: <BubbleChartIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'actions', icon: <PlayArrowIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-domains', icon: <CategoryIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-dimensions', icon: <TuneIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'properties', icon: <LabelIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
@@ -434,6 +437,14 @@ function PropertiesView() {
   )
 }
 
+function ActionsView() {
+  return (
+    <div className="px-4 py-8 text-center text-gray-500">
+      <p className="text-sm">No actions yet. Click + to add one.</p>
+    </div>
+  )
+}
+
 function QualityDimensionsView() {
   return (
     <div className="px-4 py-2">
@@ -459,6 +470,7 @@ export default function LibraryPanel() {
   const [propertyDomainId, setPropertyDomainId] = useState<string | null>(null)
   const [isPropertyLabelModalOpen, setIsPropertyLabelModalOpen] = useState(false)
   const [editingPropertyLabelId, setEditingPropertyLabelId] = useState<string | null>(null)
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false)
 
   const handleNavigateToSection = (section: LibrarySection) => {
     router.push(`/library/${section}`)
@@ -543,6 +555,20 @@ export default function LibraryPanel() {
           </Button>
         </span>
       </Tooltip>
+    ) : activeSection === 'actions' ? (
+      <Tooltip title="Add Action">
+        <span>
+          <Button
+            onClick={() => setIsActionModalOpen(true)}
+            color="secondary"
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: 0, p: 0.5 }}
+          >
+            <AddIcon sx={{ fontSize: 16 }} />
+          </Button>
+        </span>
+      </Tooltip>
     ) : activeSection === 'quality-domains' ? (
       <Tooltip title="Add Quality Domain">
         <span>
@@ -587,6 +613,7 @@ export default function LibraryPanel() {
           {activeSection === 'concepts' && (
             <ConceptsView onEdit={handleOpenEditConcept} />
           )}
+          {activeSection === 'actions' && <ActionsView />}
           {activeSection === 'quality-domains' && <QualityDomainsView />}
           {activeSection === 'properties' && <PropertiesView />}
           {activeSection === 'quality-dimensions' && <QualityDimensionsView />}
@@ -632,6 +659,22 @@ export default function LibraryPanel() {
           }}
           useLibraryState
         />
+        <Modal
+          isOpen={isActionModalOpen}
+          onClose={() => setIsActionModalOpen(false)}
+          title="Add Action"
+        >
+          <p className="text-sm text-gray-500 mb-4">Action creation coming soon.</p>
+          <div className="flex justify-end">
+            <Button
+              onClick={() => setIsActionModalOpen(false)}
+              variant="outlined"
+              color="secondary"
+            >
+              Close
+            </Button>
+          </div>
+        </Modal>
       </>
     )
   }
