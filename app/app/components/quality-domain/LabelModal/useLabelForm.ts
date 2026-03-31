@@ -9,10 +9,12 @@ interface UseLabelFormProps {
   isOpen: boolean
   domainId: string | null
   editingLabelId: string | null
+  /** When true, operates on library state instead of scene state */
+  useLibraryState?: boolean
 }
 
-export default function useLabelForm({ isOpen, domainId, editingLabelId }: UseLabelFormProps) {
-  const { state, addLabel, updateLabel } = useQualityDomain()
+export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibraryState = false }: UseLabelFormProps) {
+  const { state, addLabel, updateLabel, addLibraryLabel, updateLibraryLabel } = useQualityDomain()
   const [name, setName] = useState('')
   const [labelType, setLabelType] = useState<'region' | 'point' | null>(null)
   const [regionDimensions, setRegionDimensions] = useState<RegionDimensionRange[]>([])
@@ -20,7 +22,8 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId }: UseLa
   const [errors, setErrors] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
 
-  const domain = domainId ? state.scene.domains.find((d) => d.id === domainId) : null
+  const domains = useLibraryState ? state.library.domains : state.scene.domains
+  const domain = domainId ? domains.find((d) => d.id === domainId) : null
   const editingLabel = editingLabelId && domain
     ? domain.labels.find((l) => l.id === editingLabelId)
     : null
@@ -205,10 +208,18 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId }: UseLa
           createdAt: editingLabel?.createdAt || new Date(),
         }
 
-    if (editingLabel) {
-      updateLabel(domain.id, label)
+    if (useLibraryState) {
+      if (editingLabel) {
+        updateLibraryLabel(domain.id, label)
+      } else {
+        addLibraryLabel(domain.id, label)
+      }
     } else {
-      addLabel(domain.id, label)
+      if (editingLabel) {
+        updateLabel(domain.id, label)
+      } else {
+        addLabel(domain.id, label)
+      }
     }
 
     onClose()

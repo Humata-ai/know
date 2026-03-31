@@ -60,6 +60,11 @@ interface AppStoreContextType {
   updateLibraryDomain: (domain: QualityDomain) => void
   deleteLibraryDomain: (id: string) => void
   
+  // Library label methods
+  addLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
+  updateLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
+  deleteLibraryLabel: (domainId: string, labelId: string) => void
+  
   // Selector methods (operate on scene state)
   getSelectedDomain: () => QualityDomain | null
   getConceptLabels: (conceptId: string) => QualityDomainLabel[]
@@ -181,6 +186,18 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_LIBRARY_DOMAIN', payload: id })
   }, [])
 
+  const addLibraryLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
+    dispatch({ type: 'ADD_LIBRARY_LABEL', payload: { domainId, label } })
+  }, [])
+
+  const updateLibraryLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
+    dispatch({ type: 'UPDATE_LIBRARY_LABEL', payload: { domainId, label } })
+  }, [])
+
+  const deleteLibraryLabelMethod = useCallback((domainId: string, labelId: string) => {
+    dispatch({ type: 'DELETE_LIBRARY_LABEL', payload: { domainId, labelId } })
+  }, [])
+
   // Memoize selector methods - selectors now operate on scene state
   const getSelectedDomainMethod = useCallback(() => {
     return getSelectedDomain(state.scene)
@@ -226,6 +243,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryDomain: addLibraryDomainMethod,
     updateLibraryDomain: updateLibraryDomainMethod,
     deleteLibraryDomain: deleteLibraryDomainMethod,
+    addLibraryLabel: addLibraryLabelMethod,
+    updateLibraryLabel: updateLibraryLabelMethod,
+    deleteLibraryLabel: deleteLibraryLabelMethod,
     getSelectedDomain: getSelectedDomainMethod,
     getConceptLabels: getConceptLabelsMethod,
     getInstancePoints: getInstancePointsMethod,
@@ -256,6 +276,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryDomainMethod,
     updateLibraryDomainMethod,
     deleteLibraryDomainMethod,
+    addLibraryLabelMethod,
+    updateLibraryLabelMethod,
+    deleteLibraryLabelMethod,
     getSelectedDomainMethod,
     getConceptLabelsMethod,
     getInstancePointsMethod,

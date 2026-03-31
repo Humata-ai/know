@@ -11,6 +11,8 @@ interface LabelModalProps {
   domainId: string | null
   editingLabelId: string | null
   onClose: () => void
+  /** When true, operates on library state instead of scene state */
+  useLibraryState?: boolean
 }
 
 export default function LabelModal({
@@ -18,6 +20,7 @@ export default function LabelModal({
   domainId,
   editingLabelId,
   onClose,
+  useLibraryState = false,
 }: LabelModalProps) {
   const {
     name,
@@ -34,7 +37,7 @@ export default function LabelModal({
     handlePointValueChange,
     handleGenerate,
     handleSubmit,
-  } = useLabelForm({ isOpen, domainId, editingLabelId })
+  } = useLabelForm({ isOpen, domainId, editingLabelId, useLibraryState })
 
   if (!isOpen || !domain) return null
 

@@ -54,6 +54,11 @@ export type LibraryAction =
   | { type: 'UPDATE_LIBRARY_DOMAIN'; payload: QualityDomain }
   | { type: 'DELETE_LIBRARY_DOMAIN'; payload: string }
   
+  // Library label actions
+  | { type: 'ADD_LIBRARY_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
+  | { type: 'UPDATE_LIBRARY_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
+  | { type: 'DELETE_LIBRARY_LABEL'; payload: { domainId: string; labelId: string } }
+  
   // State restoration
   | { type: 'RESTORE_LIBRARY_STATE'; payload: { words: Word[]; domains: QualityDomain[] } }
 
