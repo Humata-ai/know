@@ -471,6 +471,7 @@ export default function LibraryPanel() {
   const [isPropertyLabelModalOpen, setIsPropertyLabelModalOpen] = useState(false)
   const [editingPropertyLabelId, setEditingPropertyLabelId] = useState<string | null>(null)
   const [isActionModalOpen, setIsActionModalOpen] = useState(false)
+  const [verbType, setVerbType] = useState<'manner' | 'result' | 'path'>('manner')
 
   const handleNavigateToSection = (section: LibrarySection) => {
     router.push(`/library/${section}`)
@@ -663,16 +664,64 @@ export default function LibraryPanel() {
           isOpen={isActionModalOpen}
           onClose={() => setIsActionModalOpen(false)}
           title="Add Action"
+          maxWidth="sm"
         >
-          <p className="text-sm text-gray-500 mb-4">Action creation coming soon.</p>
-          <div className="flex justify-end">
-            <Button
-              onClick={() => setIsActionModalOpen(false)}
-              variant="outlined"
-              color="secondary"
-            >
-              Close
-            </Button>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Verb type</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setVerbType('manner')}
+                  className={`px-3 py-1.5 rounded border text-sm transition-colors ${
+                    verbType === 'manner'
+                      ? 'bg-purple-600 text-white border-purple-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  Manner
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVerbType('result')}
+                  className={`px-3 py-1.5 rounded border text-sm transition-colors ${
+                    verbType === 'result'
+                      ? 'bg-purple-600 text-white border-purple-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  Result
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVerbType('path')}
+                  className={`px-3 py-1.5 rounded border text-sm transition-colors ${
+                    verbType === 'path'
+                      ? 'bg-purple-600 text-white border-purple-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  Path
+                </button>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setIsActionModalOpen(false)}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsActionModalOpen(false)}
+                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              >
+                Add Action
+              </button>
+            </div>
           </div>
         </Modal>
       </>
