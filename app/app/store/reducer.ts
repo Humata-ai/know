@@ -208,6 +208,27 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
  */
 export function libraryReducer(state: LibraryState, action: LibraryAction): LibraryState {
   switch (action.type) {
+    // Dictionary word actions
+    case 'ADD_DICTIONARY_WORD':
+      return {
+        ...state,
+        dictionaryWords: [...state.dictionaryWords, action.payload],
+      }
+
+    case 'UPDATE_DICTIONARY_WORD':
+      return {
+        ...state,
+        dictionaryWords: state.dictionaryWords.map((word) =>
+          word.id === action.payload.id ? action.payload : word
+        ),
+      }
+
+    case 'DELETE_DICTIONARY_WORD':
+      return {
+        ...state,
+        dictionaryWords: state.dictionaryWords.filter((word) => word.id !== action.payload),
+      }
+
     // Library concept actions
     case 'ADD_LIBRARY_CONCEPT':
       return {
@@ -253,6 +274,7 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
     case 'RESTORE_LIBRARY_STATE':
       return {
         ...state,
+        dictionaryWords: action.payload.dictionaryWords || [],
         concepts: action.payload.concepts || [],
         domains: action.payload.domains || [],
       }
@@ -279,6 +301,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
   ]
 
   const libraryActionTypes = [
+    'ADD_DICTIONARY_WORD', 'UPDATE_DICTIONARY_WORD', 'DELETE_DICTIONARY_WORD',
     'ADD_LIBRARY_CONCEPT', 'UPDATE_LIBRARY_CONCEPT', 'DELETE_LIBRARY_CONCEPT',
     'ADD_LIBRARY_DOMAIN', 'UPDATE_LIBRARY_DOMAIN', 'DELETE_LIBRARY_DOMAIN',
     'RESTORE_LIBRARY_STATE',

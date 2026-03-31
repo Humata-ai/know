@@ -256,7 +256,7 @@ export default function ImportExportSection() {
 
         const libConcepts = parseConcepts(rawLibConcepts)
         const libDomains = rawLibDomains.length > 0 ? parseDomains(rawLibDomains) : state.library.domains
-        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { concepts: libConcepts, domains: libDomains } })
+        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { dictionaryWords: [], concepts: libConcepts, domains: libDomains } })
 
         setSuccess(`Library state imported successfully! (${libConcepts.length} concept${libConcepts.length !== 1 ? 's' : ''})`)
         setTimeout(() => setSuccess(null), 3000)
@@ -301,7 +301,7 @@ export default function ImportExportSection() {
       })
       dispatch({
         type: 'RESTORE_LIBRARY_STATE',
-        payload: { concepts: libConcepts, domains: libDomains },
+        payload: { dictionaryWords: [], concepts: libConcepts, domains: libDomains },
       })
 
       const parts: string[] = []

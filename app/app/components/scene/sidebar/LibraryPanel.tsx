@@ -10,18 +10,21 @@ import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import BubbleChartIcon from '@mui/icons-material/BubbleChart'
 import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SidebarPanel from './SidebarPanel'
-import { getLibrarySectionFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
+import { getLibrarySectionFromPathname, getDictionaryWordFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
+import AddDictionaryWordModal from '../../dictionary/AddDictionaryWordModal'
 import ConceptModal from '../../concept/ConceptModal'
 import DomainModal from '../../quality-domain/DomainModal'
 
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
-  { section: 'concepts', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'dictionary', icon: <MenuBookIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
+  { section: 'concepts', icon: <BubbleChartIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-domains', icon: <CategoryIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
   { section: 'quality-dimensions', icon: <TuneIcon fontSize="small" sx={{ color: 'text.secondary' }} /> },
 ]
@@ -44,6 +47,101 @@ function LibraryMenu({ onNavigate }: { onNavigate: (section: LibrarySection) => 
           <ChevronRightIcon fontSize="small" sx={{ color: 'text.secondary' }} />
         </button>
       ))}
+    </div>
+  )
+}
+
+function DictionaryView() {
+  const router = useRouter()
+  const { state } = useAppStore()
+
+  if (state.library.dictionaryWords.length === 0) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">No words registered yet. Click + to add one.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="px-4 py-2 space-y-2">
+      {state.library.dictionaryWords.map((word) => {
+        const slug = word.name.toLowerCase().replace(/\s+/g, '-')
+        const linkedConcept = word.conceptId
+          ? state.library.concepts.find((c) => c.id === word.conceptId)
+          : null
+        return (
+          <button
+            key={word.id}
+            onClick={() => router.push(`/library/dictionary/${encodeURIComponent(slug)}`)}
+            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
+          >
+            <h3 className="font-medium">{word.name}</h3>
+            {linkedConcept && (
+              <span className="text-xs text-gray-500">Concept: {linkedConcept.name}</span>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function DictionaryWordDetailView({ wordSlug }: { wordSlug: string }) {
+  const { state, deleteDictionaryWord } = useAppStore()
+  const router = useRouter()
+
+  const word = state.library.dictionaryWords.find(
+    (w) => w.name.toLowerCase().replace(/\s+/g, '-') === wordSlug
+  )
+
+  if (!word) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">Word not found.</p>
+      </div>
+    )
+  }
+
+  const linkedConcept = word.conceptId
+    ? state.library.concepts.find((c) => c.id === word.conceptId)
+    : null
+
+  const handleDelete = () => {
+    deleteDictionaryWord(word.id)
+    router.push('/library/dictionary')
+  }
+
+  return (
+    <div className="px-4 py-4 space-y-4">
+      <div>
+        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Word</h4>
+        <p className="text-sm text-gray-700">{word.name}</p>
+      </div>
+
+      {linkedConcept && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Associated Concept</h4>
+          <p className="text-sm text-gray-700">{linkedConcept.name}</p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            {linkedConcept.labelRefs.length} {linkedConcept.labelRefs.length === 1 ? 'label' : 'labels'}
+          </p>
+        </div>
+      )}
+
+      <div>
+        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Added</h4>
+        <p className="text-sm text-gray-700">{word.createdAt.toLocaleDateString()}</p>
+      </div>
+
+      <div className="pt-2">
+        <button
+          onClick={handleDelete}
+          className="text-sm text-red-600 hover:text-red-700 transition-colors"
+        >
+          Remove from dictionary
+        </button>
+      </div>
     </div>
   )
 }
@@ -213,7 +311,9 @@ export default function LibraryPanel() {
   const router = useRouter()
   const { state, addLibraryConcept, updateLibraryConcept } = useAppStore()
   const activeSection = getLibrarySectionFromPathname(pathname)
+  const dictionaryWordRoute = getDictionaryWordFromPathname(pathname)
   const domainRoute = getQualityDomainFromPathname(pathname)
+  const [isAddDictWordModalOpen, setIsAddDictWordModalOpen] = useState(false)
   const [isConceptModalOpen, setIsConceptModalOpen] = useState(false)
   const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
@@ -236,6 +336,22 @@ export default function LibraryPanel() {
     setIsConceptModalOpen(true)
   }
 
+  // Dictionary word detail view: /library/dictionary/<word-slug>
+  if (dictionaryWordRoute) {
+    return (
+      <SidebarPanel
+        title={decodeURIComponent(dictionaryWordRoute.wordSlug)}
+        breadcrumbs={[
+          { label: 'Library', href: '/library' },
+          { label: 'Dictionary', href: '/library/dictionary' },
+        ]}
+        onNavigate={handleBreadcrumbNavigate}
+      >
+        <DictionaryWordDetailView wordSlug={dictionaryWordRoute.wordSlug} />
+      </SidebarPanel>
+    )
+  }
+
   // Domain detail view: /library/quality-domains/<domain-slug>
   if (domainRoute) {
     return (
@@ -254,7 +370,21 @@ export default function LibraryPanel() {
 
   // Sub-section view
   if (activeSection) {
-    const headerAction = activeSection === 'concepts' ? (
+    const headerAction = activeSection === 'dictionary' ? (
+      <Tooltip title="Add Word">
+        <span>
+          <Button
+            onClick={() => setIsAddDictWordModalOpen(true)}
+            color="secondary"
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: 0, p: 0.5 }}
+          >
+            <AddIcon sx={{ fontSize: 16 }} />
+          </Button>
+        </span>
+      </Tooltip>
+    ) : activeSection === 'concepts' ? (
       <Tooltip title="Add Concept">
         <span>
           <Button
@@ -294,12 +424,17 @@ export default function LibraryPanel() {
           onNavigate={handleBreadcrumbNavigate}
           headerAction={headerAction}
         >
+          {activeSection === 'dictionary' && <DictionaryView />}
           {activeSection === 'concepts' && (
             <ConceptsView onEdit={handleOpenEditConcept} />
           )}
           {activeSection === 'quality-domains' && <QualityDomainsView />}
           {activeSection === 'quality-dimensions' && <QualityDimensionsView />}
         </SidebarPanel>
+        <AddDictionaryWordModal
+          isOpen={isAddDictWordModalOpen}
+          onClose={() => setIsAddDictWordModalOpen(false)}
+        />
         <ConceptModal
           isOpen={isConceptModalOpen}
           editingConceptId={editingConceptId}

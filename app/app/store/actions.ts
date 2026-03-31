@@ -1,5 +1,5 @@
 import type { SceneAction, LibraryAction } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord } from '../components/shared/types'
 
 /**
  * Scene Action Creators
@@ -117,6 +117,22 @@ export const restoreSceneState = (
  * Helper functions for creating library actions with proper typing.
  */
 
+// Dictionary word action creators
+export const addDictionaryWord = (word: DictionaryWord): LibraryAction => ({
+  type: 'ADD_DICTIONARY_WORD',
+  payload: word,
+})
+
+export const updateDictionaryWord = (word: DictionaryWord): LibraryAction => ({
+  type: 'UPDATE_DICTIONARY_WORD',
+  payload: word,
+})
+
+export const deleteDictionaryWord = (id: string): LibraryAction => ({
+  type: 'DELETE_DICTIONARY_WORD',
+  payload: id,
+})
+
 // Library concept action creators
 export const addLibraryConcept = (concept: Concept): LibraryAction => ({
   type: 'ADD_LIBRARY_CONCEPT',
@@ -150,9 +166,10 @@ export const deleteLibraryDomain = (id: string): LibraryAction => ({
 })
 
 export const restoreLibraryState = (
+  dictionaryWords: DictionaryWord[] = [],
   concepts: Concept[] = [],
   domains: QualityDomain[] = [],
 ): LibraryAction => ({
   type: 'RESTORE_LIBRARY_STATE',
-  payload: { concepts, domains },
+  payload: { dictionaryWords, concepts, domains },
 })

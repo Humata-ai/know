@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, useMemo, useCallback, useEffect, type ReactNode } from 'react'
 import type { AppState, AppAction } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint, DictionaryWord } from '../components/shared/types'
 import { appReducer } from './reducer'
 import { initialState } from './initialState'
 import { 
@@ -48,6 +48,11 @@ interface AppStoreContextType {
   addInstance: (instance: ConceptInstance) => void
   updateInstance: (instance: ConceptInstance) => void
   deleteInstance: (id: string) => void
+  
+  // Dictionary word methods
+  addDictionaryWord: (word: DictionaryWord) => void
+  updateDictionaryWord: (word: DictionaryWord) => void
+  deleteDictionaryWord: (id: string) => void
   
   // Library concept methods
   addLibraryConcept: (concept: Concept) => void
@@ -152,6 +157,18 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_INSTANCE', payload: id })
   }, [])
 
+  const addDictionaryWordMethod = useCallback((word: DictionaryWord) => {
+    dispatch({ type: 'ADD_DICTIONARY_WORD', payload: word })
+  }, [])
+
+  const updateDictionaryWordMethod = useCallback((word: DictionaryWord) => {
+    dispatch({ type: 'UPDATE_DICTIONARY_WORD', payload: word })
+  }, [])
+
+  const deleteDictionaryWordMethod = useCallback((id: string) => {
+    dispatch({ type: 'DELETE_DICTIONARY_WORD', payload: id })
+  }, [])
+
   const addLibraryConceptMethod = useCallback((concept: Concept) => {
     dispatch({ type: 'ADD_LIBRARY_CONCEPT', payload: concept })
   }, [])
@@ -214,6 +231,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addInstance: addInstanceMethod,
     updateInstance: updateInstanceMethod,
     deleteInstance: deleteInstanceMethod,
+    addDictionaryWord: addDictionaryWordMethod,
+    updateDictionaryWord: updateDictionaryWordMethod,
+    deleteDictionaryWord: deleteDictionaryWordMethod,
     addLibraryConcept: addLibraryConceptMethod,
     updateLibraryConcept: updateLibraryConceptMethod,
     deleteLibraryConcept: deleteLibraryConceptMethod,
@@ -243,6 +263,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addInstanceMethod,
     updateInstanceMethod,
     deleteInstanceMethod,
+    addDictionaryWordMethod,
+    updateDictionaryWordMethod,
+    deleteDictionaryWordMethod,
     addLibraryConceptMethod,
     updateLibraryConceptMethod,
     deleteLibraryConceptMethod,

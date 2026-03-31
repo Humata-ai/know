@@ -195,7 +195,7 @@ export default function StateDebugPanel() {
         // Library-only import
         const libConcepts = parseConcepts(parsed.libraryConcepts || [])
         const libDomains = parsed.libraryDomains ? parseDomains(parsed.libraryDomains) : state.library.domains
-        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { concepts: libConcepts, domains: libDomains } })
+        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { dictionaryWords: [], concepts: libConcepts, domains: libDomains } })
         setSuccess(`Library state imported! (${libConcepts.length} concept${libConcepts.length !== 1 ? 's' : ''})`)
         setJsonInput("")
         setTimeout(() => setSuccess(null), 2000)
@@ -244,7 +244,7 @@ export default function StateDebugPanel() {
       })
       dispatch({
         type: 'RESTORE_LIBRARY_STATE',
-        payload: { concepts: libConcepts, domains: libDomains },
+        payload: { dictionaryWords: [], concepts: libConcepts, domains: libDomains },
       })
 
       setSuccess("State imported successfully!")

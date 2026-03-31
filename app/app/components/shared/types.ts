@@ -17,6 +17,7 @@ import {
   ConceptualStructureSchema,
   WordClassSchema,
   WordSchema,
+  DictionaryWordSchema,
 } from './schemas'
 
 // ===== Inferred Types from Zod Schemas =====
@@ -91,6 +92,8 @@ export const WORD_CLASS_LABELS: Record<WordClass, string> = {
 export const WORD_CLASSES: WordClass[] = ['noun', 'adjective', 'verb', 'adverb', 'preposition']
 
 export type Word = z.infer<typeof WordSchema>
+
+export type DictionaryWord = z.infer<typeof DictionaryWordSchema>
 
 export interface QualityDomainState {
   domains: QualityDomain[]

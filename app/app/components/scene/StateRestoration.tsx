@@ -23,8 +23,9 @@ export function StateRestoration() {
         instances: savedState.instances,
       } })
 
-      // Restore library state (including library domains and concepts)
+      // Restore library state (including dictionary words, library domains and concepts)
       dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: {
+        dictionaryWords: savedState.dictionaryWords,
         concepts: savedState.libraryConcepts,
         domains: savedState.libraryDomains,
       } })
