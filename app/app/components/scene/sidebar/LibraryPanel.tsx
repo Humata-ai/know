@@ -414,6 +414,7 @@ export default function LibraryPanel() {
             <ConceptsView onEdit={handleOpenEditConcept} />
           )}
           {activeSection === 'quality-domains' && <QualityDomainsView />}
+          {activeSection === 'properties' && <PropertiesView />}
           {activeSection === 'quality-dimensions' && <QualityDimensionsView />}
         </SidebarPanel>
         <ConceptModal
