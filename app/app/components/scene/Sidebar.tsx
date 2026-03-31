@@ -18,6 +18,14 @@ export default function Sidebar() {
 
   const handleTabClick = (tab: SidebarView) => {
     if (activeView === tab) {
+      // If we're in a sub-route (e.g. /library/dictionary), navigate to
+      // the tab root first instead of immediately collapsing.
+      const isAtTabRoot = pathname === `/${tab}` || pathname === `/${tab}/`
+      if (!isAtTabRoot) {
+        setCollapsed(false)
+        router.push(`/${tab}`)
+        return
+      }
       setCollapsed((prev) => !prev)
       return
     }
