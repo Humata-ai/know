@@ -466,6 +466,7 @@ export default function LibraryPanel() {
   const [isConceptModalOpen, setIsConceptModalOpen] = useState(false)
   const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
+  const [editingLibraryDomainId, setEditingLibraryDomainId] = useState<string | null>(null)
   const [isDomainPickerOpen, setIsDomainPickerOpen] = useState(false)
   const [propertyDomainId, setPropertyDomainId] = useState<string | null>(null)
   const [isPropertyLabelModalOpen, setIsPropertyLabelModalOpen] = useState(false)
@@ -511,17 +512,48 @@ export default function LibraryPanel() {
 
   // Domain detail view: /library/quality-domains/<domain-slug>
   if (domainRoute) {
+    const domain = state.library.domains.find(
+      (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainRoute.domainSlug
+    )
+    const headerAction = domain ? (
+      <Tooltip title="Edit Quality Domain">
+        <span>
+          <Button
+            onClick={() => {
+              setEditingLibraryDomainId(domain.id)
+              setIsDomainModalOpen(true)
+            }}
+            color="secondary"
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: 0, p: 0.5 }}
+          >
+            <EditIcon sx={{ fontSize: 16 }} />
+          </Button>
+        </span>
+      </Tooltip>
+    ) : undefined
+
     return (
-      <SidebarPanel
-        title={decodeURIComponent(domainRoute.domainSlug)}
-        breadcrumbs={[
-          { label: 'Library', href: '/library' },
-          { label: 'Quality Domains', href: '/library/quality-domains' },
-        ]}
-        onNavigate={handleBreadcrumbNavigate}
-      >
-        <DomainDetailView domainSlug={domainRoute.domainSlug} />
-      </SidebarPanel>
+      <>
+        <SidebarPanel
+          title={domain ? domain.name : decodeURIComponent(domainRoute.domainSlug)}
+          breadcrumbs={[
+            { label: 'Library', href: '/library' },
+            { label: 'Quality Domains', href: '/library/quality-domains' },
+          ]}
+          onNavigate={handleBreadcrumbNavigate}
+          headerAction={headerAction}
+        >
+          <DomainDetailView domainSlug={domainRoute.domainSlug} />
+        </SidebarPanel>
+        <DomainModal
+          isOpen={isDomainModalOpen}
+          editingDomainId={editingLibraryDomainId}
+          onClose={() => setIsDomainModalOpen(false)}
+          useLibraryState
+        />
+      </>
     )
   }
 
@@ -573,7 +605,10 @@ export default function LibraryPanel() {
       <Tooltip title="Add Quality Domain">
         <span>
           <Button
-            onClick={() => setIsDomainModalOpen(true)}
+            onClick={() => {
+              setEditingLibraryDomainId(null)
+              setIsDomainModalOpen(true)
+            }}
             color="secondary"
             variant="outlined"
             size="small"
@@ -633,7 +668,7 @@ export default function LibraryPanel() {
         />
         <DomainModal
           isOpen={isDomainModalOpen}
-          editingDomainId={null}
+          editingDomainId={editingLibraryDomainId}
           onClose={() => setIsDomainModalOpen(false)}
           useLibraryState
         />
