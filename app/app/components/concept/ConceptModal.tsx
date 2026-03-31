@@ -1,31 +1,41 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useQualityDomain } from '@/app/store'
-import type { Concept, LabelReference } from '../shared/types'
+import type { Concept, LabelReference, QualityDomain } from '../shared/types'
 import { generateId } from '../shared/utils'
 import Modal from '@/app/components/common/Modal'
-import { required, arrayMinLength, collectErrors } from '@/app/utils/validators'
+import { required, arrayMinLength } from '@/app/utils/validators'
 
 interface ConceptModalProps {
   isOpen: boolean
   editingConceptId: string | null
   onClose: () => void
+  /** The domains to select labels from */
+  domains: QualityDomain[]
+  /** The concepts list (used to find the editing concept) */
+  concepts: Concept[]
+  /** Called when a new concept is created */
+  onAddConcept: (concept: Concept) => void
+  /** Called when an existing concept is updated */
+  onUpdateConcept: (concept: Concept) => void
 }
 
 export default function ConceptModal({
   isOpen,
   editingConceptId,
   onClose,
+  domains,
+  concepts,
+  onAddConcept,
+  onUpdateConcept,
 }: ConceptModalProps) {
-  const { state, addConcept, updateConcept } = useQualityDomain()
   const [name, setName] = useState('')
   const [selectedLabelRefs, setSelectedLabelRefs] = useState<LabelReference[]>([])
   const [expandedDomains, setExpandedDomains] = useState<Set<string>>(new Set())
   const [errors, setErrors] = useState<string[]>([])
 
   const editingConcept = editingConceptId
-    ? state.scene.concepts.find((c) => c.id === editingConceptId)
+    ? concepts.find((c) => c.id === editingConceptId)
     : null
 
   useEffect(() => {
@@ -38,10 +48,10 @@ export default function ConceptModal({
         setSelectedLabelRefs([])
       }
       // Expand all domains by default
-      setExpandedDomains(new Set(state.scene.domains.map(d => d.id)))
+      setExpandedDomains(new Set(domains.map(d => d.id)))
       setErrors([])
     }
-  }, [isOpen, editingConcept, state.scene.domains])
+  }, [isOpen, editingConcept, domains])
 
   const toggleDomain = (domainId: string) => {
     setExpandedDomains((prev) => {
@@ -108,9 +118,9 @@ export default function ConceptModal({
     }
 
     if (editingConcept) {
-      updateConcept(concept)
+      onUpdateConcept(concept)
     } else {
-      addConcept(concept)
+      onAddConcept(concept)
     }
 
     onClose()
@@ -143,7 +153,7 @@ export default function ConceptModal({
                 Select Labels
               </label>
               <div className="space-y-2 max-h-80 overflow-y-auto border border-gray-200 rounded p-2">
-                {state.scene.domains.map((domain) => {
+                {domains.map((domain) => {
                   const isExpanded = expandedDomains.has(domain.id)
                   const selectedCount = getSelectedCount(domain.id)
                   const totalCount = domain.labels.length

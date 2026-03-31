@@ -196,13 +196,7 @@ export const initialState: AppState = {
     hasRestoredState: false,
   },
   library: {
-    words: (jsonData.words || []).map(word => ({
-      ...word,
-      wordClass: word.wordClass as import('../components/shared/types').WordClass,
-      conceptualStructure: parseConceptualStructure(word.conceptualStructure || { domains: [], concepts: [], instances: [] }),
-      createdAt: new Date(word.createdAt),
-    })),
-    selectedWordId: null,
+    concepts: [],
     domains: parseDomains(jsonData.domains),
   },
 }

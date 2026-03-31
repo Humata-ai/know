@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
@@ -8,20 +8,16 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
-import SaveIcon from '@mui/icons-material/Save'
+import DeleteIcon from '@mui/icons-material/Delete'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SidebarPanel from './SidebarPanel'
-import { getLibrarySectionFromPathname, getConceptsWordFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
+import { getLibrarySectionFromPathname, getQualityDomainFromPathname, LIBRARY_SECTION_LABELS } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
-import { WORD_CLASS_LABELS } from '../../shared/types'
-import AddWordModal from '../../concepts/AddWordModal'
-import WordEditView from '../../concepts/WordEditView'
-import type { WordEditViewHandle } from '../../concepts/WordEditView'
-import WordDetailView from '../../concepts/WordDetailView'
+import ConceptModal from '../../concept/ConceptModal'
 import DomainModal from '../../quality-domain/DomainModal'
 
 const LIBRARY_MENU_ITEMS: { section: LibrarySection; icon: React.ReactNode }[] = [
@@ -52,31 +48,56 @@ function LibraryMenu({ onNavigate }: { onNavigate: (section: LibrarySection) => 
   )
 }
 
-function ConceptsView() {
-  const router = useRouter()
-  const { state } = useAppStore()
+function ConceptsView({
+  onEdit,
+}: {
+  onEdit: (conceptId: string) => void
+}) {
+  const { state, deleteLibraryConcept } = useAppStore()
 
-  if (state.library.words.length === 0) {
+  if (state.library.concepts.length === 0) {
     return (
       <div className="px-4 py-8 text-center text-gray-500">
-        <p className="text-sm">No words yet. Click + to add one.</p>
+        <p className="text-sm">No concepts yet. Click + to add one.</p>
       </div>
     )
   }
 
   return (
     <div className="px-4 py-2 space-y-2">
-      {state.library.words.map((word) => {
-        const slug = word.name.toLowerCase().replace(/\s+/g, '-')
+      {state.library.concepts.map((concept) => {
         return (
-          <button
-            key={word.id}
-            onClick={() => router.push(`/library/concepts/${encodeURIComponent(slug)}`)}
-            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
+          <div
+            key={concept.id}
+            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors text-left"
           >
-            <h3 className="font-medium">{word.name}</h3>
-            <span className="text-xs text-gray-500">{WORD_CLASS_LABELS[word.wordClass]}</span>
-          </button>
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium">{concept.name}</h3>
+              <div className="flex items-center gap-1">
+                <Tooltip title="Edit">
+                  <IconButton
+                    size="small"
+                    onClick={() => onEdit(concept.id)}
+                    sx={{ color: 'text.secondary' }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton
+                    size="small"
+                    onClick={() => deleteLibraryConcept(concept.id)}
+                    sx={{ color: 'text.secondary' }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </div>
+            <span className="text-xs text-gray-500">
+              {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'label' : 'labels'}
+            </span>
+          </div>
         )
       })}
     </div>
@@ -187,21 +208,15 @@ function QualityDimensionsView() {
   )
 }
 
-const SECTION_VIEWS: Record<LibrarySection, React.ComponentType> = {
-  'concepts': ConceptsView,
-  'quality-domains': QualityDomainsView,
-  'quality-dimensions': QualityDimensionsView,
-}
-
 export default function LibraryPanel() {
   const pathname = usePathname()
   const router = useRouter()
+  const { state, addLibraryConcept, updateLibraryConcept } = useAppStore()
   const activeSection = getLibrarySectionFromPathname(pathname)
-  const wordRoute = getConceptsWordFromPathname(pathname)
   const domainRoute = getQualityDomainFromPathname(pathname)
-  const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
+  const [isConceptModalOpen, setIsConceptModalOpen] = useState(false)
+  const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false)
-  const wordEditRef = useRef<WordEditViewHandle>(null)
 
   const handleNavigateToSection = (section: LibrarySection) => {
     router.push(`/library/${section}`)
@@ -211,47 +226,14 @@ export default function LibraryPanel() {
     router.push(href)
   }
 
-  // Word detail or edit view: /library/concepts/<word> or /library/concepts/<word>/edit
-  if (wordRoute) {
-    const wordHeaderAction = wordRoute.isEdit ? (
-      <Tooltip title="Save">
-        <IconButton
-          size="small"
-          onClick={() => wordEditRef.current?.save()}
-          sx={{ color: 'text.secondary' }}
-        >
-          <SaveIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    ) : (
-      <Tooltip title="Edit">
-        <IconButton
-          size="small"
-          onClick={() => router.push(`/library/concepts/${encodeURIComponent(wordRoute.wordSlug)}/edit`)}
-          sx={{ color: 'text.secondary' }}
-        >
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )
+  const handleOpenCreateConcept = () => {
+    setEditingConceptId(null)
+    setIsConceptModalOpen(true)
+  }
 
-    return (
-      <SidebarPanel
-        title={decodeURIComponent(wordRoute.wordSlug)}
-        breadcrumbs={[
-          { label: 'Library', href: '/library' },
-          { label: 'Concepts', href: '/library/concepts' },
-        ]}
-        onNavigate={handleBreadcrumbNavigate}
-        headerAction={wordHeaderAction}
-      >
-        {wordRoute.isEdit ? (
-          <WordEditView ref={wordEditRef} wordSlug={wordRoute.wordSlug} />
-        ) : (
-          <WordDetailView wordSlug={wordRoute.wordSlug} />
-        )}
-      </SidebarPanel>
-    )
+  const handleOpenEditConcept = (conceptId: string) => {
+    setEditingConceptId(conceptId)
+    setIsConceptModalOpen(true)
   }
 
   // Domain detail view: /library/quality-domains/<domain-slug>
@@ -272,13 +254,11 @@ export default function LibraryPanel() {
 
   // Sub-section view
   if (activeSection) {
-    const SectionView = SECTION_VIEWS[activeSection]
-
     const headerAction = activeSection === 'concepts' ? (
-      <Tooltip title="Add Word">
+      <Tooltip title="Add Concept">
         <span>
           <Button
-            onClick={() => setIsAddWordModalOpen(true)}
+            onClick={handleOpenCreateConcept}
             color="secondary"
             variant="outlined"
             size="small"
@@ -314,11 +294,20 @@ export default function LibraryPanel() {
           onNavigate={handleBreadcrumbNavigate}
           headerAction={headerAction}
         >
-          <SectionView />
+          {activeSection === 'concepts' && (
+            <ConceptsView onEdit={handleOpenEditConcept} />
+          )}
+          {activeSection === 'quality-domains' && <QualityDomainsView />}
+          {activeSection === 'quality-dimensions' && <QualityDimensionsView />}
         </SidebarPanel>
-        <AddWordModal
-          isOpen={isAddWordModalOpen}
-          onClose={() => setIsAddWordModalOpen(false)}
+        <ConceptModal
+          isOpen={isConceptModalOpen}
+          editingConceptId={editingConceptId}
+          onClose={() => setIsConceptModalOpen(false)}
+          domains={state.library.domains}
+          concepts={state.library.concepts}
+          onAddConcept={addLibraryConcept}
+          onUpdateConcept={updateLibraryConcept}
         />
         <DomainModal
           isOpen={isDomainModalOpen}

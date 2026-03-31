@@ -1,5 +1,5 @@
 import type { SceneAction, LibraryAction } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, Word } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance } from '../components/shared/types'
 
 /**
  * Scene Action Creators
@@ -117,24 +117,20 @@ export const restoreSceneState = (
  * Helper functions for creating library actions with proper typing.
  */
 
-export const addWord = (word: Word): LibraryAction => ({
-  type: 'ADD_WORD',
-  payload: word,
+// Library concept action creators
+export const addLibraryConcept = (concept: Concept): LibraryAction => ({
+  type: 'ADD_LIBRARY_CONCEPT',
+  payload: concept,
 })
 
-export const updateWord = (word: Word): LibraryAction => ({
-  type: 'UPDATE_WORD',
-  payload: word,
+export const updateLibraryConcept = (concept: Concept): LibraryAction => ({
+  type: 'UPDATE_LIBRARY_CONCEPT',
+  payload: concept,
 })
 
-export const deleteWord = (id: string): LibraryAction => ({
-  type: 'DELETE_WORD',
+export const deleteLibraryConcept = (id: string): LibraryAction => ({
+  type: 'DELETE_LIBRARY_CONCEPT',
   payload: id,
-})
-
-export const selectWord = (wordId: string | null): LibraryAction => ({
-  type: 'SELECT_WORD',
-  payload: wordId,
 })
 
 // Library quality domain action creators
@@ -154,9 +150,9 @@ export const deleteLibraryDomain = (id: string): LibraryAction => ({
 })
 
 export const restoreLibraryState = (
-  words: Word[] = [],
+  concepts: Concept[] = [],
   domains: QualityDomain[] = [],
 ): LibraryAction => ({
   type: 'RESTORE_LIBRARY_STATE',
-  payload: { words, domains },
+  payload: { concepts, domains },
 })

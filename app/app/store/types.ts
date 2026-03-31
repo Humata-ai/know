@@ -1,4 +1,4 @@
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, Word } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance } from '../components/shared/types'
 
 /**
  * Scene Action Types
@@ -43,11 +43,10 @@ export type SceneAction =
  * Actions for state mutations related to the library (words and quality domains).
  */
 export type LibraryAction =
-  // Word actions
-  | { type: 'ADD_WORD'; payload: Word }
-  | { type: 'UPDATE_WORD'; payload: Word }
-  | { type: 'DELETE_WORD'; payload: string }
-  | { type: 'SELECT_WORD'; payload: string | null }
+  // Library concept actions
+  | { type: 'ADD_LIBRARY_CONCEPT'; payload: Concept }
+  | { type: 'UPDATE_LIBRARY_CONCEPT'; payload: Concept }
+  | { type: 'DELETE_LIBRARY_CONCEPT'; payload: string }
   
   // Library quality domain actions
   | { type: 'ADD_LIBRARY_DOMAIN'; payload: QualityDomain }
@@ -55,7 +54,7 @@ export type LibraryAction =
   | { type: 'DELETE_LIBRARY_DOMAIN'; payload: string }
   
   // State restoration
-  | { type: 'RESTORE_LIBRARY_STATE'; payload: { words: Word[]; domains: QualityDomain[] } }
+  | { type: 'RESTORE_LIBRARY_STATE'; payload: { concepts: Concept[]; domains: QualityDomain[] } }
 
 /**
  * App Action
@@ -88,8 +87,7 @@ export interface SceneState {
  * State for the library view containing words, word selection, and quality domains.
  */
 export interface LibraryState {
-  words: Word[]
-  selectedWordId: string | null
+  concepts: Concept[]
   domains: QualityDomain[]
 }
 

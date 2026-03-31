@@ -7,7 +7,7 @@ import ConceptModal from './ConceptModal'
 import Button from '@mui/material/Button'
 
 export default function ConceptList() {
-  const { state } = useQualityDomain()
+  const { state, addConcept, updateConcept } = useQualityDomain()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
 
@@ -58,6 +58,10 @@ export default function ConceptList() {
         isOpen={isModalOpen}
         editingConceptId={editingConceptId}
         onClose={() => setIsModalOpen(false)}
+        domains={state.scene.domains}
+        concepts={state.scene.concepts}
+        onAddConcept={addConcept}
+        onUpdateConcept={updateConcept}
       />
     </>
   )

@@ -13,8 +13,8 @@ type ExportType = 'library' | 'scene'
 
 /**
  * Exported file format discriminator.
- * - "library": contains only library state (words).
- * - "scene": contains scene state (domains, concepts, instances) AND library state (words).
+ * - "library": contains library state (concepts, domains).
+ * - "scene": contains scene state (domains, concepts, instances) AND library state.
  */
 interface ExportEnvelope {
   exportType: ExportType
@@ -46,7 +46,8 @@ export default function ImportExportSection() {
       const payload: ExportEnvelope = {
         exportType: 'library',
         version: EXPORT_VERSION,
-        words: state.library.words,
+        libraryConcepts: state.library.concepts,
+        libraryDomains: state.library.domains,
       }
       return JSON.stringify(payload, infinityReplacer, 2)
     }
@@ -57,7 +58,8 @@ export default function ImportExportSection() {
       domains: state.scene.domains,
       concepts: state.scene.concepts,
       instances: state.scene.instances,
-      words: state.library.words,
+      libraryConcepts: state.library.concepts,
+      libraryDomains: state.library.domains,
     }
     return JSON.stringify(payload, infinityReplacer, 2)
   }
@@ -85,27 +87,23 @@ export default function ImportExportSection() {
 
   // ---------- validation ----------
 
-  const validateWords = (words: unknown): boolean => {
-    if (!Array.isArray(words)) {
-      setError("Invalid state: 'words' must be an array")
+  const validateConcepts = (concepts: unknown): boolean => {
+    if (!Array.isArray(concepts)) {
+      setError("Invalid state: 'concepts' must be an array")
       return false
     }
-    for (let i = 0; i < words.length; i++) {
-      const w = words[i]
-      if (!w || typeof w !== 'object') {
-        setError(`Invalid word at index ${i}: must be an object`)
+    for (let i = 0; i < concepts.length; i++) {
+      const c = concepts[i]
+      if (!c || typeof c !== 'object') {
+        setError(`Invalid concept at index ${i}: must be an object`)
         return false
       }
-      if (!w.id || typeof w.id !== 'string') {
-        setError(`Invalid word at index ${i}: missing or invalid 'id'`)
+      if (!c.id || typeof c.id !== 'string') {
+        setError(`Invalid concept at index ${i}: missing or invalid 'id'`)
         return false
       }
-      if (!w.name || typeof w.name !== 'string') {
-        setError(`Invalid word at index ${i}: missing or invalid 'name'`)
-        return false
-      }
-      if (!w.wordClass || typeof w.wordClass !== 'string') {
-        setError(`Invalid word at index ${i}: missing or invalid 'wordClass'`)
+      if (!c.name || typeof c.name !== 'string') {
+        setError(`Invalid concept at index ${i}: missing or invalid 'name'`)
         return false
       }
     }
@@ -223,12 +221,6 @@ export default function ImportExportSection() {
       createdAt: new Date(instance.createdAt),
     }))
 
-  const parseWords = (rawWords: any[]) =>
-    (rawWords || []).map((word: any) => ({
-      ...word,
-      createdAt: new Date(word.createdAt),
-    }))
-
   // ---------- import ----------
 
   const importFromJson = (jsonString: string) => {
@@ -251,23 +243,22 @@ export default function ImportExportSection() {
           // if they have a 'domains' key, otherwise fall back based on heuristics
           : parsed.domains !== undefined
             ? 'scene'
-            : parsed.words !== undefined
-              ? 'library'
-              // Check for the old nested scene/library structure from localStorage
-              : parsed.scene !== undefined
-                ? 'scene'
-                : 'scene' // default
+            // Check for the old nested scene/library structure from localStorage
+            : parsed.scene !== undefined
+              ? 'scene'
+              : 'scene' // default
 
       if (detectedType === 'library') {
         // --- Library-only import ---
-        const rawWords = parsed.words
-        if (!validateWords(rawWords)) return
+        const rawLibConcepts = parsed.libraryConcepts || []
+        const rawLibDomains = parsed.libraryDomains || []
+        if (!validateConcepts(rawLibConcepts)) return
 
-        const words = parseWords(rawWords)
-        // Preserve existing library domains when importing library-only
-        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { words, domains: state.library.domains } })
+        const libConcepts = parseConcepts(rawLibConcepts)
+        const libDomains = rawLibDomains.length > 0 ? parseDomains(rawLibDomains) : state.library.domains
+        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { concepts: libConcepts, domains: libDomains } })
 
-        setSuccess(`Library state imported successfully! (${words.length} word${words.length !== 1 ? 's' : ''})`)
+        setSuccess(`Library state imported successfully! (${libConcepts.length} concept${libConcepts.length !== 1 ? 's' : ''})`)
         setTimeout(() => setSuccess(null), 3000)
         return
       }
@@ -277,29 +268,32 @@ export default function ImportExportSection() {
       let rawDomains: any[]
       let rawConcepts: any[]
       let rawInstances: any[]
-      let rawWords: any[]
+      let rawLibConcepts: any[]
+      let rawLibDomains: any[]
 
       if (parsed.scene) {
-        // Old localStorage/StateDebugPanel format: { scene: { domains, concepts, instances }, library: { words } }
+        // Old localStorage/StateDebugPanel format
         rawDomains = parsed.scene.domains || []
         rawConcepts = parsed.scene.concepts || []
         rawInstances = parsed.scene.instances || []
-        rawWords = parsed.library?.words || []
+        rawLibConcepts = parsed.library?.concepts || []
+        rawLibDomains = parsed.library?.domains || rawDomains
       } else {
-        // New flat format: { exportType, domains, concepts, instances, words }
+        // New flat format
         rawDomains = parsed.domains || []
         rawConcepts = parsed.concepts || []
         rawInstances = parsed.instances || []
-        rawWords = parsed.words || []
+        rawLibConcepts = parsed.libraryConcepts || []
+        rawLibDomains = parsed.libraryDomains || rawDomains
       }
 
       if (!validateDomains(rawDomains)) return
-      if (rawWords.length > 0 && !validateWords(rawWords)) return
 
       const domains = parseDomains(rawDomains)
       const concepts = parseConcepts(rawConcepts)
       const instances = parseInstances(rawInstances)
-      const words = parseWords(rawWords)
+      const libConcepts = parseConcepts(rawLibConcepts)
+      const libDomains = parseDomains(rawLibDomains)
 
       dispatch({
         type: 'RESTORE_SCENE_STATE',
@@ -307,14 +301,13 @@ export default function ImportExportSection() {
       })
       dispatch({
         type: 'RESTORE_LIBRARY_STATE',
-        payload: { words, domains },
+        payload: { concepts: libConcepts, domains: libDomains },
       })
 
       const parts: string[] = []
       parts.push(`${domains.length} domain${domains.length !== 1 ? 's' : ''}`)
       parts.push(`${concepts.length} concept${concepts.length !== 1 ? 's' : ''}`)
       parts.push(`${instances.length} instance${instances.length !== 1 ? 's' : ''}`)
-      parts.push(`${words.length} word${words.length !== 1 ? 's' : ''}`)
       setSuccess(`Scene state imported successfully! (${parts.join(', ')})`)
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
