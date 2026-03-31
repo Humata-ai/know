@@ -255,11 +255,10 @@ function QualityDomainsView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.domains.map((domain) => {
-        const slug = domain.name.toLowerCase().replace(/\s+/g, '-')
         return (
           <button
             key={domain.id}
-            onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
+            onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(domain.id)}`)}
             className="w-full p-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-left cursor-pointer"
           >
             <div className="font-medium">{domain.name}</div>
@@ -278,11 +277,11 @@ function QualityDomainsView() {
   )
 }
 
-function DomainDetailView({ domainSlug }: { domainSlug: string }) {
+function DomainDetailView({ domainId }: { domainId: string }) {
   const { state, selectLibraryItem, clearLibrarySelection } = useAppStore()
 
   const domain = state.library.domains.find(
-    (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainSlug
+    (d) => d.id === domainId
   )
 
   // Auto-select domain for 3D visualization when detail page is open
@@ -509,18 +508,21 @@ export default function LibraryPanel() {
     )
   }
 
-  // Domain detail view: /library/quality-domains/<domain-slug>
+  // Domain detail view: /library/quality-domains/<domain-id>
   if (domainRoute) {
+    const domainId = domainRoute.domainId
+    const domain = state.library.domains.find((d) => d.id === domainId)
+    const domainTitle = domain?.name || 'Domain'
     return (
       <SidebarPanel
-        title={decodeURIComponent(domainRoute.domainSlug)}
+        title={domainTitle}
         breadcrumbs={[
           { label: 'Library', href: '/library' },
           { label: 'Quality Domains', href: '/library/quality-domains' },
         ]}
         onNavigate={handleBreadcrumbNavigate}
       >
-        <DomainDetailView domainSlug={domainRoute.domainSlug} />
+        <DomainDetailView domainId={domainId} />
       </SidebarPanel>
     )
   }
