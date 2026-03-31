@@ -208,32 +208,25 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
  */
 export function libraryReducer(state: LibraryState, action: LibraryAction): LibraryState {
   switch (action.type) {
-    case 'ADD_WORD':
+    // Library concept actions
+    case 'ADD_LIBRARY_CONCEPT':
       return {
         ...state,
-        words: [...state.words, action.payload],
+        concepts: [...state.concepts, action.payload],
       }
 
-    case 'UPDATE_WORD':
+    case 'UPDATE_LIBRARY_CONCEPT':
       return {
         ...state,
-        words: state.words.map((word) =>
-          word.id === action.payload.id ? action.payload : word
+        concepts: state.concepts.map((concept) =>
+          concept.id === action.payload.id ? action.payload : concept
         ),
       }
 
-    case 'DELETE_WORD':
+    case 'DELETE_LIBRARY_CONCEPT':
       return {
         ...state,
-        words: state.words.filter((word) => word.id !== action.payload),
-        selectedWordId:
-          state.selectedWordId === action.payload ? null : state.selectedWordId,
-      }
-
-    case 'SELECT_WORD':
-      return {
-        ...state,
-        selectedWordId: action.payload,
+        concepts: state.concepts.filter((concept) => concept.id !== action.payload),
       }
 
     // Library quality domain actions
@@ -260,7 +253,7 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
     case 'RESTORE_LIBRARY_STATE':
       return {
         ...state,
-        words: action.payload.words || [],
+        concepts: action.payload.concepts || [],
         domains: action.payload.domains || [],
       }
 
@@ -286,7 +279,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
   ]
 
   const libraryActionTypes = [
-    'ADD_WORD', 'UPDATE_WORD', 'DELETE_WORD', 'SELECT_WORD',
+    'ADD_LIBRARY_CONCEPT', 'UPDATE_LIBRARY_CONCEPT', 'DELETE_LIBRARY_CONCEPT',
     'ADD_LIBRARY_DOMAIN', 'UPDATE_LIBRARY_DOMAIN', 'DELETE_LIBRARY_DOMAIN',
     'RESTORE_LIBRARY_STATE',
   ]

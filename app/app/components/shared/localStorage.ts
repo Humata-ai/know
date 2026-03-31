@@ -1,8 +1,8 @@
-import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, QualityDomainLabel, Property, PropertyReference, LabelReference, Word } from './types'
+import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, QualityDomainLabel, Property, PropertyReference, LabelReference } from './types'
 import type { AppState } from '@/app/store'
 
 const STORAGE_KEY = 'quality-domain-state'
-const STATE_VERSION = 5 // Version 5 adds library quality domains as independent state
+const STATE_VERSION = 6 // Version 6 replaces words with library concepts
 
 // Migration: Convert old Property to QualityDomainLabel (Region)
 function migratePropertyToLabel(oldProperty: Property): QualityDomainLabel {
@@ -39,7 +39,6 @@ export function serializeState(state: AppState): string {
         key === 'selectedLabelDomainId' ||
         key === 'selectedConceptId' ||
         key === 'selectedInstanceId' ||
-        key === 'selectedWordId' ||
         key === 'hasRestoredState') {
       return undefined
     }
@@ -166,19 +165,8 @@ function parseConceptualStructure(raw: any): ConceptualStructure {
   }
 }
 
-/**
- * Parse words from raw JSON data.
- */
-function parseWords(rawWords: any[]): Word[] {
-  return (rawWords || []).map((word: any) => ({
-    ...word,
-    conceptualStructure: parseConceptualStructure(word.conceptualStructure),
-    createdAt: new Date(word.createdAt)
-  }))
-}
-
 // Deserialize with migration support
-export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], words: Word[], libraryDomains: QualityDomain[] } {
+export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], libraryConcepts: Concept[], libraryDomains: QualityDomain[] } {
   const parsed = JSON.parse(jsonString)
   const version = parsed.version || 1 // Default to version 1 if not specified
 
@@ -187,23 +175,27 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
     const domains = parseDomains(parsed.scene.domains || [], version)
     const concepts = parseConcepts(parsed.scene.concepts || [], version)
     const instances = parseInstances(parsed.scene.instances || [])
-    const words = parseWords(parsed.library?.words || [])
+    // Version 6+ has library concepts; older versions have no library concepts
+    const libraryConcepts = parsed.library?.concepts
+      ? parseConcepts(parsed.library.concepts, version)
+      : []
     // Version 5+ has library domains; for version 4, migrate by copying scene domains
     const libraryDomains = parsed.library?.domains
       ? parseDomains(parsed.library.domains, version)
       : parseDomains(parsed.scene.domains || [], version)
-    return { domains, concepts, instances, words, libraryDomains }
+    return { domains, concepts, instances, libraryConcepts, libraryDomains }
   }
 
   // Versions 1-3: flat structure (backwards compatible migration)
   const domains = parseDomains(parsed.domains || [], version)
   const concepts = parseConcepts(parsed.concepts || [], version)
   const instances = parseInstances(parsed.instances || [])
-  const words = parseWords(parsed.words || [])
+  // For old versions, no library concepts
+  const libraryConcepts: Concept[] = []
   // For old versions, library domains mirror scene domains
   const libraryDomains = parseDomains(parsed.domains || [], version)
 
-  return { domains, concepts, instances, words, libraryDomains }
+  return { domains, concepts, instances, libraryConcepts, libraryDomains }
 }
 
 export function saveToLocalStorage(state: AppState): void {
@@ -215,7 +207,7 @@ export function saveToLocalStorage(state: AppState): void {
   }
 }
 
-export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], words: Word[], libraryDomains: QualityDomain[] } | null {
+export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], libraryConcepts: Concept[], libraryDomains: QualityDomain[] } | null {
   try {
     const serialized = localStorage.getItem(STORAGE_KEY)
     if (!serialized) return null

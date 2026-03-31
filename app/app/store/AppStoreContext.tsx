@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, useMemo, useCallback, useEffect, type ReactNode } from 'react'
 import type { AppState, AppAction } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint, Word } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint } from '../components/shared/types'
 import { appReducer } from './reducer'
 import { initialState } from './initialState'
 import { 
@@ -49,11 +49,10 @@ interface AppStoreContextType {
   updateInstance: (instance: ConceptInstance) => void
   deleteInstance: (id: string) => void
   
-  // Word methods
-  addWord: (word: Word) => void
-  updateWord: (word: Word) => void
-  deleteWord: (id: string) => void
-  selectWord: (wordId: string | null) => void
+  // Library concept methods
+  addLibraryConcept: (concept: Concept) => void
+  updateLibraryConcept: (concept: Concept) => void
+  deleteLibraryConcept: (id: string) => void
   
   // Library quality domain methods
   addLibraryDomain: (domain: QualityDomain) => void
@@ -153,20 +152,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_INSTANCE', payload: id })
   }, [])
 
-  const addWordMethod = useCallback((word: Word) => {
-    dispatch({ type: 'ADD_WORD', payload: word })
+  const addLibraryConceptMethod = useCallback((concept: Concept) => {
+    dispatch({ type: 'ADD_LIBRARY_CONCEPT', payload: concept })
   }, [])
 
-  const updateWordMethod = useCallback((word: Word) => {
-    dispatch({ type: 'UPDATE_WORD', payload: word })
+  const updateLibraryConceptMethod = useCallback((concept: Concept) => {
+    dispatch({ type: 'UPDATE_LIBRARY_CONCEPT', payload: concept })
   }, [])
 
-  const deleteWordMethod = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_WORD', payload: id })
-  }, [])
-
-  const selectWordMethod = useCallback((wordId: string | null) => {
-    dispatch({ type: 'SELECT_WORD', payload: wordId })
+  const deleteLibraryConceptMethod = useCallback((id: string) => {
+    dispatch({ type: 'DELETE_LIBRARY_CONCEPT', payload: id })
   }, [])
 
   const addLibraryDomainMethod = useCallback((domain: QualityDomain) => {
@@ -219,10 +214,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addInstance: addInstanceMethod,
     updateInstance: updateInstanceMethod,
     deleteInstance: deleteInstanceMethod,
-    addWord: addWordMethod,
-    updateWord: updateWordMethod,
-    deleteWord: deleteWordMethod,
-    selectWord: selectWordMethod,
+    addLibraryConcept: addLibraryConceptMethod,
+    updateLibraryConcept: updateLibraryConceptMethod,
+    deleteLibraryConcept: deleteLibraryConceptMethod,
     addLibraryDomain: addLibraryDomainMethod,
     updateLibraryDomain: updateLibraryDomainMethod,
     deleteLibraryDomain: deleteLibraryDomainMethod,
@@ -249,10 +243,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addInstanceMethod,
     updateInstanceMethod,
     deleteInstanceMethod,
-    addWordMethod,
-    updateWordMethod,
-    deleteWordMethod,
-    selectWordMethod,
+    addLibraryConceptMethod,
+    updateLibraryConceptMethod,
+    deleteLibraryConceptMethod,
     addLibraryDomainMethod,
     updateLibraryDomainMethod,
     deleteLibraryDomainMethod,

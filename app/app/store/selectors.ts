@@ -1,5 +1,5 @@
 import type { SceneState, LibraryState } from './types'
-import type { QualityDomain, QualityDomainLabel, QualityDomainPoint, ConceptInstance, Word } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, QualityDomainPoint, ConceptInstance, Concept } from '../components/shared/types'
 import { isPoint } from '../components/shared/types'
 
 // Re-export for convenience
@@ -120,25 +120,17 @@ export function getAllInstances(state: SceneState) {
  */
 
 /**
- * Get all words
+ * Get all library concepts
  */
-export function getAllWords(state: LibraryState): Word[] {
-  return state.words
+export function getAllLibraryConcepts(state: LibraryState): Concept[] {
+  return state.concepts
 }
 
 /**
- * Get a word by ID
+ * Get a library concept by ID
  */
-export function getWordById(state: LibraryState, wordId: string): Word | null {
-  return state.words.find((w) => w.id === wordId) || null
-}
-
-/**
- * Get the currently selected word
- */
-export function getSelectedWord(state: LibraryState): Word | null {
-  if (!state.selectedWordId) return null
-  return state.words.find((w) => w.id === state.selectedWordId) || null
+export function getLibraryConceptById(state: LibraryState, conceptId: string): Concept | null {
+  return state.concepts.find((c) => c.id === conceptId) || null
 }
 
 /**

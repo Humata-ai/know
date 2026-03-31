@@ -19,8 +19,7 @@ export default function StateDebugPanel() {
       key === 'selectedLabelId' ||
       key === 'selectedLabelDomainId' ||
       key === 'selectedConceptId' ||
-      key === 'selectedInstanceId' ||
-      key === 'selectedWordId') {
+      key === 'selectedInstanceId') {
       return undefined  // Exclude from export
     }
 
@@ -177,12 +176,6 @@ export default function StateDebugPanel() {
       createdAt: new Date(instance.createdAt),
     }))
 
-  const parseWords = (rawWords: any[]) =>
-    (rawWords || []).map((word: any) => ({
-      ...word,
-      createdAt: new Date(word.createdAt),
-    }))
-
   const handleImport = () => {
     setError(null)
     setSuccess(null)
@@ -199,10 +192,11 @@ export default function StateDebugPanel() {
       const isLibraryOnly = parsed.exportType === 'library'
 
       if (isLibraryOnly) {
-        // Library-only import — preserve existing library domains
-        const words = parseWords(parsed.words || [])
-        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { words, domains: state.library.domains } })
-        setSuccess(`Library state imported! (${words.length} word${words.length !== 1 ? 's' : ''})`)
+        // Library-only import
+        const libConcepts = parseConcepts(parsed.libraryConcepts || [])
+        const libDomains = parsed.libraryDomains ? parseDomains(parsed.libraryDomains) : state.library.domains
+        dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { concepts: libConcepts, domains: libDomains } })
+        setSuccess(`Library state imported! (${libConcepts.length} concept${libConcepts.length !== 1 ? 's' : ''})`)
         setJsonInput("")
         setTimeout(() => setSuccess(null), 2000)
         return
@@ -212,20 +206,23 @@ export default function StateDebugPanel() {
       let rawDomains: any[]
       let rawConcepts: any[]
       let rawInstances: any[]
-      let rawWords: any[]
+      let rawLibConcepts: any[]
+      let rawLibDomains: any[]
 
       if (parsed.scene) {
         // Old nested format
         rawDomains = parsed.scene.domains || []
         rawConcepts = parsed.scene.concepts || []
         rawInstances = parsed.scene.instances || []
-        rawWords = parsed.library?.words || []
+        rawLibConcepts = parsed.library?.concepts || []
+        rawLibDomains = parsed.library?.domains || rawDomains
       } else {
         // Flat format (new or legacy)
         rawDomains = parsed.domains || []
         rawConcepts = parsed.concepts || []
         rawInstances = parsed.instances || []
-        rawWords = parsed.words || []
+        rawLibConcepts = parsed.libraryConcepts || []
+        rawLibDomains = parsed.libraryDomains || rawDomains
       }
 
       if (!Array.isArray(rawDomains)) {
@@ -238,7 +235,8 @@ export default function StateDebugPanel() {
       const domains = parseDomains(rawDomains)
       const concepts = parseConcepts(rawConcepts)
       const instances = parseInstances(rawInstances)
-      const words = parseWords(rawWords)
+      const libConcepts = parseConcepts(rawLibConcepts)
+      const libDomains = parseDomains(rawLibDomains)
 
       dispatch({
         type: 'RESTORE_SCENE_STATE',
@@ -246,7 +244,7 @@ export default function StateDebugPanel() {
       })
       dispatch({
         type: 'RESTORE_LIBRARY_STATE',
-        payload: { words, domains },
+        payload: { concepts: libConcepts, domains: libDomains },
       })
 
       setSuccess("State imported successfully!")
@@ -313,8 +311,8 @@ export default function StateDebugPanel() {
                 <span className="text-purple-900">{state.scene.concepts.length}</span>
               </div>
               <div>
-                <span className="font-semibold text-blue-700">Words:</span>{" "}
-                <span className="text-blue-900">{state.library.words.length}</span>
+                <span className="font-semibold text-blue-700">Library Concepts:</span>{" "}
+                <span className="text-blue-900">{state.library.concepts.length}</span>
               </div>
             </div>
             {state.scene.concepts.length > 0 && (

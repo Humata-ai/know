@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import CollapsibleSection from './CollapsibleSection'
 
 export default function ConceptsSection() {
-  const { state } = useQualityDomain()
+  const { state, addConcept, updateConcept } = useQualityDomain()
   const [isConceptModalOpen, setIsConceptModalOpen] = useState(false)
   const [editingConceptId, setEditingConceptId] = useState<string | null>(null)
 
@@ -54,6 +54,10 @@ export default function ConceptsSection() {
         isOpen={isConceptModalOpen}
         editingConceptId={editingConceptId}
         onClose={() => setIsConceptModalOpen(false)}
+        domains={state.scene.domains}
+        concepts={state.scene.concepts}
+        onAddConcept={addConcept}
+        onUpdateConcept={updateConcept}
       />
     </>
   )
