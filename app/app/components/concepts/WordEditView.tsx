@@ -30,6 +30,17 @@ const WordEditView = forwardRef<WordEditViewHandle, WordEditViewProps>(function 
     }
   }, [word])
 
+  useImperativeHandle(ref, () => ({
+    save: () => {
+      if (!word) return
+      updateWord({
+        ...word,
+        wordClass,
+      })
+      router.push(`/library/concepts/${encodeURIComponent(wordSlug)}`)
+    },
+  }), [word, wordClass, updateWord, router, wordSlug])
+
   if (!word) {
     return (
       <div className="px-4 py-8 text-center text-gray-500">
@@ -37,18 +48,6 @@ const WordEditView = forwardRef<WordEditViewHandle, WordEditViewProps>(function 
       </div>
     )
   }
-
-  const handleSave = () => {
-    updateWord({
-      ...word,
-      wordClass,
-    })
-    router.push(`/library/concepts/${encodeURIComponent(wordSlug)}`)
-  }
-
-  useImperativeHandle(ref, () => ({
-    save: handleSave,
-  }))
 
   return (
     <div className="px-4 py-4 space-y-4">
