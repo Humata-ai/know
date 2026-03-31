@@ -19,6 +19,7 @@ import { getLibrarySectionFromPathname, getDictionaryWordFromPathname, getQualit
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
 import AddDictionaryWordModal from '../../dictionary/AddDictionaryWordModal'
+import { getDictionaryWordName, getDictionaryWordType } from '../../dictionary/utils'
 import ConceptModal from '../../concept/ConceptModal'
 import DomainModal from '../../quality-domain/DomainModal'
 
@@ -66,20 +67,18 @@ function DictionaryView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.dictionaryWords.map((word) => {
-        const slug = word.name.toLowerCase().replace(/\s+/g, '-')
-        const linkedConcept = word.conceptId
-          ? state.library.concepts.find((c) => c.id === word.conceptId)
-          : null
+        const pointerName = getDictionaryWordName(word, state.library.domains, state.library.concepts)
+        const typeLabel = getDictionaryWordType(word, state.library.domains)
         return (
           <button
             key={word.id}
-            onClick={() => router.push(`/library/dictionary/${encodeURIComponent(slug)}`)}
+            onClick={() => router.push(`/library/dictionary/${encodeURIComponent(word.id)}`)}
             className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
           >
             <h3 className="font-medium">{word.name}</h3>
-            {linkedConcept && (
-              <span className="text-xs text-gray-500">Concept: {linkedConcept.name}</span>
-            )}
+            <span className="text-xs text-gray-500">
+              {typeLabel}: {pointerName}
+            </span>
           </button>
         )
       })}
@@ -87,13 +86,11 @@ function DictionaryView() {
   )
 }
 
-function DictionaryWordDetailView({ wordSlug }: { wordSlug: string }) {
+function DictionaryWordDetailView({ wordId }: { wordId: string }) {
   const { state, deleteDictionaryWord } = useAppStore()
   const router = useRouter()
 
-  const word = state.library.dictionaryWords.find(
-    (w) => w.name.toLowerCase().replace(/\s+/g, '-') === wordSlug
-  )
+  const word = state.library.dictionaryWords.find((w) => w.id === wordId)
 
   if (!word) {
     return (
@@ -103,8 +100,19 @@ function DictionaryWordDetailView({ wordSlug }: { wordSlug: string }) {
     )
   }
 
+  const typeLabel = getDictionaryWordType(word, state.library.domains)
+
   const linkedConcept = word.conceptId
     ? state.library.concepts.find((c) => c.id === word.conceptId)
+    : null
+
+  const linkedLabel = word.labelRef
+    ? (() => {
+        const domain = state.library.domains.find((d) => d.id === word.labelRef!.domainId)
+        if (!domain) return null
+        const label = domain.labels.find((l) => l.id === word.labelRef!.labelId)
+        return label ? { label, domain } : null
+      })()
     : null
 
   const handleDelete = () => {
@@ -115,13 +123,24 @@ function DictionaryWordDetailView({ wordSlug }: { wordSlug: string }) {
   return (
     <div className="px-4 py-4 space-y-4">
       <div>
-        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Word</h4>
-        <p className="text-sm text-gray-700">{word.name}</p>
+        <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
+          {typeLabel}
+        </span>
       </div>
+
+      {linkedLabel && (
+        <div>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Label</h4>
+          <p className="text-sm text-gray-700">{linkedLabel.label.name}</p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            in {linkedLabel.domain.name}
+          </p>
+        </div>
+      )}
 
       {linkedConcept && (
         <div>
-          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Associated Concept</h4>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Concept</h4>
           <p className="text-sm text-gray-700">{linkedConcept.name}</p>
           <p className="text-xs text-gray-400 mt-0.5">
             {linkedConcept.labelRefs.length} {linkedConcept.labelRefs.length === 1 ? 'label' : 'labels'}
@@ -336,18 +355,21 @@ export default function LibraryPanel() {
     setIsConceptModalOpen(true)
   }
 
-  // Dictionary word detail view: /library/dictionary/<word-slug>
+  // Dictionary word detail view: /library/dictionary/<word-id>
   if (dictionaryWordRoute) {
+    const wordId = dictionaryWordRoute.wordSlug
+    const dictWord = state.library.dictionaryWords.find((w) => w.id === wordId)
+    const dictWordTitle = dictWord?.name || 'Word'
     return (
       <SidebarPanel
-        title={decodeURIComponent(dictionaryWordRoute.wordSlug)}
+        title={dictWordTitle}
         breadcrumbs={[
           { label: 'Library', href: '/library' },
           { label: 'Dictionary', href: '/library/dictionary' },
         ]}
         onNavigate={handleBreadcrumbNavigate}
       >
-        <DictionaryWordDetailView wordSlug={dictionaryWordRoute.wordSlug} />
+        <DictionaryWordDetailView wordId={wordId} />
       </SidebarPanel>
     )
   }
