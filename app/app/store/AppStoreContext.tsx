@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useReducer, useMemo, useCallback, useEffect, type ReactNode } from 'react'
-import type { AppState, AppAction } from './types'
+import type { AppState, AppAction, LibrarySelectionType } from './types'
 import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint } from '../components/shared/types'
 import { appReducer } from './reducer'
 import { initialState } from './initialState'
@@ -58,6 +58,10 @@ interface AppStoreContextType {
   addLibraryDomain: (domain: QualityDomain) => void
   updateLibraryDomain: (domain: QualityDomain) => void
   deleteLibraryDomain: (id: string) => void
+  
+  // Library selection methods
+  selectLibraryItem: (id: string, itemType: LibrarySelectionType) => void
+  clearLibrarySelection: () => void
   
   // Selector methods (operate on scene state)
   getSelectedDomain: () => QualityDomain | null
@@ -176,6 +180,14 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_LIBRARY_DOMAIN', payload: id })
   }, [])
 
+  const selectLibraryItemMethod = useCallback((id: string, itemType: LibrarySelectionType) => {
+    dispatch({ type: 'SELECT_LIBRARY_ITEM', payload: { id, itemType } })
+  }, [])
+
+  const clearLibrarySelectionMethod = useCallback(() => {
+    dispatch({ type: 'CLEAR_LIBRARY_SELECTION' })
+  }, [])
+
   // Memoize selector methods - selectors now operate on scene state
   const getSelectedDomainMethod = useCallback(() => {
     return getSelectedDomain(state.scene)
@@ -220,6 +232,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryDomain: addLibraryDomainMethod,
     updateLibraryDomain: updateLibraryDomainMethod,
     deleteLibraryDomain: deleteLibraryDomainMethod,
+    selectLibraryItem: selectLibraryItemMethod,
+    clearLibrarySelection: clearLibrarySelectionMethod,
     getSelectedDomain: getSelectedDomainMethod,
     getConceptLabels: getConceptLabelsMethod,
     getInstancePoints: getInstancePointsMethod,
@@ -249,6 +263,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryDomainMethod,
     updateLibraryDomainMethod,
     deleteLibraryDomainMethod,
+    selectLibraryItemMethod,
+    clearLibrarySelectionMethod,
     getSelectedDomainMethod,
     getConceptLabelsMethod,
     getInstancePointsMethod,

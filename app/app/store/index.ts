@@ -9,7 +9,7 @@
 export { AppStoreProvider, useAppStore, useQualityDomain } from './AppStoreContext'
 
 // Types
-export type { AppState, AppAction, SceneState, SceneAction, LibraryState, LibraryAction } from './types'
+export type { AppState, AppAction, SceneState, SceneAction, LibraryState, LibraryAction, LibrarySelectionType } from './types'
 
 // Reducer
 export { appReducer, sceneReducer, libraryReducer } from './reducer'

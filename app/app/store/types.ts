@@ -38,6 +38,13 @@ export type SceneAction =
   | { type: 'MARK_RESTORED' }
 
 /**
+ * Library Selection Type
+ * 
+ * Identifies the type of item selected for viewing in the library 3D viewer.
+ */
+export type LibrarySelectionType = 'concept' | 'quality-domain'
+
+/**
  * Library Action Types
  * 
  * Actions for state mutations related to the library (words and quality domains).
@@ -52,6 +59,10 @@ export type LibraryAction =
   | { type: 'ADD_LIBRARY_DOMAIN'; payload: QualityDomain }
   | { type: 'UPDATE_LIBRARY_DOMAIN'; payload: QualityDomain }
   | { type: 'DELETE_LIBRARY_DOMAIN'; payload: string }
+  
+  // Library selection actions
+  | { type: 'SELECT_LIBRARY_ITEM'; payload: { id: string; itemType: LibrarySelectionType } }
+  | { type: 'CLEAR_LIBRARY_SELECTION' }
   
   // State restoration
   | { type: 'RESTORE_LIBRARY_STATE'; payload: { concepts: Concept[]; domains: QualityDomain[] } }
@@ -84,11 +95,14 @@ export interface SceneState {
 /**
  * Library State
  * 
- * State for the library view containing words, word selection, and quality domains.
+ * State for the library view containing concepts, quality domains,
+ * and the currently selected item for 3D viewing.
  */
 export interface LibraryState {
   concepts: Concept[]
   domains: QualityDomain[]
+  selectedItemId: string | null
+  selectedItemType: LibrarySelectionType | null
 }
 
 /**

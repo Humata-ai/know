@@ -1,4 +1,4 @@
-import type { SceneAction, LibraryAction } from './types'
+import type { SceneAction, LibraryAction, LibrarySelectionType } from './types'
 import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance } from '../components/shared/types'
 
 /**
@@ -147,6 +147,16 @@ export const updateLibraryDomain = (domain: QualityDomain): LibraryAction => ({
 export const deleteLibraryDomain = (id: string): LibraryAction => ({
   type: 'DELETE_LIBRARY_DOMAIN',
   payload: id,
+})
+
+// Library selection action creators
+export const selectLibraryItem = (id: string, itemType: LibrarySelectionType): LibraryAction => ({
+  type: 'SELECT_LIBRARY_ITEM',
+  payload: { id, itemType },
+})
+
+export const clearLibrarySelection = (): LibraryAction => ({
+  type: 'CLEAR_LIBRARY_SELECTION',
 })
 
 export const restoreLibraryState = (

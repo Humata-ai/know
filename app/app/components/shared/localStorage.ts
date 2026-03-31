@@ -39,6 +39,8 @@ export function serializeState(state: AppState): string {
         key === 'selectedLabelDomainId' ||
         key === 'selectedConceptId' ||
         key === 'selectedInstanceId' ||
+        key === 'selectedItemId' ||
+        key === 'selectedItemType' ||
         key === 'hasRestoredState') {
       return undefined
     }
