@@ -227,6 +227,11 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
       return {
         ...state,
         concepts: state.concepts.filter((concept) => concept.id !== action.payload),
+        // Clear selection if the deleted concept was selected
+        selectedItemId: state.selectedItemType === 'concept' && state.selectedItemId === action.payload
+          ? null : state.selectedItemId,
+        selectedItemType: state.selectedItemType === 'concept' && state.selectedItemId === action.payload
+          ? null : state.selectedItemType,
       }
 
     // Library quality domain actions
@@ -248,6 +253,26 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
       return {
         ...state,
         domains: state.domains.filter((domain) => domain.id !== action.payload),
+        // Clear selection if the deleted domain was selected
+        selectedItemId: state.selectedItemType === 'quality-domain' && state.selectedItemId === action.payload
+          ? null : state.selectedItemId,
+        selectedItemType: state.selectedItemType === 'quality-domain' && state.selectedItemId === action.payload
+          ? null : state.selectedItemType,
+      }
+
+    // Library selection actions
+    case 'SELECT_LIBRARY_ITEM':
+      return {
+        ...state,
+        selectedItemId: action.payload.id,
+        selectedItemType: action.payload.itemType,
+      }
+
+    case 'CLEAR_LIBRARY_SELECTION':
+      return {
+        ...state,
+        selectedItemId: null,
+        selectedItemType: null,
       }
 
     // Library label actions
@@ -296,6 +321,8 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
         ...state,
         concepts: action.payload.concepts || [],
         domains: action.payload.domains || [],
+        selectedItemId: null,
+        selectedItemType: null,
       }
 
     default:
@@ -323,6 +350,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     'ADD_LIBRARY_CONCEPT', 'UPDATE_LIBRARY_CONCEPT', 'DELETE_LIBRARY_CONCEPT',
     'ADD_LIBRARY_DOMAIN', 'UPDATE_LIBRARY_DOMAIN', 'DELETE_LIBRARY_DOMAIN',
     'ADD_LIBRARY_LABEL', 'UPDATE_LIBRARY_LABEL', 'DELETE_LIBRARY_LABEL',
+    'SELECT_LIBRARY_ITEM', 'CLEAR_LIBRARY_SELECTION',
     'RESTORE_LIBRARY_STATE',
   ]
 

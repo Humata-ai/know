@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useRef } from 'react'
-import { usePathname } from 'next/navigation'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import ConceptualSpaceVisualizer from './ConceptualSpaceVisualizer'
@@ -11,7 +10,6 @@ import type { QualityDomain, Concept, ConceptInstance } from '../shared/types'
 import { normalizeToRange } from '@/app/utils/positionCalculations'
 import { Vector3 } from 'three'
 import type { SidebarView } from './sidebar/types'
-import { getQualityDomainFromPathname } from './sidebar/types'
 
 /**
  * Determines which visualization mode the 3D viewer should be in
@@ -420,28 +418,27 @@ interface SceneProps {
 
 export default function Scene({ activeTab = null }: SceneProps) {
   const { state } = useQualityDomain()
-  const pathname = usePathname()
 
   const mode = getVisualizationMode(activeTab)
 
-  // Find the selected quality domain from the URL when in library mode
-  const selectedDomain = useMemo(() => {
-    if (mode !== 'library') return null
-    const domainRoute = getQualityDomainFromPathname(pathname)
-    if (!domainRoute) return null
-    return state.library.domains.find(
-      (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainRoute.domainSlug
-    ) || null
-  }, [mode, pathname, state.library.domains])
-
   // Select the conceptual space data based on the active tab.
   // Scene tab: uses scene state from the store.
-  // Library tab: uses library domains/concepts or selected domain.
+  // Library tab: only renders the specifically selected item's conceptual structure.
   const visualizationData = useMemo(() => {
     if (mode === 'library') {
-      if (selectedDomain) {
+      const { selectedItemId, selectedItemType } = state.library
+
+      // Nothing selected — show empty space with prompt
+      if (!selectedItemId || !selectedItemType) {
+        return EMPTY_CONCEPTUAL_SPACE
+      }
+
+      // A quality domain is selected — show just that domain
+      if (selectedItemType === 'quality-domain') {
+        const domain = state.library.domains.find(d => d.id === selectedItemId)
+        if (!domain) return EMPTY_CONCEPTUAL_SPACE
         return {
-          domains: [selectedDomain],
+          domains: [domain],
           concepts: [],
           instances: [],
           selectedDomainId: null,
@@ -449,17 +446,26 @@ export default function Scene({ activeTab = null }: SceneProps) {
           selectedInstanceId: null,
         }
       }
-      // Show all library domains and concepts
-      if (state.library.domains.length > 0 || state.library.concepts.length > 0) {
+
+      // A concept is selected — show the concept and its referenced domains
+      if (selectedItemType === 'concept') {
+        const concept = state.library.concepts.find(c => c.id === selectedItemId)
+        if (!concept) return EMPTY_CONCEPTUAL_SPACE
+
+        // Collect all domains referenced by this concept's labels
+        const referencedDomainIds = new Set(concept.labelRefs.map(ref => ref.domainId))
+        const domains = state.library.domains.filter(d => referencedDomainIds.has(d.id))
+
         return {
-          domains: state.library.domains,
-          concepts: state.library.concepts,
+          domains,
+          concepts: [concept],
           instances: [],
           selectedDomainId: null,
           selectedConceptId: null,
           selectedInstanceId: null,
         }
       }
+
       return EMPTY_CONCEPTUAL_SPACE
     }
 
@@ -471,7 +477,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
       selectedConceptId: state.scene.selectedConceptId,
       selectedInstanceId: state.scene.selectedInstanceId,
     }
-  }, [mode, selectedDomain, state.library.domains, state.library.concepts, state.scene.domains, state.scene.concepts, state.scene.instances, state.scene.selectedDomainId, state.scene.selectedConceptId, state.scene.selectedInstanceId])
+  }, [mode, state.library.selectedItemId, state.library.selectedItemType, state.library.domains, state.library.concepts, state.scene.domains, state.scene.concepts, state.scene.instances, state.scene.selectedDomainId, state.scene.selectedConceptId, state.scene.selectedInstanceId])
 
   const CameraControls = mode === 'library' ? LibraryCameraControls : SceneCameraControls
 
@@ -494,9 +500,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
           selectedConceptId={visualizationData.selectedConceptId}
           selectedInstanceId={visualizationData.selectedInstanceId}
           emptyMessage={mode === 'library'
-            ? (selectedDomain
-              ? 'This domain has no dimensions defined yet.'
-              : 'Add domains and concepts to visualize them.')
+            ? 'Select a concept or quality domain to view it in 3D.'
             : 'No domains yet. Click "+ Add Domain" to create one.'}
         />
         <CameraControls />

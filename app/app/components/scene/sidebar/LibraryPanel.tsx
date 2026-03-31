@@ -9,6 +9,8 @@ import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import CategoryIcon from '@mui/icons-material/Category'
 import TuneIcon from '@mui/icons-material/Tune'
@@ -58,7 +60,7 @@ function ConceptsView({
 }: {
   onEdit: (conceptId: string) => void
 }) {
-  const { state, deleteLibraryConcept } = useAppStore()
+  const { state, deleteLibraryConcept, selectLibraryItem, clearLibrarySelection } = useAppStore()
 
   if (state.library.concepts.length === 0) {
     return (
@@ -71,14 +73,34 @@ function ConceptsView({
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.concepts.map((concept) => {
+        const isViewing = state.library.selectedItemType === 'concept' && state.library.selectedItemId === concept.id
         return (
           <div
             key={concept.id}
-            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors text-left"
+            className={`w-full p-3 rounded-lg border transition-colors text-left ${
+              isViewing
+                ? 'bg-blue-50 border-blue-400'
+                : 'bg-white border-gray-300 hover:bg-gray-50'
+            }`}
           >
             <div className="flex items-center justify-between">
               <h3 className="font-medium">{concept.name}</h3>
               <div className="flex items-center gap-1">
+                <Tooltip title={isViewing ? 'Hide from 3D viewer' : 'View in 3D'}>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      if (isViewing) {
+                        clearLibrarySelection()
+                      } else {
+                        selectLibraryItem(concept.id, 'concept')
+                      }
+                    }}
+                    sx={{ color: isViewing ? 'primary.main' : 'text.secondary' }}
+                  >
+                    {isViewing ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                  </IconButton>
+                </Tooltip>
                 <Tooltip title="Edit">
                   <IconButton
                     size="small"
@@ -111,7 +133,7 @@ function ConceptsView({
 
 function QualityDomainsView() {
   const router = useRouter()
-  const { state } = useAppStore()
+  const { state, selectLibraryItem, clearLibrarySelection } = useAppStore()
 
   if (state.library.domains.length === 0) {
     return (
@@ -125,13 +147,39 @@ function QualityDomainsView() {
     <div className="px-4 py-2 space-y-2">
       {state.library.domains.map((domain) => {
         const slug = domain.name.toLowerCase().replace(/\s+/g, '-')
+        const isViewing = state.library.selectedItemType === 'quality-domain' && state.library.selectedItemId === domain.id
         return (
-          <button
+          <div
             key={domain.id}
-            onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
-            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
+            className={`w-full p-3 rounded-lg border transition-colors text-left ${
+              isViewing
+                ? 'bg-blue-50 border-blue-400'
+                : 'bg-white border-gray-300 hover:bg-gray-50'
+            }`}
           >
-            <h3 className="font-medium">{domain.name}</h3>
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
+                className="font-medium hover:underline cursor-pointer text-left flex-1"
+              >
+                {domain.name}
+              </button>
+              <Tooltip title={isViewing ? 'Hide from 3D viewer' : 'View in 3D'}>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    if (isViewing) {
+                      clearLibrarySelection()
+                    } else {
+                      selectLibraryItem(domain.id, 'quality-domain')
+                    }
+                  }}
+                  sx={{ color: isViewing ? 'primary.main' : 'text.secondary' }}
+                >
+                  {isViewing ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                </IconButton>
+              </Tooltip>
+            </div>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-gray-500">
                 {domain.dimensions.length}D
@@ -140,7 +188,7 @@ function QualityDomainsView() {
                 {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
               </span>
             </div>
-          </button>
+          </div>
         )
       })}
     </div>

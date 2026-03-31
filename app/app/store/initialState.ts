@@ -198,5 +198,7 @@ export const initialState: AppState = {
   library: {
     concepts: [],
     domains: parseDomains(jsonData.domains),
+    selectedItemId: null,
+    selectedItemType: null,
   },
 }
