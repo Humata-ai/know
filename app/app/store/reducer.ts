@@ -250,6 +250,47 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
         domains: state.domains.filter((domain) => domain.id !== action.payload),
       }
 
+    // Library label actions
+    case 'ADD_LIBRARY_LABEL':
+      return {
+        ...state,
+        domains: state.domains.map((domain) =>
+          domain.id === action.payload.domainId
+            ? { ...domain, labels: [...domain.labels, action.payload.label] }
+            : domain
+        ),
+      }
+
+    case 'UPDATE_LIBRARY_LABEL':
+      return {
+        ...state,
+        domains: state.domains.map((domain) =>
+          domain.id === action.payload.domainId
+            ? {
+                ...domain,
+                labels: domain.labels.map((label) =>
+                  label.id === action.payload.label.id ? action.payload.label : label
+                ),
+              }
+            : domain
+        ),
+      }
+
+    case 'DELETE_LIBRARY_LABEL':
+      return {
+        ...state,
+        domains: state.domains.map((domain) =>
+          domain.id === action.payload.domainId
+            ? {
+                ...domain,
+                labels: domain.labels.filter(
+                  (label) => label.id !== action.payload.labelId
+                ),
+              }
+            : domain
+        ),
+      }
+
     case 'RESTORE_LIBRARY_STATE':
       return {
         ...state,
@@ -281,6 +322,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
   const libraryActionTypes = [
     'ADD_LIBRARY_CONCEPT', 'UPDATE_LIBRARY_CONCEPT', 'DELETE_LIBRARY_CONCEPT',
     'ADD_LIBRARY_DOMAIN', 'UPDATE_LIBRARY_DOMAIN', 'DELETE_LIBRARY_DOMAIN',
+    'ADD_LIBRARY_LABEL', 'UPDATE_LIBRARY_LABEL', 'DELETE_LIBRARY_LABEL',
     'RESTORE_LIBRARY_STATE',
   ]
 

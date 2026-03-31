@@ -1,15 +1,16 @@
 export type SidebarView = 'scene' | 'import-export' | 'library'
 
-export type LibrarySection = 'concepts' | 'quality-domains' | 'quality-dimensions'
+export type LibrarySection = 'concepts' | 'quality-domains' | 'quality-dimensions' | 'properties'
 
 export const VALID_TABS: SidebarView[] = ['scene', 'import-export', 'library']
 
-export const VALID_LIBRARY_SECTIONS: LibrarySection[] = ['concepts', 'quality-domains', 'quality-dimensions']
+export const VALID_LIBRARY_SECTIONS: LibrarySection[] = ['concepts', 'quality-domains', 'quality-dimensions', 'properties']
 
 export const LIBRARY_SECTION_LABELS: Record<LibrarySection, string> = {
   'concepts': 'Concepts',
   'quality-domains': 'Quality Domains',
   'quality-dimensions': 'Quality Dimensions',
+  'properties': 'Properties',
 }
 
 export function getTabFromPathname(pathname: string): SidebarView | null {
