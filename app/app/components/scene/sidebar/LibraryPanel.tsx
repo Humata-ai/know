@@ -79,148 +79,6 @@ function ConceptDetailView({ conceptId }: { conceptId: string }) {
           </div>
         </div>
       )}
-
-function PropertiesView() {
-  const { state, deleteLibraryLabel } = useAppStore()
-  const [editingDomainId, setEditingDomainId] = useState<string | null>(null)
-  const [editingLabelId, setEditingLabelId] = useState<string | null>(null)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-
-  // Collect all labels across all library domains
-  const allProperties = useMemo(() => {
-    return state.library.domains.flatMap((domain) =>
-      domain.labels.map((label) => ({
-        label,
-        domain,
-      }))
-    )
-  }, [state.library.domains])
-
-  const handleEditProperty = (domainId: string, labelId: string) => {
-    setEditingDomainId(domainId)
-    setEditingLabelId(labelId)
-    setIsEditModalOpen(true)
-  }
-
-  const handleEditModalClose = () => {
-    setIsEditModalOpen(false)
-    setEditingDomainId(null)
-    setEditingLabelId(null)
-  }
-
-  if (allProperties.length === 0) {
-    return (
-      <div className="px-4 py-8 text-center text-gray-500">
-        <p className="text-sm">No properties yet. Click + to add one.</p>
-        <p className="text-xs mt-1">Properties are region labels on quality domains.</p>
-      </div>
-    )
-  }
-
-  return (
-    <>
-      <div className="px-4 py-2 space-y-2">
-        {allProperties.map(({ label, domain }) => (
-          <div
-            key={label.id}
-            className="p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1 cursor-pointer" onClick={() => handleEditProperty(domain.id, label.id)}>
-                <h3 className="font-medium">{label.name}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-500">{domain.name}</span>
-                  <span className="inline-block px-1.5 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600">
-                    {isRegion(label) ? 'Region' : 'Point'}
-                  </span>
-                </div>
-                <div className="mt-1 space-y-0.5">
-                  {label.dimensions.map((d) => {
-                    const dimension = domain.dimensions.find((dim) => dim.id === d.dimensionId)
-                    if (!dimension) return null
-                    return (
-                      <div key={d.dimensionId} className="text-xs text-gray-500">
-                        <span className="font-medium">{dimension.name}:</span>{' '}
-                        <span className="font-mono">
-                          {'range' in d
-                            ? `[${d.range[0]}, ${d.range[1]}]`
-                            : d.value
-                          }
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-              <button
-                onClick={() => deleteLibraryLabel(domain.id, label.id)}
-                className="text-xs text-red-500 hover:text-red-700 ml-2 mt-1"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      <LabelModal
-        isOpen={isEditModalOpen}
-        domainId={editingDomainId}
-        editingLabelId={editingLabelId}
-        onClose={handleEditModalClose}
-        useLibraryState
-      />
-    </>
-  )
-}
-
-function ActionsView() {
-  const { state, deleteLibraryAction } = useAppStore()
-
-  if (!state.library.actions || state.library.actions.length === 0) {
-    return (
-      <div className="px-4 py-8 text-center text-gray-500">
-        <p className="text-sm">No actions yet. Click + to add one.</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="px-4 py-2 space-y-2">
-      {state.library.actions.map((action) => (
-        <div
-          key={action.id}
-          className="p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="font-medium">{action.name}</h3>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600">
-                  {action.verbType === 'manner' && 'Manner Verb'}
-                  {action.verbType === 'result' && 'Result Verb'}
-                  {action.verbType === 'path' && 'Path Verb'}
-                </span>
-              </div>
-            </div>
-            <button
-              onClick={() => deleteLibraryAction(action.id)}
-              className="text-xs text-red-500 hover:text-red-700 ml-2 mt-1"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function QualityDimensionsView() {
-  return (
-    <div className="px-4 py-2">
-      <div className="text-center py-8 text-gray-500">
-        <p className="text-sm">Quality Dimensions library coming soon.</p>
-      </div>
     </div>
   )
 }
@@ -361,111 +219,7 @@ export default function LibraryPanel() {
           onClose={() => setIsDomainModalOpen(false)}
           useLibraryState
         />
-<<<<<<< HEAD
-        <DomainPickerModal
-          isOpen={isDomainPickerOpen}
-          onClose={() => setIsDomainPickerOpen(false)}
-          onSelect={(domainId) => {
-            setIsDomainPickerOpen(false)
-            setPropertyDomainId(domainId)
-            setEditingPropertyLabelId(null)
-            setIsPropertyLabelModalOpen(true)
-          }}
-          domains={state.library.domains}
-        />
-        <LabelModal
-          isOpen={isPropertyLabelModalOpen}
-          domainId={propertyDomainId}
-          editingLabelId={editingPropertyLabelId}
-          onClose={() => {
-            setIsPropertyLabelModalOpen(false)
-            setPropertyDomainId(null)
-            setEditingPropertyLabelId(null)
-          }}
-          useLibraryState
-        />
-        <Modal
-          isOpen={isActionModalOpen}
-          onClose={() => setIsActionModalOpen(false)}
-          title="Add Action"
-          maxWidth="sm"
-        >
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="action-name" className="block text-sm font-medium mb-1">
-                Action name
-              </label>
-              <input
-                id="action-name"
-                type="text"
-                value={actionName}
-                onChange={(e) => setActionName(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                placeholder="e.g., Run, Push, Slide"
-                autoFocus
-              />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Verb type</label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setVerbType('manner')}
-                  className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                    verbType === 'manner'
-                      ? 'bg-purple-600 text-white border-purple-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  Manner Verb
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setVerbType('result')}
-                  className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                    verbType === 'result'
-                      ? 'bg-purple-600 text-white border-purple-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  Result Verb
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setVerbType('path')}
-                  className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                    verbType === 'path'
-                      ? 'bg-purple-600 text-white border-purple-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  Path Verb
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-end pt-2">
-              <button
-                type="button"
-                onClick={() => setIsActionModalOpen(false)}
-                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleAddAction}
-                disabled={!actionName.trim()}
-                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Add Action
-              </button>
-            </div>
-          </div>
-        </Modal>
-=======
->>>>>>> release/april-7th
       </>
     )
   }
@@ -574,16 +328,80 @@ export default function LibraryPanel() {
         isOpen={isActionModalOpen}
         onClose={() => setIsActionModalOpen(false)}
         title="Add Action"
+        maxWidth="sm"
       >
-        <p className="text-sm text-gray-500 mb-4">Action creation coming soon.</p>
-        <div className="flex justify-end">
-          <Button
-            onClick={() => setIsActionModalOpen(false)}
-            variant="outlined"
-            color="secondary"
-          >
-            Close
-          </Button>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="action-name" className="block text-sm font-medium mb-1">
+              Action name
+            </label>
+            <input
+              id="action-name"
+              type="text"
+              value={actionName}
+              onChange={(e) => setActionName(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              placeholder="e.g., Run, Push, Slide"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Verb type</label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setVerbType('manner')}
+                className={`px-3 py-1.5 rounded border text-sm transition-colors ${
+                  verbType === 'manner'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Manner Verb
+              </button>
+              <button
+                type="button"
+                onClick={() => setVerbType('result')}
+                className={`px-3 py-1.5 rounded border text-sm transition-colors ${
+                  verbType === 'result'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Result Verb
+              </button>
+              <button
+                type="button"
+                onClick={() => setVerbType('path')}
+                className={`px-3 py-1.5 rounded border text-sm transition-colors ${
+                  verbType === 'path'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Path Verb
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-3 justify-end pt-2">
+            <button
+              type="button"
+              onClick={() => setIsActionModalOpen(false)}
+              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleAddAction}
+              disabled={!actionName.trim()}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Add Action
+            </button>
+          </div>
         </div>
       </Modal>
     </>
