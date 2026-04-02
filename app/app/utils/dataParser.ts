@@ -20,6 +20,17 @@ import type {
   DictionaryWord
 } from '@/app/components/shared/types'
 
+import type {
+  JsonQualityDomain,
+  JsonConcept,
+  JsonConceptInstance,
+  JsonConceptualStructure,
+  JsonDictionaryWord,
+  JsonQualityDimension,
+  JsonLabelDimension,
+  JsonProperty
+} from '@/app/types/json'
+
 /**
  * Convert string representations of Infinity to actual Infinity values
  */
@@ -68,12 +79,12 @@ export function migratePropertyRefToLabelRef(oldRef: PropertyReference): LabelRe
  * @param version - Schema version number (for migrations)
  * @returns Parsed and typed QualityDomain array
  */
-export function parseDomains(rawDomains: any[], version: number = 4): QualityDomain[] {
-  return rawDomains.map((domain: any) => {
+export function parseDomains(rawDomains: JsonQualityDomain[], version: number = 4): QualityDomain[] {
+  return rawDomains.map((domain) => {
     const baseDomain = {
       ...domain,
       createdAt: new Date(domain.createdAt),
-      dimensions: domain.dimensions.map((dim: any) => ({
+      dimensions: domain.dimensions.map((dim: JsonQualityDimension) => ({
         ...dim,
         range: [
           convertInfinity(dim.range[0]),
@@ -84,10 +95,10 @@ export function parseDomains(rawDomains: any[], version: number = 4): QualityDom
 
     // Handle old format (version 1) with properties field
     if (version === 1 || domain.properties) {
-      const oldProperties = (domain.properties || []).map((prop: any) => ({
+      const oldProperties = (domain.properties || []).map((prop: JsonProperty) => ({
         ...prop,
         createdAt: new Date(prop.createdAt),
-        dimensions: prop.dimensions.map((d: any) => ({
+        dimensions: prop.dimensions.map((d) => ({
           ...d,
           range: [
             convertInfinity(d.range[0]),
@@ -100,14 +111,14 @@ export function parseDomains(rawDomains: any[], version: number = 4): QualityDom
       return {
         ...baseDomain,
         labels: oldProperties.map(migratePropertyToLabel)
-      }
+      } as QualityDomain
     }
 
     // Handle new format (version 2+) with labels field
-    const labels = (domain.labels || []).map((label: any) => ({
+    const labels = (domain.labels || []).map((label) => ({
       ...label,
       createdAt: new Date(label.createdAt),
-      dimensions: label.dimensions.map((d: any) => {
+      dimensions: label.dimensions.map((d: JsonLabelDimension) => {
         // Handle region dimensions (with range)
         if ('range' in d) {
           return {
@@ -126,7 +137,7 @@ export function parseDomains(rawDomains: any[], version: number = 4): QualityDom
     return {
       ...baseDomain,
       labels
-    }
+    } as QualityDomain
   })
 }
 
@@ -141,8 +152,8 @@ export function parseDomains(rawDomains: any[], version: number = 4): QualityDom
  * @param version - Schema version number (for migrations)
  * @returns Parsed and typed Concept array
  */
-export function parseConcepts(rawConcepts: any[], version: number = 4): Concept[] {
-  return (rawConcepts || []).map((concept: any) => {
+export function parseConcepts(rawConcepts: JsonConcept[], version: number = 4): Concept[] {
+  return (rawConcepts || []).map((concept) => {
     const baseConcept = {
       ...concept,
       createdAt: new Date(concept.createdAt)
@@ -153,11 +164,11 @@ export function parseConcepts(rawConcepts: any[], version: number = 4): Concept[
       return {
         ...baseConcept,
         labelRefs: (concept.propertyRefs || []).map(migratePropertyRefToLabelRef)
-      }
+      } as Concept
     }
 
     // New format already has labelRefs
-    return baseConcept
+    return baseConcept as Concept
   })
 }
 
@@ -170,8 +181,8 @@ export function parseConcepts(rawConcepts: any[], version: number = 4): Concept[
  * @param rawInstances - Raw instance objects from JSON
  * @returns Parsed and typed ConceptInstance array
  */
-export function parseInstances(rawInstances: any[]): ConceptInstance[] {
-  return (rawInstances || []).map((instance: any) => ({
+export function parseInstances(rawInstances: JsonConceptInstance[]): ConceptInstance[] {
+  return (rawInstances || []).map((instance) => ({
     ...instance,
     createdAt: new Date(instance.createdAt)
   }))
@@ -183,18 +194,20 @@ export function parseInstances(rawInstances: any[]): ConceptInstance[] {
  * A ConceptualStructure contains domains, concepts, and instances together.
  * This is the format used for word definitions in the library.
  * 
- * @param raw - Raw conceptual structure object from JSON
+ * @param raw - Raw conceptual structure object from JSON (use unknown for initial parse)
  * @param version - Schema version number (for migrations, defaults to latest)
  * @returns Parsed and typed ConceptualStructure
  */
-export function parseConceptualStructure(raw: any, version: number = 4): ConceptualStructure {
-  if (!raw) {
+export function parseConceptualStructure(raw: unknown, version: number = 4): ConceptualStructure {
+  if (!raw || typeof raw !== 'object') {
     return { domains: [], concepts: [], instances: [] }
   }
+  
+  const data = raw as JsonConceptualStructure
   return {
-    domains: parseDomains(raw.domains || [], version),
-    concepts: parseConcepts(raw.concepts || [], version),
-    instances: parseInstances(raw.instances || []),
+    domains: parseDomains(data.domains || [], version),
+    concepts: parseConcepts(data.concepts || [], version),
+    instances: parseInstances(data.instances || []),
   }
 }
 
@@ -208,8 +221,8 @@ export function parseConceptualStructure(raw: any, version: number = 4): Concept
  * @param rawWords - Raw word objects from JSON
  * @returns Parsed and typed DictionaryWord array
  */
-export function parseDictionaryWords(rawWords: any[]): DictionaryWord[] {
-  return (rawWords || []).map((word: any) => ({
+export function parseDictionaryWords(rawWords: JsonDictionaryWord[]): DictionaryWord[] {
+  return (rawWords || []).map((word) => ({
     ...word,
     createdAt: new Date(word.createdAt),
   }))

@@ -193,34 +193,36 @@ export default function ImportExportSection() {
     setSuccess(null)
 
     try {
-      const parsed = JSON.parse(jsonString)
+      const parsed = JSON.parse(jsonString) as unknown
 
       if (!parsed || typeof parsed !== 'object') {
         setError('Invalid JSON: must be an object')
         return
       }
 
-      const detectedType: ExportType = parsed.exportType === 'library'
+      const data = parsed as Record<string, unknown>
+
+      const detectedType: ExportType = data.exportType === 'library'
         ? 'library'
-        : parsed.exportType === 'scene'
+        : data.exportType === 'scene'
           ? 'scene'
           // Legacy files (before exportType was added) are treated as scene exports
           // if they have a 'domains' key, otherwise fall back based on heuristics
-          : parsed.domains !== undefined
+          : data.domains !== undefined
             ? 'scene'
             // Check for the old nested scene/library structure from localStorage
-            : parsed.scene !== undefined
+            : data.scene !== undefined
               ? 'scene'
               : 'scene' // default
 
       if (detectedType === 'library') {
         // --- Library-only import ---
-        const rawLibConcepts = parsed.libraryConcepts || []
-        const rawLibDomains = parsed.libraryDomains || []
+        const rawLibConcepts = (data.libraryConcepts as unknown[]) || []
+        const rawLibDomains = (data.libraryDomains as unknown[]) || []
         if (!validateConcepts(rawLibConcepts)) return
 
-        const libConcepts = parseConcepts(rawLibConcepts)
-        const libDomains = rawLibDomains.length > 0 ? parseDomains(rawLibDomains) : state.library.domains
+        const libConcepts = parseConcepts(rawLibConcepts as any[])
+        const libDomains = rawLibDomains.length > 0 ? parseDomains(rawLibDomains as any[]) : state.library.domains
         dispatch({ type: 'RESTORE_LIBRARY_STATE', payload: { dictionaryWords: [], concepts: libConcepts, domains: libDomains } })
 
         setSuccess(`Library state imported successfully! (${libConcepts.length} concept${libConcepts.length !== 1 ? 's' : ''})`)
@@ -230,35 +232,37 @@ export default function ImportExportSection() {
 
       // --- Scene import (includes library) ---
       // Support both new flat format and old nested scene/library format
-      let rawDomains: any[]
-      let rawConcepts: any[]
-      let rawInstances: any[]
-      let rawLibConcepts: any[]
-      let rawLibDomains: any[]
+      let rawDomains: unknown[]
+      let rawConcepts: unknown[]
+      let rawInstances: unknown[]
+      let rawLibConcepts: unknown[]
+      let rawLibDomains: unknown[]
 
-      if (parsed.scene) {
+      if (data.scene) {
         // Old localStorage/StateDebugPanel format
-        rawDomains = parsed.scene.domains || []
-        rawConcepts = parsed.scene.concepts || []
-        rawInstances = parsed.scene.instances || []
-        rawLibConcepts = parsed.library?.concepts || []
-        rawLibDomains = parsed.library?.domains || rawDomains
+        const scene = data.scene as Record<string, unknown>
+        const library = data.library as Record<string, unknown> | undefined
+        rawDomains = (scene.domains as unknown[]) || []
+        rawConcepts = (scene.concepts as unknown[]) || []
+        rawInstances = (scene.instances as unknown[]) || []
+        rawLibConcepts = (library?.concepts as unknown[]) || []
+        rawLibDomains = (library?.domains as unknown[]) || rawDomains
       } else {
         // New flat format
-        rawDomains = parsed.domains || []
-        rawConcepts = parsed.concepts || []
-        rawInstances = parsed.instances || []
-        rawLibConcepts = parsed.libraryConcepts || []
-        rawLibDomains = parsed.libraryDomains || rawDomains
+        rawDomains = (data.domains as unknown[]) || []
+        rawConcepts = (data.concepts as unknown[]) || []
+        rawInstances = (data.instances as unknown[]) || []
+        rawLibConcepts = (data.libraryConcepts as unknown[]) || []
+        rawLibDomains = (data.libraryDomains as unknown[]) || rawDomains
       }
 
       if (!validateDomains(rawDomains)) return
 
-      const domains = parseDomains(rawDomains)
-      const concepts = parseConcepts(rawConcepts)
-      const instances = parseInstances(rawInstances)
-      const libConcepts = parseConcepts(rawLibConcepts)
-      const libDomains = parseDomains(rawLibDomains)
+      const domains = parseDomains(rawDomains as any[])
+      const concepts = parseConcepts(rawConcepts as any[])
+      const instances = parseInstances(rawInstances as any[])
+      const libConcepts = parseConcepts(rawLibConcepts as any[])
+      const libDomains = parseDomains(rawLibDomains as any[])
 
       dispatch({
         type: 'RESTORE_SCENE_STATE',

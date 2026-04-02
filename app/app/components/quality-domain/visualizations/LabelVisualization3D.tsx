@@ -6,6 +6,7 @@ import { isRegion, isPoint } from '../../shared/types'
 import { useQualityDomain } from '@/app/store'
 import type { ThreeEvent } from '@react-three/fiber'
 import { useCursorOnHover } from '@/app/hooks/useCursorOnHover'
+import { areLabelDimensionsEqual, areDimensionsEqual } from '@/app/utils/equality'
 
 interface LabelVisualization3DProps {
   label: QualityDomainLabel
@@ -163,8 +164,8 @@ const areEqual = (prevProps: LabelVisualization3DProps, nextProps: LabelVisualiz
     prevProps.index === nextProps.index &&
     prevProps.domain.id === nextProps.domain.id &&
     prevProps.isSelected === nextProps.isSelected &&
-    JSON.stringify(prevProps.label.dimensions) === JSON.stringify(nextProps.label.dimensions) &&
-    JSON.stringify(prevProps.domain.dimensions) === JSON.stringify(nextProps.domain.dimensions)
+    areLabelDimensionsEqual(prevProps.label.dimensions, nextProps.label.dimensions) &&
+    areDimensionsEqual(prevProps.domain.dimensions, nextProps.domain.dimensions)
   )
 }
 

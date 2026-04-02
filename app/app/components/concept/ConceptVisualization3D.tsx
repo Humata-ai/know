@@ -7,6 +7,7 @@ import { useCircularLayoutMap } from '@/app/hooks/useCircularLayout'
 import { useCursorOnHover } from '@/app/hooks/useCursorOnHover'
 import { normalizeDimensionValue, normalizeToRange } from '@/app/utils/positionCalculations'
 import { calculateLabelPosition, calculateConceptLabelPositions, calculateCentroid } from '@/app/utils/labelPositionCalculations'
+import { areLabelRefsEqual } from '@/app/utils/equality'
 import { VISUALIZATION_SIZE } from '../quality-domain/visualizations/constants'
 import { useConceptualSpace } from '../scene/ConceptualSpaceContext'
 
@@ -354,7 +355,7 @@ const areEqual = (prevProps: ConceptVisualization3DProps, nextProps: ConceptVisu
   return (
     prevProps.concept.id === nextProps.concept.id &&
     prevProps.concept.name === nextProps.concept.name &&
-    JSON.stringify(prevProps.concept.labelRefs) === JSON.stringify(nextProps.concept.labelRefs)
+    areLabelRefsEqual(prevProps.concept.labelRefs, nextProps.concept.labelRefs)
   )
 }
 

@@ -6,6 +6,7 @@ import type { QualityDomain, Concept, ConceptInstance } from '../shared/types'
 import { useCircularLayout } from '@/app/hooks/useCircularLayout'
 import { DOMAIN_SCALE } from '../quality-domain/visualizations/constants'
 import { ConceptualSpaceProvider } from './ConceptualSpaceContext'
+import { areDimensionsEqual, areLabelsEqual } from '@/app/utils/equality'
 
 /**
  * Props for the ConceptualSpaceVisualizer.
@@ -35,8 +36,8 @@ const domainItemAreEqual = (
     prevProps.domain.name === nextProps.domain.name &&
     prevProps.position === nextProps.position &&
     prevProps.scale === nextProps.scale &&
-    JSON.stringify(prevProps.domain.dimensions) === JSON.stringify(nextProps.domain.dimensions) &&
-    JSON.stringify(prevProps.domain.labels) === JSON.stringify(nextProps.domain.labels)
+    areDimensionsEqual(prevProps.domain.dimensions, nextProps.domain.dimensions) &&
+    areLabelsEqual(prevProps.domain.labels, nextProps.domain.labels)
   )
 }
 
