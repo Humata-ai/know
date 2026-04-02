@@ -281,6 +281,27 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
           ? null : state.selectedItemType,
       }
 
+    // Library action actions
+    case 'ADD_LIBRARY_ACTION':
+      return {
+        ...state,
+        actions: [...state.actions, action.payload],
+      }
+
+    case 'UPDATE_LIBRARY_ACTION':
+      return {
+        ...state,
+        actions: state.actions.map((act) =>
+          act.id === action.payload.id ? action.payload : act
+        ),
+      }
+
+    case 'DELETE_LIBRARY_ACTION':
+      return {
+        ...state,
+        actions: state.actions.filter((act) => act.id !== action.payload),
+      }
+
     // Library selection actions
     case 'SELECT_LIBRARY_ITEM':
       return {
@@ -343,6 +364,7 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
         dictionaryWords: action.payload.dictionaryWords || [],
         concepts: action.payload.concepts || [],
         domains: action.payload.domains || [],
+        actions: action.payload.actions || [],
         selectedItemId: null,
         selectedItemType: null,
       }
@@ -372,6 +394,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     'ADD_DICTIONARY_WORD', 'UPDATE_DICTIONARY_WORD', 'DELETE_DICTIONARY_WORD',
     'ADD_LIBRARY_CONCEPT', 'UPDATE_LIBRARY_CONCEPT', 'DELETE_LIBRARY_CONCEPT',
     'ADD_LIBRARY_DOMAIN', 'UPDATE_LIBRARY_DOMAIN', 'DELETE_LIBRARY_DOMAIN',
+    'ADD_LIBRARY_ACTION', 'UPDATE_LIBRARY_ACTION', 'DELETE_LIBRARY_ACTION',
     'ADD_LIBRARY_LABEL', 'UPDATE_LIBRARY_LABEL', 'DELETE_LIBRARY_LABEL',
     'SELECT_LIBRARY_ITEM', 'CLEAR_LIBRARY_SELECTION',
     'RESTORE_LIBRARY_STATE',

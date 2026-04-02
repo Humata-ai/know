@@ -18,6 +18,8 @@ import {
   WordClassSchema,
   WordSchema,
   DictionaryWordSchema,
+  VerbTypeSchema,
+  ActionSchema,
 } from './schemas'
 
 // ===== Inferred Types from Zod Schemas =====
@@ -94,6 +96,16 @@ export const WORD_CLASSES: WordClass[] = ['noun', 'adjective', 'verb', 'adverb',
 export type Word = z.infer<typeof WordSchema>
 
 export type DictionaryWord = z.infer<typeof DictionaryWordSchema>
+
+export type VerbType = z.infer<typeof VerbTypeSchema>
+
+export const VERB_TYPE_LABELS: Record<VerbType, string> = {
+  manner: 'Manner Verb',
+  result: 'Result Verb',
+  path: 'Path Verb',
+}
+
+export type Action = z.infer<typeof ActionSchema>
 
 export interface QualityDomainState {
   domains: QualityDomain[]

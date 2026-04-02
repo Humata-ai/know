@@ -1,5 +1,5 @@
 import type { SceneAction, LibraryAction, LibrarySelectionType } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
 
 /**
  * Scene Action Creators
@@ -162,6 +162,22 @@ export const updateLibraryDomain = (domain: QualityDomain): LibraryAction => ({
 
 export const deleteLibraryDomain = (id: string): LibraryAction => ({
   type: 'DELETE_LIBRARY_DOMAIN',
+  payload: id,
+})
+
+// Library action (verb) action creators
+export const addLibraryAction = (action: Action): LibraryAction => ({
+  type: 'ADD_LIBRARY_ACTION',
+  payload: action,
+})
+
+export const updateLibraryAction = (action: Action): LibraryAction => ({
+  type: 'UPDATE_LIBRARY_ACTION',
+  payload: action,
+})
+
+export const deleteLibraryAction = (id: string): LibraryAction => ({
+  type: 'DELETE_LIBRARY_ACTION',
   payload: id,
 })
 

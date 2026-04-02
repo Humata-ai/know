@@ -141,6 +141,17 @@ export const DictionaryWordSchema = z.object({
   createdAt: z.date(),
 })
 
+// ===== Verb Type & Action =====
+
+export const VerbTypeSchema = z.enum(['manner', 'result', 'path'])
+
+export const ActionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  verbType: VerbTypeSchema,
+  createdAt: z.date(),
+})
+
 // ===== Generate Label API Schemas =====
 // These schemas are used for OpenAI structured output in the generate-label API.
 

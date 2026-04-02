@@ -438,9 +438,43 @@ function PropertiesView() {
 }
 
 function ActionsView() {
+  const { state, deleteLibraryAction } = useAppStore()
+
+  if (!state.library.actions || state.library.actions.length === 0) {
+    return (
+      <div className="px-4 py-8 text-center text-gray-500">
+        <p className="text-sm">No actions yet. Click + to add one.</p>
+      </div>
+    )
+  }
+
   return (
-    <div className="px-4 py-8 text-center text-gray-500">
-      <p className="text-sm">No actions yet. Click + to add one.</p>
+    <div className="px-4 py-2 space-y-2">
+      {state.library.actions.map((action) => (
+        <div
+          key={action.id}
+          className="p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-medium">{action.name}</h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600">
+                  {action.verbType === 'manner' && 'Manner Verb'}
+                  {action.verbType === 'result' && 'Result Verb'}
+                  {action.verbType === 'path' && 'Path Verb'}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => deleteLibraryAction(action.id)}
+              className="text-xs text-red-500 hover:text-red-700 ml-2 mt-1"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -458,7 +492,7 @@ function QualityDimensionsView() {
 export default function LibraryPanel() {
   const pathname = usePathname()
   const router = useRouter()
-  const { state, addLibraryConcept, updateLibraryConcept } = useAppStore()
+  const { state, addLibraryConcept, updateLibraryConcept, addLibraryAction } = useAppStore()
   const activeSection = getLibrarySectionFromPathname(pathname)
   const dictionaryWordRoute = getDictionaryWordFromPathname(pathname)
   const domainRoute = getQualityDomainFromPathname(pathname)
@@ -471,6 +505,7 @@ export default function LibraryPanel() {
   const [isPropertyLabelModalOpen, setIsPropertyLabelModalOpen] = useState(false)
   const [editingPropertyLabelId, setEditingPropertyLabelId] = useState<string | null>(null)
   const [isActionModalOpen, setIsActionModalOpen] = useState(false)
+  const [actionName, setActionName] = useState('')
   const [verbType, setVerbType] = useState<'manner' | 'result' | 'path'>('manner')
 
   const handleNavigateToSection = (section: LibrarySection) => {
@@ -489,6 +524,22 @@ export default function LibraryPanel() {
   const handleOpenEditConcept = (conceptId: string) => {
     setEditingConceptId(conceptId)
     setIsConceptModalOpen(true)
+  }
+
+  const handleAddAction = () => {
+    if (!actionName.trim()) return
+
+    const newAction = {
+      id: crypto.randomUUID(),
+      name: actionName.trim(),
+      verbType,
+      createdAt: new Date(),
+    }
+
+    addLibraryAction(newAction)
+    setIsActionModalOpen(false)
+    setActionName('')
+    setVerbType('manner')
   }
 
   // Dictionary word detail view: /library/dictionary/<word-id>
@@ -668,6 +719,21 @@ export default function LibraryPanel() {
         >
           <div className="space-y-4">
             <div>
+              <label htmlFor="action-name" className="block text-sm font-medium mb-1">
+                Action name
+              </label>
+              <input
+                id="action-name"
+                type="text"
+                value={actionName}
+                onChange={(e) => setActionName(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                placeholder="e.g., Run, Push, Slide"
+                autoFocus
+              />
+            </div>
+
+            <div>
               <label className="block text-sm font-medium mb-2">Verb type</label>
               <div className="flex gap-2">
                 <button
@@ -679,7 +745,7 @@ export default function LibraryPanel() {
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  Manner
+                  Manner Verb
                 </button>
                 <button
                   type="button"
@@ -690,7 +756,7 @@ export default function LibraryPanel() {
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  Result
+                  Result Verb
                 </button>
                 <button
                   type="button"
@@ -701,7 +767,7 @@ export default function LibraryPanel() {
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  Path
+                  Path Verb
                 </button>
               </div>
             </div>
@@ -716,8 +782,9 @@ export default function LibraryPanel() {
               </button>
               <button
                 type="button"
-                onClick={() => setIsActionModalOpen(false)}
-                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                onClick={handleAddAction}
+                disabled={!actionName.trim()}
+                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Add Action
               </button>

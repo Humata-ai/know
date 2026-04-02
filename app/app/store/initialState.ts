@@ -199,6 +199,7 @@ export const initialState: AppState = {
     dictionaryWords: [],
     concepts: [],
     domains: parseDomains(jsonData.domains),
+    actions: [],
     selectedItemId: null,
     selectedItemType: null,
   },

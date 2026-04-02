@@ -1,4 +1,4 @@
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
 
 /**
  * Scene Action Types
@@ -65,6 +65,11 @@ export type LibraryAction =
   | { type: 'UPDATE_LIBRARY_DOMAIN'; payload: QualityDomain }
   | { type: 'DELETE_LIBRARY_DOMAIN'; payload: string }
   
+  // Library action (verb) actions
+  | { type: 'ADD_LIBRARY_ACTION'; payload: Action }
+  | { type: 'UPDATE_LIBRARY_ACTION'; payload: Action }
+  | { type: 'DELETE_LIBRARY_ACTION'; payload: string }
+  
   // Library label actions
   | { type: 'ADD_LIBRARY_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
   | { type: 'UPDATE_LIBRARY_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
@@ -75,7 +80,7 @@ export type LibraryAction =
   | { type: 'CLEAR_LIBRARY_SELECTION' }
   
   // State restoration
-  | { type: 'RESTORE_LIBRARY_STATE'; payload: { dictionaryWords: DictionaryWord[]; concepts: Concept[]; domains: QualityDomain[] } }
+  | { type: 'RESTORE_LIBRARY_STATE'; payload: { dictionaryWords: DictionaryWord[]; concepts: Concept[]; domains: QualityDomain[]; actions?: Action[] } }
 
 /**
  * App Action
@@ -112,6 +117,7 @@ export interface LibraryState {
   dictionaryWords: DictionaryWord[]
   concepts: Concept[]
   domains: QualityDomain[]
+  actions: Action[]
   selectedItemId: string | null
   selectedItemType: LibrarySelectionType | null
 }

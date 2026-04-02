@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, useMemo, useCallback, useEffect, type ReactNode } from 'react'
 import type { AppState, AppAction, LibrarySelectionType } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint, DictionaryWord } from '../components/shared/types'
+import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint, DictionaryWord, Action } from '../components/shared/types'
 import { appReducer } from './reducer'
 import { initialState } from './initialState'
 import { 
@@ -63,6 +63,11 @@ interface AppStoreContextType {
   addLibraryDomain: (domain: QualityDomain) => void
   updateLibraryDomain: (domain: QualityDomain) => void
   deleteLibraryDomain: (id: string) => void
+  
+  // Library action methods
+  addLibraryAction: (action: Action) => void
+  updateLibraryAction: (action: Action) => void
+  deleteLibraryAction: (id: string) => void
   
   // Library label methods
   addLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
@@ -202,6 +207,18 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_LIBRARY_DOMAIN', payload: id })
   }, [])
 
+  const addLibraryActionMethod = useCallback((action: Action) => {
+    dispatch({ type: 'ADD_LIBRARY_ACTION', payload: action })
+  }, [])
+
+  const updateLibraryActionMethod = useCallback((action: Action) => {
+    dispatch({ type: 'UPDATE_LIBRARY_ACTION', payload: action })
+  }, [])
+
+  const deleteLibraryActionMethod = useCallback((id: string) => {
+    dispatch({ type: 'DELETE_LIBRARY_ACTION', payload: id })
+  }, [])
+
   const addLibraryLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
     dispatch({ type: 'ADD_LIBRARY_LABEL', payload: { domainId, label } })
   }, [])
@@ -269,6 +286,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryDomain: addLibraryDomainMethod,
     updateLibraryDomain: updateLibraryDomainMethod,
     deleteLibraryDomain: deleteLibraryDomainMethod,
+    addLibraryAction: addLibraryActionMethod,
+    updateLibraryAction: updateLibraryActionMethod,
+    deleteLibraryAction: deleteLibraryActionMethod,
     addLibraryLabel: addLibraryLabelMethod,
     updateLibraryLabel: updateLibraryLabelMethod,
     deleteLibraryLabel: deleteLibraryLabelMethod,
@@ -306,6 +326,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryDomainMethod,
     updateLibraryDomainMethod,
     deleteLibraryDomainMethod,
+    addLibraryActionMethod,
+    updateLibraryActionMethod,
+    deleteLibraryActionMethod,
     addLibraryLabelMethod,
     updateLibraryLabelMethod,
     deleteLibraryLabelMethod,

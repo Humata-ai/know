@@ -1,8 +1,8 @@
-import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, QualityDomainLabel, Property, PropertyReference, LabelReference, DictionaryWord } from './types'
+import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, QualityDomainLabel, Property, PropertyReference, LabelReference, DictionaryWord, Action } from './types'
 import type { AppState } from '@/app/store'
 
 const STORAGE_KEY = 'quality-domain-state'
-const STATE_VERSION = 7 // Version 7 adds dictionary words
+const STATE_VERSION = 8 // Version 8 adds actions
 
 // Migration: Convert old Property to QualityDomainLabel (Region)
 function migratePropertyToLabel(oldProperty: Property): QualityDomainLabel {
@@ -177,8 +177,18 @@ function parseDictionaryWords(rawWords: any[]): DictionaryWord[] {
   }))
 }
 
+/**
+ * Parse actions from raw JSON data.
+ */
+function parseActions(rawActions: any[]): Action[] {
+  return (rawActions || []).map((action: any) => ({
+    ...action,
+    createdAt: new Date(action.createdAt),
+  }))
+}
+
 // Deserialize with migration support
-export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[] } {
+export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[], actions: Action[] } {
   const parsed = JSON.parse(jsonString)
   const version = parsed.version || 1 // Default to version 1 if not specified
 
@@ -187,6 +197,10 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
     const domains = parseDomains(parsed.scene.domains || [], version)
     const concepts = parseConcepts(parsed.scene.concepts || [], version)
     const instances = parseInstances(parsed.scene.instances || [])
+    // Version 8+ has actions; older versions have none
+    const actions = parsed.library?.actions
+      ? parseActions(parsed.library.actions)
+      : []
     // Version 7+ has dictionary words; older versions have none
     const dictionaryWords = parsed.library?.dictionaryWords
       ? parseDictionaryWords(parsed.library.dictionaryWords)
@@ -199,20 +213,21 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
     const libraryDomains = parsed.library?.domains
       ? parseDomains(parsed.library.domains, version)
       : parseDomains(parsed.scene.domains || [], version)
-    return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains }
+    return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains, actions }
   }
 
   // Versions 1-3: flat structure (backwards compatible migration)
   const domains = parseDomains(parsed.domains || [], version)
   const concepts = parseConcepts(parsed.concepts || [], version)
   const instances = parseInstances(parsed.instances || [])
-  // For old versions, no dictionary words or library concepts
+  // For old versions, no actions, dictionary words, or library concepts
+  const actions: Action[] = []
   const dictionaryWords: DictionaryWord[] = []
   const libraryConcepts: Concept[] = []
   // For old versions, library domains mirror scene domains
   const libraryDomains = parseDomains(parsed.domains || [], version)
 
-  return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains }
+  return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains, actions }
 }
 
 export function saveToLocalStorage(state: AppState): void {
@@ -224,7 +239,7 @@ export function saveToLocalStorage(state: AppState): void {
   }
 }
 
-export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[] } | null {
+export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[], actions: Action[] } | null {
   try {
     const serialized = localStorage.getItem(STORAGE_KEY)
     if (!serialized) return null
