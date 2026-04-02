@@ -5,9 +5,8 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import ConceptualSpaceVisualizer from './ConceptualSpaceVisualizer'
 import { useQualityDomain } from '@/app/store'
-import { isRegion } from '../shared/types'
 import type { QualityDomain, Concept, ConceptInstance } from '../shared/types'
-import { normalizeToRange } from '@/app/utils/positionCalculations'
+import { calculateLabelPosition, calculateCentroid, calculateConceptLabelPositions } from '@/app/utils/labelPositionCalculations'
 import { Vector3 } from 'three'
 import type { SidebarView } from './sidebar/types'
 
@@ -63,70 +62,9 @@ function SceneCameraControls() {
 
       if (domain && label && domainPos) {
         const scale = 0.5
-
-        // Helper to get range from label dimension (works for both region and point)
-        const getLabelRange = (dimId: string): readonly [number, number] => {
-          if (isRegion(label)) {
-            const labelDim = label.dimensions.find(d => d.dimensionId === dimId)
-            return labelDim?.range || domain.dimensions.find(d => d.id === dimId)!.range
-          } else {
-            // For points, use the value as both min and max
-            const labelDim = label.dimensions.find(d => d.dimensionId === dimId)
-            if (labelDim) {
-              return [labelDim.value, labelDim.value] as const
-            }
-            // Fallback to domain range
-            return domain.dimensions.find(d => d.id === dimId)!.range
-          }
-        }
-
-        if (domain.dimensions.length === 1) {
-          // 1D label
-          const dim = domain.dimensions[0]
-          const labelRange = getLabelRange(dim.id)
-          const minPos = normalizeToRange(labelRange[0], dim.range, [-5, 5])
-          const maxPos = normalizeToRange(labelRange[1], dim.range, [-5, 5])
-          const centerPos = (minPos + maxPos) / 2
-
-          return new Vector3(
-            domainPos[0] + centerPos * scale,
-            domainPos[1] + 0.3 * scale,
-            domainPos[2]
-          )
-        } else if (domain.dimensions.length === 2) {
-          // 2D label
-          const dimX = domain.dimensions[0]
-          const dimY = domain.dimensions[1]
-          const labelRangeX = getLabelRange(dimX.id)
-          const labelRangeY = getLabelRange(dimY.id)
-
-          const minX = normalizeToRange(labelRangeX[0], dimX.range, [-5, 5])
-          const maxX = normalizeToRange(labelRangeX[1], dimX.range, [-5, 5])
-          const minY = normalizeToRange(labelRangeY[0], dimY.range, [-5, 5])
-          const maxY = normalizeToRange(labelRangeY[1], dimY.range, [-5, 5])
-
-          const centerX = (minX + maxX) / 2
-          const centerY = (minY + maxY) / 2
-
-          return new Vector3(
-            domainPos[0] + centerX * scale,
-            domainPos[1] + centerY * scale,
-            domainPos[2]
-          )
-        } else if (domain.dimensions.length === 3) {
-          // 3D label
-          const ranges = domain.dimensions.map(dim => {
-            const labelRange = getLabelRange(dim.id)
-            const min = normalizeToRange(labelRange[0], dim.range, [-4, 4])
-            const max = normalizeToRange(labelRange[1], dim.range, [-4, 4])
-            return { center: (min + max) / 2 }
-          })
-
-          return new Vector3(
-            domainPos[0] + ranges[0].center * scale,
-            domainPos[1] + ranges[1].center * scale,
-            domainPos[2] + ranges[2].center * scale
-          )
+        const position = calculateLabelPosition(label, domain, domainPos, scale)
+        if (position) {
+          return position
         }
       }
     }
@@ -233,85 +171,18 @@ function SceneCameraControls() {
       const concept = state.scene.concepts.find(c => c.id === state.scene.selectedConceptId)
       if (concept) {
         const labels = getConceptLabels(concept.id)
-        const positions: Vector3[] = []
+        const scale = 0.5
 
-        labels.forEach(label => {
-          const domain = state.scene.domains.find(d => d.id === label.domainId)
-          if (!domain || domain.dimensions.length >= 4) return
+        // Calculate positions for all labels and find centroid
+        const positions = calculateConceptLabelPositions(
+          labels,
+          state.scene.domains,
+          domainPositions,
+          scale
+        )
 
-          const domainPos = domainPositions.get(domain.id)
-          if (!domainPos) return
-
-          const scale = 0.5
-
-          // Helper to get range from label dimension (works for both region and point)
-          const getLabelRange = (dimId: string): readonly [number, number] => {
-            if (isRegion(label)) {
-              const labelDim = label.dimensions.find(d => d.dimensionId === dimId)
-              return labelDim?.range || domain.dimensions.find(d => d.id === dimId)!.range
-            } else {
-              // For points, use the value as both min and max
-              const labelDim = label.dimensions.find(d => d.dimensionId === dimId)
-              if (labelDim) {
-                return [labelDim.value, labelDim.value] as const
-              }
-              // Fallback to domain range
-              return domain.dimensions.find(d => d.id === dimId)!.range
-            }
-          }
-
-          if (domain.dimensions.length === 1) {
-            const dim = domain.dimensions[0]
-            const labelRange = getLabelRange(dim.id)
-            const minPos = normalizeToRange(labelRange[0], dim.range, [-5, 5])
-            const maxPos = normalizeToRange(labelRange[1], dim.range, [-5, 5])
-            const centerPos = (minPos + maxPos) / 2
-
-            positions.push(new Vector3(
-              domainPos[0] + centerPos * scale,
-              domainPos[1] + 0.3 * scale,
-              domainPos[2]
-            ))
-          } else if (domain.dimensions.length === 2) {
-            const dimX = domain.dimensions[0]
-            const dimY = domain.dimensions[1]
-            const labelRangeX = getLabelRange(dimX.id)
-            const labelRangeY = getLabelRange(dimY.id)
-
-            const minX = normalizeToRange(labelRangeX[0], dimX.range, [-5, 5])
-            const maxX = normalizeToRange(labelRangeX[1], dimX.range, [-5, 5])
-            const minY = normalizeToRange(labelRangeY[0], dimY.range, [-5, 5])
-            const maxY = normalizeToRange(labelRangeY[1], dimY.range, [-5, 5])
-
-            const centerX = (minX + maxX) / 2
-            const centerY = (minY + maxY) / 2
-
-            positions.push(new Vector3(
-              domainPos[0] + centerX * scale,
-              domainPos[1] + centerY * scale,
-              domainPos[2]
-            ))
-          } else if (domain.dimensions.length === 3) {
-            const ranges = domain.dimensions.map(dim => {
-              const labelRange = getLabelRange(dim.id)
-              const min = normalizeToRange(labelRange[0], dim.range, [-4, 4])
-              const max = normalizeToRange(labelRange[1], dim.range, [-4, 4])
-              return { center: (min + max) / 2 }
-            })
-
-            positions.push(new Vector3(
-              domainPos[0] + ranges[0].center * scale,
-              domainPos[1] + ranges[1].center * scale,
-              domainPos[2] + ranges[2].center * scale
-            ))
-          }
-        })
-
-        // Calculate centroid of concept
-        if (positions.length > 0) {
-          const centroid = new Vector3(0, 0, 0)
-          positions.forEach(pos => centroid.add(pos))
-          centroid.divideScalar(positions.length)
+        const centroid = calculateCentroid(positions)
+        if (centroid) {
           centroid.y += 8 // Concept label is 8 units above centroid
           return centroid
         }
