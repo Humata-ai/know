@@ -1,28 +1,9 @@
 import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, QualityDomainLabel, Property, PropertyReference, LabelReference, DictionaryWord, Action } from './types'
 import type { AppState } from '@/app/store'
+import { DataParser } from '@/app/utils/dataParser'
 
 const STORAGE_KEY = 'quality-domain-state'
 const STATE_VERSION = 8 // Version 8 adds actions
-
-// Migration: Convert old Property to QualityDomainLabel (Region)
-function migratePropertyToLabel(oldProperty: Property): QualityDomainLabel {
-  return {
-    type: 'region',
-    id: oldProperty.id,
-    name: oldProperty.name,
-    domainId: oldProperty.domainId,
-    dimensions: oldProperty.dimensions,
-    createdAt: oldProperty.createdAt
-  }
-}
-
-// Migration: Convert old PropertyReference to LabelReference
-function migratePropertyRefToLabelRef(oldRef: PropertyReference): LabelReference {
-  return {
-    domainId: oldRef.domainId,
-    labelId: oldRef.propertyId
-  }
-}
 
 // Same logic as StateDebugPanel export
 export function serializeState(state: AppState): string {
@@ -55,127 +36,12 @@ export function serializeState(state: AppState): string {
   return persistableState
 }
 
-/**
- * Parse domains from raw JSON data, handling migrations from older formats.
- */
-function parseDomains(rawDomains: any[], version: number): QualityDomain[] {
-  return rawDomains.map((domain: any) => {
-    const baseDomain = {
-      ...domain,
-      createdAt: new Date(domain.createdAt),
-      dimensions: domain.dimensions.map((dim: any) => ({
-        ...dim,
-        range: [
-          dim.range[0] === "Infinity" ? Infinity : dim.range[0] === "-Infinity" ? -Infinity : dim.range[0],
-          dim.range[1] === "Infinity" ? Infinity : dim.range[1] === "-Infinity" ? -Infinity : dim.range[1]
-        ] as const
-      }))
-    }
-
-    // Handle old format (version 1) with properties field
-    if (version === 1 || domain.properties) {
-      const oldProperties = (domain.properties || []).map((prop: any) => ({
-        ...prop,
-        createdAt: new Date(prop.createdAt),
-        dimensions: prop.dimensions.map((d: any) => ({
-          ...d,
-          range: [
-            d.range[0] === "Infinity" ? Infinity : d.range[0] === "-Infinity" ? -Infinity : d.range[0],
-            d.range[1] === "Infinity" ? Infinity : d.range[1] === "-Infinity" ? -Infinity : d.range[1]
-          ] as const
-        }))
-      }))
-
-      // Migrate old properties to labels
-      return {
-        ...baseDomain,
-        labels: oldProperties.map(migratePropertyToLabel)
-      }
-    }
-
-    // Handle new format (version 2+) with labels field
-    const labels = (domain.labels || []).map((label: any) => ({
-      ...label,
-      createdAt: new Date(label.createdAt),
-      dimensions: label.dimensions.map((d: any) => {
-        // Handle region dimensions (with range)
-        if ('range' in d) {
-          return {
-            ...d,
-            range: [
-              d.range[0] === "Infinity" ? Infinity : d.range[0] === "-Infinity" ? -Infinity : d.range[0],
-              d.range[1] === "Infinity" ? Infinity : d.range[1] === "-Infinity" ? -Infinity : d.range[1]
-            ] as const
-          }
-        }
-        // Handle point dimensions (with value)
-        return d
-      })
-    }))
-
-    return {
-      ...baseDomain,
-      labels
-    }
-  })
-}
-
-/**
- * Parse concepts from raw JSON data, handling migrations from older formats.
- */
-function parseConcepts(rawConcepts: any[], version: number): Concept[] {
-  return (rawConcepts || []).map((concept: any) => {
-    const baseConcept = {
-      ...concept,
-      createdAt: new Date(concept.createdAt)
-    }
-
-    // Handle old format with propertyRefs
-    if (version === 1 || concept.propertyRefs) {
-      return {
-        ...baseConcept,
-        labelRefs: (concept.propertyRefs || []).map(migratePropertyRefToLabelRef)
-      }
-    }
-
-    // New format already has labelRefs
-    return baseConcept
-  })
-}
-
-/**
- * Parse instances from raw JSON data.
- */
-function parseInstances(rawInstances: any[]): ConceptInstance[] {
-  return (rawInstances || []).map((instance: any) => ({
-    ...instance,
-    createdAt: new Date(instance.createdAt)
-  }))
-}
-
-/**
- * Parse a conceptual structure from raw JSON data.
- */
-function parseConceptualStructure(raw: any): ConceptualStructure {
-  if (!raw) {
-    return { domains: [], concepts: [], instances: [] }
-  }
-  return {
-    domains: parseDomains(raw.domains || [], 4),
-    concepts: parseConcepts(raw.concepts || [], 4),
-    instances: parseInstances(raw.instances || []),
-  }
-}
-
-/**
- * Parse dictionary words from raw JSON data.
- */
-function parseDictionaryWords(rawWords: any[]): DictionaryWord[] {
-  return (rawWords || []).map((word: any) => ({
-    ...word,
-    createdAt: new Date(word.createdAt),
-  }))
-}
+// Use centralized parsing utilities from dataParser module
+const parseDomains = DataParser.parseDomains
+const parseConcepts = DataParser.parseConcepts
+const parseInstances = DataParser.parseInstances
+const parseConceptualStructure = DataParser.parseConceptualStructure
+const parseDictionaryWords = DataParser.parseDictionaryWords
 
 /**
  * Parse actions from raw JSON data.

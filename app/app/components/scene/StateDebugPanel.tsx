@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useQualityDomain } from '@/app/store'
+import { DataParser } from '@/app/utils/dataParser'
 import CloseIcon from '@mui/icons-material/Close'
 import CodeIcon from '@mui/icons-material/Code'
 
@@ -135,46 +136,10 @@ export default function StateDebugPanel() {
     return true
   }
 
-  const convertInfinity = (val: any) => {
-    if (val === "Infinity") return Infinity
-    if (val === "-Infinity") return -Infinity
-    return val
-  }
-
-  const parseDomains = (rawDomains: any[]) =>
-    rawDomains.map((domain: any) => ({
-      ...domain,
-      createdAt: new Date(domain.createdAt),
-      dimensions: domain.dimensions.map((dim: any) => ({
-        ...dim,
-        range: [convertInfinity(dim.range[0]), convertInfinity(dim.range[1])] as const,
-      })),
-      labels: (domain.labels || []).map((label: any) => ({
-        ...label,
-        createdAt: new Date(label.createdAt),
-        dimensions: label.dimensions.map((d: any) => {
-          if ('range' in d) {
-            return {
-              ...d,
-              range: [convertInfinity(d.range[0]), convertInfinity(d.range[1])] as const,
-            }
-          }
-          return d
-        }),
-      })),
-    }))
-
-  const parseConcepts = (rawConcepts: any[]) =>
-    (rawConcepts || []).map((concept: any) => ({
-      ...concept,
-      createdAt: new Date(concept.createdAt),
-    }))
-
-  const parseInstances = (rawInstances: any[]) =>
-    (rawInstances || []).map((instance: any) => ({
-      ...instance,
-      createdAt: new Date(instance.createdAt),
-    }))
+  // Use centralized parsing utilities
+  const parseDomains = DataParser.parseDomains
+  const parseConcepts = DataParser.parseConcepts
+  const parseInstances = DataParser.parseInstances
 
   const handleImport = () => {
     setError(null)
