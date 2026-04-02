@@ -69,15 +69,15 @@ export function getConceptsWordFromPathname(pathname: string): ConceptsWordRoute
 }
 
 export interface QualityDomainRoute {
-  domainSlug: string
+  domainId: string
 }
 
 export function getQualityDomainFromPathname(pathname: string): QualityDomainRoute | null {
   const segments = pathname.replace(/^\//, '').split('/')
-  // /library/quality-domains/<domain-slug>
+  // /library/quality-domains/<domain-id>
   if (segments[0] === 'library' && segments[1] === 'quality-domains' && segments.length >= 3 && segments[2]) {
     return {
-      domainSlug: decodeURIComponent(segments[2]),
+      domainId: decodeURIComponent(segments[2]),
     }
   }
   return null

@@ -35,7 +35,7 @@ export default function TabPage({ params }: { params: Promise<{ tab: string[] }>
         notFound()
       }
     } else if (section === 'quality-domains') {
-      // Quality domains supports: /library/quality-domains/<domain-slug>
+      // Quality domains supports: /library/quality-domains/<domain-id>
       if (tab.length > 3) {
         notFound()
       }
