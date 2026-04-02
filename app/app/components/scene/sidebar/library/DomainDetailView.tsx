@@ -3,11 +3,11 @@
 import { useEffect } from 'react'
 import { useAppStore } from '@/app/store'
 
-export default function DomainDetailView({ domainSlug }: { domainSlug: string }) {
+export default function DomainDetailView({ domainId }: { domainId: string }) {
   const { state, selectLibraryItem, clearLibrarySelection } = useAppStore()
 
   const domain = state.library.domains.find(
-    (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainSlug
+    (d) => d.id === domainId
   )
 
   // Auto-select domain for 3D visualization when detail page is open

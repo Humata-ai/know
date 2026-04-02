@@ -18,11 +18,10 @@ export default function QualityDomainsView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.domains.map((domain) => {
-        const slug = domain.name.toLowerCase().replace(/\s+/g, '-')
         return (
           <button
             key={domain.id}
-            onClick={() => router.push(`/library/quality-domains/${encodeURIComponent(slug)}`)}
+            onClick={() => router.push(`/library/quality-domains/${domain.id}`)}
             className="w-full p-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-left cursor-pointer"
           >
             <div className="font-medium">{domain.name}</div>

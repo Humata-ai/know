@@ -180,7 +180,7 @@ export default function LibraryPanel() {
   // Domain detail view: /library/quality-domains/<domain-id>
   if (domainRoute) {
     const domain = state.library.domains.find(
-      (d) => d.name.toLowerCase().replace(/\s+/g, '-') === domainRoute.domainId
+      (d) => d.id === domainRoute.domainId
     )
     const headerAction = domain ? (
       <Tooltip title="Edit Quality Domain">
@@ -204,7 +204,7 @@ export default function LibraryPanel() {
     return (
       <>
         <SidebarPanel
-          title={domain ? domain.name : decodeURIComponent(domainRoute.domainId)}
+          title={domain ? domain.name : 'Domain not found'}
           breadcrumbs={[
             { label: 'Library', href: '/library' },
             { label: 'Quality Domains', href: '/library/quality-domains' },
@@ -212,7 +212,7 @@ export default function LibraryPanel() {
           onNavigate={handleBreadcrumbNavigate}
           headerAction={headerAction}
         >
-          <DomainDetailView domainSlug={domainRoute.domainId} />
+          <DomainDetailView domainId={domainRoute.domainId} />
         </SidebarPanel>
         <DomainModal
           isOpen={isDomainModalOpen}
