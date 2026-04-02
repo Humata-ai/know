@@ -34,6 +34,30 @@ export function getLibrarySectionFromPathname(pathname: string): LibrarySection 
   return null
 }
 
+// Generic interface for library detail routes
+export interface LibraryDetailRoute {
+  section: LibrarySection
+  itemId: string
+}
+
+// Get library detail route from pathname
+// Supports: /library/<section>/<id>
+export function getLibraryDetailFromPathname(pathname: string): LibraryDetailRoute | null {
+  const segments = pathname.replace(/^\//, '').split('/')
+  // /library/<section>/<id>
+  if (segments[0] === 'library' && segments.length >= 3 && segments[2]) {
+    const section = segments[1]
+    if (VALID_LIBRARY_SECTIONS.includes(section as LibrarySection)) {
+      return {
+        section: section as LibrarySection,
+        itemId: decodeURIComponent(segments[2]),
+      }
+    }
+  }
+  return null
+}
+
+// Legacy route helpers for backward compatibility
 export interface DictionaryWordRoute {
   wordSlug: string
   isEdit: boolean

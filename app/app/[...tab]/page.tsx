@@ -21,27 +21,19 @@ export default function TabPage({ params }: { params: Promise<{ tab: string[] }>
       notFound()
     }
     
-    // Dictionary supports: /library/dictionary/<word-slug>
-    if (section === 'dictionary') {
-      if (tab.length > 3) {
-        notFound()
-      }
-    } else if (section === 'concepts') {
-      // Concepts supports deeper nesting: /library/concepts/<word> and /library/concepts/<word>/edit
+    // All sections support detail views: /library/<section>/<id>
+    // Maximum depth is 3 for most sections (section + id)
+    if (section === 'concepts') {
+      // Concepts supports deeper nesting: /library/concepts/<word> and /library/concepts/<word>/edit (legacy)
       if (tab.length > 4) {
         notFound()
       }
       if (tab.length === 4 && tab[3] !== 'edit') {
         notFound()
       }
-    } else if (section === 'quality-domains') {
-      // Quality domains supports: /library/quality-domains/<domain-id>
-      if (tab.length > 3) {
-        notFound()
-      }
     } else {
-      // No further nesting allowed for other sections
-      if (tab.length > 2) {
+      // All other sections support: /library/<section> and /library/<section>/<id>
+      if (tab.length > 3) {
         notFound()
       }
     }

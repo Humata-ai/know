@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/app/store'
+import LibraryListItem from './LibraryListItem'
 
 export default function QualityDomainsView() {
   const router = useRouter()
@@ -18,22 +19,15 @@ export default function QualityDomainsView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.domains.map((domain) => {
+        const labelCount = domain.labels.length
+        const subtitle = `${domain.dimensions.length}D • ${labelCount} ${labelCount === 1 ? 'label' : 'labels'}`
         return (
-          <button
+          <LibraryListItem
             key={domain.id}
+            title={domain.name}
+            subtitle={subtitle}
             onClick={() => router.push(`/library/quality-domains/${domain.id}`)}
-            className="w-full p-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-left cursor-pointer"
-          >
-            <div className="font-medium">{domain.name}</div>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-gray-500">
-                {domain.dimensions.length}D
-              </span>
-              <span className="text-xs text-gray-500">
-                {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
-              </span>
-            </div>
-          </button>
+          />
         )
       })}
     </div>

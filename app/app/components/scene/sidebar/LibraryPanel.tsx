@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import SidebarPanel from './SidebarPanel'
 import { 
   getLibrarySectionFromPathname, 
+  getLibraryDetailFromPathname,
   getDictionaryWordFromPathname, 
   getQualityDomainFromPathname, 
   getConceptsWordFromPathname,
@@ -29,7 +30,9 @@ import ConceptsView from './library/ConceptsView'
 import QualityDomainsView from './library/QualityDomainsView'
 import DomainDetailView from './library/DomainDetailView'
 import PropertiesView from './library/PropertiesView'
+import PropertyDetailView from './library/PropertyDetailView'
 import ActionsView from './library/ActionsView'
+import ActionDetailView from './library/ActionDetailView'
 import QualityDimensionsView from './library/QualityDimensionsView'
 import ConceptDetailView from './library/ConceptDetailView'
 import { useLibraryModals } from './hooks/useLibraryModals'
@@ -39,9 +42,7 @@ export default function LibraryPanel() {
   const router = useRouter()
   const { state, addLibraryConcept, updateLibraryConcept } = useAppStore()
   const activeSection = getLibrarySectionFromPathname(pathname)
-  const dictionaryWordRoute = getDictionaryWordFromPathname(pathname)
-  const domainRoute = getQualityDomainFromPathname(pathname)
-  const conceptRoute = getConceptsWordFromPathname(pathname)
+  const detailRoute = getLibraryDetailFromPathname(pathname)
   
   const modals = useLibraryModals()
 
@@ -53,85 +54,94 @@ export default function LibraryPanel() {
     router.push(href)
   }
 
-  // Dictionary word detail view: /library/dictionary/<word-id>
-  if (dictionaryWordRoute) {
-    const wordId = dictionaryWordRoute.wordSlug
-    const dictWord = state.library.dictionaryWords.find((w) => w.id === wordId)
-    const dictWordTitle = dictWord?.name || 'Word'
-    return (
-      <SidebarPanel
-        title={dictWordTitle}
-        breadcrumbs={[
-          { label: 'Library', href: '/library' },
-          { label: 'Dictionary', href: '/library/dictionary' },
-        ]}
-        onNavigate={handleBreadcrumbNavigate}
-      >
-        <DictionaryWordDetailView wordId={wordId} />
-      </SidebarPanel>
-    )
-  }
+  // Handle detail views: /library/<section>/<id>
+  if (detailRoute) {
+    const { section, itemId } = detailRoute
+    
+    // Get item title and render appropriate detail view
+    let title = 'Item'
+    let detailView = null
+    let headerAction = undefined
 
-  // Concept detail view: /library/concepts/<concept-id>
-  if (conceptRoute && !conceptRoute.isEdit) {
-    const conceptId = conceptRoute.wordSlug
-    const concept = state.library.concepts.find((c) => c.id === conceptId)
-    const conceptTitle = concept?.name || 'Concept'
-    return (
-      <SidebarPanel
-        title={conceptTitle}
-        breadcrumbs={[
-          { label: 'Library', href: '/library' },
-          { label: 'Concepts', href: '/library/concepts' },
-        ]}
-        onNavigate={handleBreadcrumbNavigate}
-      >
-        <ConceptDetailView conceptId={conceptId} />
-      </SidebarPanel>
-    )
-  }
-
-  // Domain detail view: /library/quality-domains/<domain-id>
-  if (domainRoute) {
-    const domain = state.library.domains.find(
-      (d) => d.id === domainRoute.domainId
-    )
-    const headerAction = domain ? (
-      <Tooltip title="Edit Quality Domain">
-        <span>
-          <Button
-            onClick={() => modals.openEditDomain(domain.id)}
-            color="secondary"
-            variant="outlined"
-            size="small"
-            sx={{ minWidth: 0, p: 0.5 }}
-          >
-            <EditIcon sx={{ fontSize: 16 }} />
-          </Button>
-        </span>
-      </Tooltip>
-    ) : undefined
+    switch (section) {
+      case 'dictionary': {
+        const word = state.library.dictionaryWords.find((w) => w.id === itemId)
+        title = word?.name || 'Word'
+        detailView = <DictionaryWordDetailView wordId={itemId} />
+        break
+      }
+      case 'concepts': {
+        const concept = state.library.concepts.find((c) => c.id === itemId)
+        title = concept?.name || 'Concept'
+        detailView = <ConceptDetailView conceptId={itemId} />
+        break
+      }
+      case 'quality-domains': {
+        const domain = state.library.domains.find((d) => d.id === itemId)
+        title = domain?.name || 'Domain'
+        detailView = <DomainDetailView domainId={itemId} />
+        if (domain) {
+          headerAction = (
+            <Tooltip title="Edit Quality Domain">
+              <span>
+                <Button
+                  onClick={() => modals.openEditDomain(domain.id)}
+                  color="secondary"
+                  variant="outlined"
+                  size="small"
+                  sx={{ minWidth: 0, p: 0.5 }}
+                >
+                  <EditIcon sx={{ fontSize: 16 }} />
+                </Button>
+              </span>
+            </Tooltip>
+          )
+        }
+        break
+      }
+      case 'actions': {
+        const action = state.library.actions?.find((a) => a.id === itemId)
+        title = action?.name || 'Action'
+        detailView = <ActionDetailView actionId={itemId} />
+        break
+      }
+      case 'properties': {
+        // Find property across all domains
+        let property = null
+        for (const domain of state.library.domains) {
+          const label = domain.labels.find((l) => l.id === itemId)
+          if (label) {
+            property = label
+            break
+          }
+        }
+        title = property?.name || 'Property'
+        detailView = <PropertyDetailView propertyId={itemId} />
+        break
+      }
+    }
 
     return (
       <>
         <SidebarPanel
-          title={domain ? domain.name : 'Domain not found'}
+          title={title}
           breadcrumbs={[
             { label: 'Library', href: '/library' },
-            { label: 'Quality Domains', href: '/library/quality-domains' },
+            { label: LIBRARY_SECTION_LABELS[section], href: `/library/${section}` },
           ]}
           onNavigate={handleBreadcrumbNavigate}
           headerAction={headerAction}
         >
-          <DomainDetailView domainId={domainRoute.domainId} />
+          {detailView}
         </SidebarPanel>
-        <DomainModal
-          isOpen={modals.isDomainModalOpen}
-          editingDomainId={modals.editingLibraryDomainId}
-          onClose={() => modals.setIsDomainModalOpen(false)}
-          useLibraryState
-        />
-
+        {section === 'quality-domains' && (
+          <DomainModal
+            isOpen={modals.isDomainModalOpen}
+            editingDomainId={modals.editingLibraryDomainId}
+            onClose={() => modals.setIsDomainModalOpen(false)}
+            useLibraryState
+          />
+        )}
       </>
     )
   }

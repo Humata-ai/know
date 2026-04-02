@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/app/store'
 import { getDictionaryWordName, getDictionaryWordType } from '../../../dictionary/utils'
+import LibraryListItem from './LibraryListItem'
 
 export default function DictionaryView() {
   const router = useRouter()
@@ -22,16 +23,12 @@ export default function DictionaryView() {
         const pointerName = getDictionaryWordName(word, state.library.domains, state.library.concepts)
         const typeLabel = getDictionaryWordType(word, state.library.domains)
         return (
-          <button
+          <LibraryListItem
             key={word.id}
+            title={word.name}
+            subtitle={`${typeLabel}: ${pointerName}`}
             onClick={() => router.push(`/library/dictionary/${encodeURIComponent(word.id)}`)}
-            className="w-full p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors text-left"
-          >
-            <h3 className="font-medium">{word.name}</h3>
-            <span className="text-xs text-gray-500">
-              {typeLabel}: {pointerName}
-            </span>
-          </button>
+          />
         )
       })}
     </div>

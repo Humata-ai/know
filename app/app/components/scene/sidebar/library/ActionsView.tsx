@@ -1,9 +1,12 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/app/store'
+import LibraryListItem from './LibraryListItem'
 
 export default function ActionsView() {
-  const { state, deleteLibraryAction } = useAppStore()
+  const router = useRouter()
+  const { state } = useAppStore()
 
   if (!state.library.actions || state.library.actions.length === 0) {
     return (
@@ -15,31 +18,21 @@ export default function ActionsView() {
 
   return (
     <div className="px-4 py-2 space-y-2">
-      {state.library.actions.map((action) => (
-        <div
-          key={action.id}
-          className="p-3 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="font-medium">{action.name}</h3>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600">
-                  {action.verbType === 'manner' && 'Manner Verb'}
-                  {action.verbType === 'result' && 'Result Verb'}
-                  {action.verbType === 'path' && 'Path Verb'}
-                </span>
-              </div>
-            </div>
-            <button
-              onClick={() => deleteLibraryAction(action.id)}
-              className="text-xs text-red-500 hover:text-red-700 ml-2 mt-1"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))}
+      {state.library.actions.map((action) => {
+        let verbTypeLabel = ''
+        if (action.verbType === 'manner') verbTypeLabel = 'Manner Verb'
+        else if (action.verbType === 'result') verbTypeLabel = 'Result Verb'
+        else if (action.verbType === 'path') verbTypeLabel = 'Path Verb'
+        
+        return (
+          <LibraryListItem
+            key={action.id}
+            title={action.name}
+            subtitle={verbTypeLabel}
+            onClick={() => router.push(`/library/actions/${encodeURIComponent(action.id)}`)}
+          />
+        )
+      })}
     </div>
   )
 }
