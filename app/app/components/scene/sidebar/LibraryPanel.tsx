@@ -16,6 +16,7 @@ import {
 } from './types'
 import type { LibrarySection } from './types'
 import { useAppStore } from '@/app/store'
+import { generateId } from '../../shared/utils'
 import AddDictionaryWordModal from '../../dictionary/AddDictionaryWordModal'
 import ConceptModal from '../../concept/ConceptModal'
 import DomainModal from '../../quality-domain/DomainModal'
@@ -126,7 +127,7 @@ export default function LibraryPanel() {
     if (!actionName.trim()) return
 
     const newAction = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: actionName.trim(),
       verbType,
       createdAt: new Date(),
