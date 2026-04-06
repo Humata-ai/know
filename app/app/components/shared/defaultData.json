@@ -1,38 +1,423 @@
 {
+  "exportType": "scene",
+  "version": 1,
   "domains": [
     {
-      "id": "1773702800918-xf53stz",
-      "name": "Age Domain",
+      "id": "1773703070507-df6oo23",
+      "name": "Name Domain",
       "dimensions": [
         {
-          "id": "1773702791708-4si6h81",
-          "name": "Years Old",
+          "id": "1773703055063-qlt739z",
+          "name": "Gender Association",
           "range": [
-            0,
-            "Infinity"
+            -1,
+            1
           ]
         }
       ],
       "labels": [
         {
           "type": "region",
-          "id": "1773702827602-pxl8hv1",
-          "name": "Human Life Span",
-          "domainId": "1773702800918-xf53stz",
+          "id": "1773703125056-3lnuqkd",
+          "name": "Male Name",
+          "domainId": "1773703070507-df6oo23",
           "dimensions": [
             {
-              "dimensionId": "1773702791708-4si6h81",
+              "dimensionId": "1773703055063-qlt739z",
               "range": [
-                0,
-                125
+                0.4,
+                1
               ]
             }
           ],
-          "createdAt": "2026-03-16T23:13:47.602Z"
+          "createdAt": "2026-03-16T23:18:45.056Z"
+        },
+        {
+          "type": "region",
+          "id": "1773703145301-oo0gcj4",
+          "name": "Female Name",
+          "domainId": "1773703070507-df6oo23",
+          "dimensions": [
+            {
+              "dimensionId": "1773703055063-qlt739z",
+              "range": [
+                -1,
+                -0.4
+              ]
+            }
+          ],
+          "createdAt": "2026-03-16T23:19:05.301Z"
+        },
+        {
+          "type": "point",
+          "id": "1773703180360-9acuw64",
+          "name": "Mary",
+          "domainId": "1773703070507-df6oo23",
+          "dimensions": [
+            {
+              "dimensionId": "1773703055063-qlt739z",
+              "value": -0.9
+            }
+          ],
+          "createdAt": "2026-03-16T23:19:40.360Z"
+        },
+        {
+          "type": "region",
+          "id": "1773708297540-mimbwzp",
+          "name": "Neutral Name",
+          "domainId": "1773703070507-df6oo23",
+          "dimensions": [
+            {
+              "dimensionId": "1773703055063-qlt739z",
+              "range": [
+                -0.4,
+                0.4
+              ]
+            }
+          ],
+          "createdAt": "2026-03-17T00:44:57.540Z"
         }
       ],
-      "createdAt": "2026-03-16T23:13:20.918Z"
+      "createdAt": "2026-03-16T23:17:50.507Z"
     },
+    {
+      "id": "1774386652846-n186tnp",
+      "name": "Size Domain",
+      "dimensions": [
+        {
+          "id": "1774386634927-dp16041",
+          "name": "Height",
+          "range": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": "1774386641137-yk8a585",
+          "name": "Width",
+          "range": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": "1774386647476-2i0vov2",
+          "name": "Length",
+          "range": [
+            0,
+            1
+          ]
+        }
+      ],
+      "labels": [
+        {
+          "type": "region",
+          "id": "1774387635202-gcc74qw",
+          "name": "Little Lamb Size",
+          "domainId": "1774386652846-n186tnp",
+          "dimensions": [
+            {
+              "dimensionId": "1774386634927-dp16041",
+              "range": [
+                0.3,
+                0.4
+              ]
+            },
+            {
+              "dimensionId": "1774386641137-yk8a585",
+              "range": [
+                0.2,
+                0.3
+              ]
+            },
+            {
+              "dimensionId": "1774386647476-2i0vov2",
+              "range": [
+                0.3,
+                0.4
+              ]
+            }
+          ],
+          "createdAt": "2026-03-24T21:27:15.202Z"
+        },
+        {
+          "type": "region",
+          "id": "1774468227388-27svk9m",
+          "name": "Human Size",
+          "domainId": "1774386652846-n186tnp",
+          "dimensions": [
+            {
+              "dimensionId": "1774386634927-dp16041",
+              "range": [
+                0.5,
+                0.8
+              ]
+            },
+            {
+              "dimensionId": "1774386641137-yk8a585",
+              "range": [
+                0.3,
+                0.6
+              ]
+            },
+            {
+              "dimensionId": "1774386647476-2i0vov2",
+              "range": [
+                0.5,
+                0.9
+              ]
+            }
+          ],
+          "createdAt": "2026-03-25T19:50:27.388Z"
+        },
+        {
+          "type": "region",
+          "id": "1775498221838-pe7ij6m",
+          "name": "Lamb Size",
+          "domainId": "1774386652846-n186tnp",
+          "dimensions": [
+            {
+              "dimensionId": "1774386634927-dp16041",
+              "range": [
+                0.3,
+                0.6
+              ]
+            },
+            {
+              "dimensionId": "1774386641137-yk8a585",
+              "range": [
+                0.2,
+                0.5
+              ]
+            },
+            {
+              "dimensionId": "1774386647476-2i0vov2",
+              "range": [
+                0.3,
+                0.55
+              ]
+            }
+          ],
+          "createdAt": "2026-04-06T17:57:01.838Z"
+        },
+        {
+          "type": "point",
+          "id": "1775498374075-mcordoi",
+          "name": "Marys little lamb size",
+          "domainId": "1774386652846-n186tnp",
+          "dimensions": [
+            {
+              "dimensionId": "1774386634927-dp16041",
+              "value": 0.35
+            },
+            {
+              "dimensionId": "1774386641137-yk8a585",
+              "value": 0.25
+            },
+            {
+              "dimensionId": "1774386647476-2i0vov2",
+              "value": 0.35
+            }
+          ],
+          "createdAt": "2026-04-06T17:59:34.075Z"
+        }
+      ],
+      "createdAt": "2026-03-24T21:10:52.846Z"
+    },
+    {
+      "id": "1774401392880-em285ec",
+      "name": "Color Domain",
+      "dimensions": [
+        {
+          "id": "1774401345473-3oz1gjn",
+          "name": "Hue",
+          "range": [
+            0,
+            360
+          ]
+        },
+        {
+          "id": "1774401375433-f25jy4n",
+          "name": "Saturation",
+          "range": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": "1774401385342-u9sd2p6",
+          "name": "Brightness",
+          "range": [
+            0,
+            1
+          ]
+        }
+      ],
+      "labels": [
+        {
+          "type": "region",
+          "id": "1774401474701-0q65m6z",
+          "name": "White",
+          "domainId": "1774401392880-em285ec",
+          "dimensions": [
+            {
+              "dimensionId": "1774401345473-3oz1gjn",
+              "range": [
+                0,
+                360
+              ]
+            },
+            {
+              "dimensionId": "1774401375433-f25jy4n",
+              "range": [
+                0,
+                0.4
+              ]
+            },
+            {
+              "dimensionId": "1774401385342-u9sd2p6",
+              "range": [
+                0.6,
+                1
+              ]
+            }
+          ],
+          "createdAt": "2026-03-25T01:17:54.701Z"
+        },
+        {
+          "type": "region",
+          "id": "1775508075924-pt3bh63",
+          "name": "Lamb Fleece Colors",
+          "domainId": "1774401392880-em285ec",
+          "dimensions": [
+            {
+              "dimensionId": "1774401345473-3oz1gjn",
+              "range": [
+                30,
+                300
+              ]
+            },
+            {
+              "dimensionId": "1774401375433-f25jy4n",
+              "range": [
+                0,
+                0.5
+              ]
+            },
+            {
+              "dimensionId": "1774401385342-u9sd2p6",
+              "range": [
+                0.7,
+                1
+              ]
+            }
+          ],
+          "createdAt": "2026-04-06T20:41:15.924Z"
+        },
+        {
+          "type": "point",
+          "id": "1775508187208-kuwbx3k",
+          "name": "Snow white",
+          "domainId": "1774401392880-em285ec",
+          "dimensions": [
+            {
+              "dimensionId": "1774401345473-3oz1gjn",
+              "value": 0
+            },
+            {
+              "dimensionId": "1774401375433-f25jy4n",
+              "value": 0
+            },
+            {
+              "dimensionId": "1774401385342-u9sd2p6",
+              "value": 1
+            }
+          ],
+          "createdAt": "2026-04-06T20:43:07.208Z"
+        }
+      ],
+      "createdAt": "2026-03-25T01:16:32.880Z"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "1773702840517-tb3khl0",
+      "name": "Human Being",
+      "labelRefs": [
+        {
+          "domainId": "1773703070507-df6oo23",
+          "labelId": "1773703125056-3lnuqkd"
+        },
+        {
+          "domainId": "1773703070507-df6oo23",
+          "labelId": "1773703145301-oo0gcj4"
+        },
+        {
+          "domainId": "1773703070507-df6oo23",
+          "labelId": "1773708297540-mimbwzp"
+        },
+        {
+          "domainId": "1774387678006-l4o2dsn",
+          "labelId": "1774400850789-nrjmatn"
+        }
+      ],
+      "createdAt": "2026-03-16T23:14:00.517Z"
+    },
+    {
+      "id": "1774387642195-c4v9dmw",
+      "name": "Lamb",
+      "labelRefs": [
+        {
+          "domainId": "1774386652846-n186tnp",
+          "labelId": "1774387635202-gcc74qw"
+        },
+        {
+          "domainId": "1774387678006-l4o2dsn",
+          "labelId": "1774400850789-nrjmatn"
+        },
+        {
+          "domainId": "1774401392880-em285ec",
+          "labelId": "1775508075924-pt3bh63"
+        }
+      ],
+      "createdAt": "2026-03-24T21:27:22.196Z"
+    }
+  ],
+  "instances": [
+    {
+      "id": "1775497099088-ck1374a",
+      "conceptId": "1773702840517-tb3khl0",
+      "name": "Mary",
+      "pointRefs": [
+        {
+          "domainId": "1773703070507-df6oo23",
+          "pointId": "1773703180360-9acuw64"
+        }
+      ],
+      "createdAt": "2026-04-06T17:38:19.088Z"
+    },
+    {
+      "id": "1775497117197-lmadtl6",
+      "conceptId": "1774387642195-c4v9dmw",
+      "name": "lamb",
+      "pointRefs": [
+        {
+          "domainId": "1774401392880-em285ec",
+          "pointId": "1775508187208-kuwbx3k"
+        }
+      ],
+      "createdAt": "2026-04-06T17:38:37.197Z"
+    }
+  ],
+  "libraryConcepts": [
+    {
+      "id": "1774972895856-smvukqf",
+      "name": "Human Being",
+      "labelRefs": [],
+      "createdAt": "2026-03-31T16:01:35.856Z"
+    }
+  ],
+  "libraryDomains": [
     {
       "id": "1773703070507-df6oo23",
       "name": "Name Domain",
@@ -330,279 +715,5 @@
       ],
       "createdAt": "2026-03-25T01:16:32.880Z"
     }
-  ],
-  "selectedInstanceId": null,
-  "concepts": [
-    {
-      "id": "1773702840517-tb3khl0",
-      "name": "Human Being",
-      "labelRefs": [
-        {
-          "domainId": "1773702800918-xf53stz",
-          "labelId": "1773702827602-pxl8hv1"
-        },
-        {
-          "domainId": "1773703070507-df6oo23",
-          "labelId": "1773703125056-3lnuqkd"
-        },
-        {
-          "domainId": "1773703070507-df6oo23",
-          "labelId": "1773703145301-oo0gcj4"
-        },
-        {
-          "domainId": "1773703070507-df6oo23",
-          "labelId": "1773708297540-mimbwzp"
-        },
-        {
-          "domainId": "1774387678006-l4o2dsn",
-          "labelId": "1774400850789-nrjmatn"
-        }
-      ],
-      "createdAt": "2026-03-16T23:14:00.517Z"
-    },
-    {
-      "id": "1774387642195-c4v9dmw",
-      "name": "Lamb",
-      "labelRefs": [
-        {
-          "domainId": "1774386652846-n186tnp",
-          "labelId": "1774387635202-gcc74qw"
-        },
-        {
-          "domainId": "1774387678006-l4o2dsn",
-          "labelId": "1774400850789-nrjmatn"
-        }
-      ],
-      "createdAt": "2026-03-24T21:27:22.196Z"
-    }
-  ],
-  "instances": [],
-  "words": [
-    {
-      "id": "1774451147761-8lfvln8",
-      "name": "Follow",
-      "wordClass": "verb",
-      "conceptualStructure": {
-        "domains": [],
-        "concepts": [],
-        "instances": []
-      },
-      "createdAt": "2026-03-25T15:05:47.761Z"
-    },
-    {
-      "id": "1774500000000-hb01word",
-      "name": "Human Being",
-      "wordClass": "noun",
-      "conceptualStructure": {
-        "domains": [
-          {
-            "id": "1773702800918-xf53stz",
-            "name": "Age Domain",
-            "dimensions": [
-              {
-                "id": "1773702791708-4si6h81",
-                "name": "Years Old",
-                "range": [0, "Infinity"]
-              }
-            ],
-            "labels": [
-              {
-                "type": "region",
-                "id": "1773702827602-pxl8hv1",
-                "name": "Human Life Span",
-                "domainId": "1773702800918-xf53stz",
-                "dimensions": [
-                  {
-                    "dimensionId": "1773702791708-4si6h81",
-                    "range": [0, 125]
-                  }
-                ],
-                "createdAt": "2026-03-16T23:13:47.602Z"
-              }
-            ],
-            "createdAt": "2026-03-16T23:13:20.918Z"
-          },
-          {
-            "id": "1773703070507-df6oo23",
-            "name": "Name Domain",
-            "dimensions": [
-              {
-                "id": "1773703055063-qlt739z",
-                "name": "Gender Association",
-                "range": [-1, 1]
-              }
-            ],
-            "labels": [
-              {
-                "type": "region",
-                "id": "1773703125056-3lnuqkd",
-                "name": "Male Name",
-                "domainId": "1773703070507-df6oo23",
-                "dimensions": [
-                  {
-                    "dimensionId": "1773703055063-qlt739z",
-                    "range": [0.4, 1]
-                  }
-                ],
-                "createdAt": "2026-03-16T23:18:45.056Z"
-              },
-              {
-                "type": "region",
-                "id": "1773703145301-oo0gcj4",
-                "name": "Female Name",
-                "domainId": "1773703070507-df6oo23",
-                "dimensions": [
-                  {
-                    "dimensionId": "1773703055063-qlt739z",
-                    "range": [-1, -0.4]
-                  }
-                ],
-                "createdAt": "2026-03-16T23:19:05.301Z"
-              },
-              {
-                "type": "region",
-                "id": "1773708297540-mimbwzp",
-                "name": "Neutral Name",
-                "domainId": "1773703070507-df6oo23",
-                "dimensions": [
-                  {
-                    "dimensionId": "1773703055063-qlt739z",
-                    "range": [-0.4, 0.4]
-                  }
-                ],
-                "createdAt": "2026-03-17T00:44:57.540Z"
-              }
-            ],
-            "createdAt": "2026-03-16T23:17:50.507Z"
-          },
-          {
-            "id": "1774386652846-n186tnp",
-            "name": "Size Domain",
-            "dimensions": [
-              {
-                "id": "1774386634927-dp16041",
-                "name": "Height (m)",
-                "range": [0, "Infinity"]
-              },
-              {
-                "id": "1774386641137-yk8a585",
-                "name": "Width (m)",
-                "range": [0, "Infinity"]
-              },
-              {
-                "id": "1774386647476-2i0vov2",
-                "name": "Length (m)",
-                "range": [0, "Infinity"]
-              }
-            ],
-            "labels": [
-              {
-                "type": "region",
-                "id": "1774468227388-27svk9m",
-                "name": "Human Size",
-                "domainId": "1774386652846-n186tnp",
-                "dimensions": [
-                  {
-                    "dimensionId": "1774386634927-dp16041",
-                    "range": [1.5, 2.5]
-                  },
-                  {
-                    "dimensionId": "1774386641137-yk8a585",
-                    "range": [0.4, 1]
-                  },
-                  {
-                    "dimensionId": "1774386647476-2i0vov2",
-                    "range": [0.5, 1]
-                  }
-                ],
-                "createdAt": "2026-03-25T19:50:27.388Z"
-              }
-            ],
-            "createdAt": "2026-03-24T21:10:52.846Z"
-          },
-          {
-            "id": "1774387678006-l4o2dsn",
-            "name": "Spatial Domain",
-            "dimensions": [
-              {
-                "id": "1774387656631-volnhb6",
-                "name": "X",
-                "range": ["-Infinity", "Infinity"]
-              },
-              {
-                "id": "1774387660206-yxnpp0q",
-                "name": "Y",
-                "range": ["-Infinity", "Infinity"]
-              },
-              {
-                "id": "1774387667851-3hofwqk",
-                "name": "Z",
-                "range": ["-Infinity", "Infinity"]
-              }
-            ],
-            "labels": [
-              {
-                "type": "region",
-                "id": "1774400850789-nrjmatn",
-                "name": "Anywhere",
-                "domainId": "1774387678006-l4o2dsn",
-                "dimensions": [
-                  {
-                    "dimensionId": "1774387656631-volnhb6",
-                    "range": ["-Infinity", "Infinity"]
-                  },
-                  {
-                    "dimensionId": "1774387660206-yxnpp0q",
-                    "range": ["-Infinity", "Infinity"]
-                  },
-                  {
-                    "dimensionId": "1774387667851-3hofwqk",
-                    "range": ["-Infinity", "Infinity"]
-                  }
-                ],
-                "createdAt": "2026-03-25T01:07:30.789Z"
-              }
-            ],
-            "createdAt": "2026-03-24T21:27:58.006Z"
-          }
-        ],
-        "concepts": [
-          {
-            "id": "1773702840517-tb3khl0",
-            "name": "Human Being",
-            "labelRefs": [
-              {
-                "domainId": "1773702800918-xf53stz",
-                "labelId": "1773702827602-pxl8hv1"
-              },
-              {
-                "domainId": "1773703070507-df6oo23",
-                "labelId": "1773703125056-3lnuqkd"
-              },
-              {
-                "domainId": "1773703070507-df6oo23",
-                "labelId": "1773703145301-oo0gcj4"
-              },
-              {
-                "domainId": "1773703070507-df6oo23",
-                "labelId": "1773708297540-mimbwzp"
-              },
-              {
-                "domainId": "1774386652846-n186tnp",
-                "labelId": "1774468227388-27svk9m"
-              },
-              {
-                "domainId": "1774387678006-l4o2dsn",
-                "labelId": "1774400850789-nrjmatn"
-              }
-            ],
-            "createdAt": "2026-03-16T23:14:00.517Z"
-          }
-        ],
-        "instances": []
-      },
-      "createdAt": "2026-03-29T00:00:00.000Z"
-    }
-  ],
-  "hasRestoredState": true
+  ]
 }
