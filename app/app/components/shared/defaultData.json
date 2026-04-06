@@ -324,10 +324,6 @@
         {
           "domainId": "1773703070507-df6oo23",
           "labelId": "1773708297540-mimbwzp"
-        },
-        {
-          "domainId": "1774387678006-l4o2dsn",
-          "labelId": "1774400850789-nrjmatn"
         }
       ],
       "createdAt": "2026-03-16T23:14:00.517Z"
@@ -336,18 +332,6 @@
       "id": "1774387642195-c4v9dmw",
       "name": "Lamb",
       "labelRefs": [
-        {
-          "domainId": "1774386652846-n186tnp",
-          "labelId": "1774387635202-gcc74qw"
-        },
-        {
-          "domainId": "1774387678006-l4o2dsn",
-          "labelId": "1774400850789-nrjmatn"
-        },
-        {
-          "domainId": "1774401392880-em285ec",
-          "labelId": "1775508075924-pt3bh63"
-        },
         {
           "domainId": "1774401392880-em285ec",
           "labelId": "1775517837527-i48ueko"
