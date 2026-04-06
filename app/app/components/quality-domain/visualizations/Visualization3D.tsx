@@ -111,6 +111,7 @@ function Visualization3D({ domain }: Visualization3DProps) {
           transparent
           opacity={0.1}
           side={THREE.DoubleSide}
+          depthWrite={false}
         />
       </mesh>
 
