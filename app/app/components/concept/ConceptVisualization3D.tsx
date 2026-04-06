@@ -99,10 +99,18 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         const worldPosition = calculatePointPosition(point, domain, domainPos, scale, getPointValue)
         
         if (worldPosition) {
+          // Find the domain label that matches this point to check if it already has a name
+          const domainLabel = domain.labels.find(l => l.id === point.id)
+          const domainLabelName = domainLabel?.name
+          
+          // Only include point name if it's different from the domain label name
+          // This prevents duplicate labels when instance point matches domain label
+          const shouldShowLabel = !domainLabelName || domainLabelName !== point.name
+          
           pointPositions.push({
             pointId: point.id,
             domainName: domain.name,
-            pointName: point.name,
+            pointName: shouldShowLabel ? point.name : '',
             position: worldPosition
           })
         }
@@ -316,15 +324,17 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
                 />
               </mesh>
 
-              {/* Point label */}
-              <LabelBillboard
-                position={[position.x, position.y + 1, position.z]}
-                text={pointName}
-                fontSize={0.6}
-                color="#2563eb"
-                outlineWidth={0.05}
-                fillOpacity={isSelected ? 1.0 : 0.7}
-              />
+              {/* Point label - only show if pointName is not empty */}
+              {pointName && (
+                <LabelBillboard
+                  position={[position.x, position.y + 1, position.z]}
+                  text={pointName}
+                  fontSize={0.6}
+                  color="#2563eb"
+                  outlineWidth={0.05}
+                  fillOpacity={isSelected ? 1.0 : 0.7}
+                />
+              )}
             </group>
           ))}
 
