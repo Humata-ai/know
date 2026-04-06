@@ -31,7 +31,7 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   useEffect(() => {
     if (isOpen && domain) {
       if (editingLabel) {
-        setName(editingLabel.name)
+        setName(editingLabel.name || '')
         setLabelType(editingLabel.type)
 
         if (editingLabel.type === 'region') {
@@ -92,10 +92,6 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   const validate = (): boolean => {
     const newErrors: string[] = []
 
-    if (!name.trim()) {
-      newErrors.push('Label name is required')
-    }
-
     if (!labelType) {
       newErrors.push('Please select a label type')
     }
@@ -139,10 +135,6 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   }
 
   const handleGenerate = async () => {
-    if (!name.trim()) {
-      setErrors(['Please enter a label name before generating'])
-      return
-    }
     if (!labelType || !domain) return
 
     setIsGenerating(true)
@@ -194,7 +186,7 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
       ? {
           type: 'region',
           id: editingLabel?.id || generateId(),
-          name,
+          name: name.trim() || undefined,
           domainId: domain.id,
           dimensions: regionDimensions,
           createdAt: editingLabel?.createdAt || new Date(),
@@ -202,7 +194,7 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
       : {
           type: 'point',
           id: editingLabel?.id || generateId(),
-          name,
+          name: name.trim() || undefined,
           domainId: domain.id,
           dimensions: pointDimensions,
           createdAt: editingLabel?.createdAt || new Date(),

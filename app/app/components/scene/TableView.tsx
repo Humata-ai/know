@@ -74,7 +74,7 @@ export default function TableView({ domain }: TableViewProps) {
                       className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                     >
                       <td className="px-4 py-3 border-b border-gray-200 font-medium">
-                        {label.name}
+                        {label.name || '(unnamed)'}
                       </td>
                       <td className="px-4 py-3 border-b border-gray-200">
                         <span className={`px-2 py-1 text-xs rounded ${

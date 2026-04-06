@@ -49,7 +49,7 @@ export default function DictionaryWordDetailView({ wordId }: { wordId: string })
       {linkedLabel && (
         <div>
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Label</h4>
-          <p className="text-sm text-gray-700">{linkedLabel.label.name}</p>
+          <p className="text-sm text-gray-700">{linkedLabel.label.name || '(unnamed)'}</p>
           <p className="text-xs text-gray-400 mt-0.5">
             in {linkedLabel.domain.name}
           </p>

@@ -38,7 +38,7 @@ export default function PropertiesView() {
         return (
           <LibraryListItem
             key={label.id}
-            title={label.name}
+            title={label.name || '(unnamed)'}
             subtitle={subtitle}
             onClick={() => router.push(`/library/properties/${encodeURIComponent(label.id)}`)}
           />

@@ -149,7 +149,7 @@ export default function ConceptCard({ concept, onEdit, isSelected }: ConceptCard
             <div className={`mt-2 text-xs ${isSelected ? 'text-blue-600' : 'text-gray-600'}`}>
               {labels.map((label, index) => (
                 <span key={label.id}>
-                  {label.name}
+                  {label.name || '(unnamed)'}
                   {index < labels.length - 1 ? ', ' : ''}
                 </span>
               ))}

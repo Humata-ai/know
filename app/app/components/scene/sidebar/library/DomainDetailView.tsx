@@ -59,7 +59,7 @@ export default function DomainDetailView({ domainId }: { domainId: string }) {
           <div className="space-y-1">
             {domain.labels.map((label) => (
               <div key={label.id} className="text-sm text-gray-700">
-                {label.name}
+                {label.name || '(unnamed)'}
               </div>
             ))}
           </div>

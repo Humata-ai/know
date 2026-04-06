@@ -70,7 +70,7 @@ export default function LabelModal({
 
           <div>
             <label htmlFor="label-name" className="block text-sm font-medium mb-1">
-              Label name
+              Label name <span className="text-gray-500 text-xs">(optional)</span>
             </label>
             <input
               id="label-name"
@@ -79,7 +79,6 @@ export default function LabelModal({
               onChange={(e) => setName(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="e.g., Red, Heavy, Bright"
-              required
             />
           </div>
 

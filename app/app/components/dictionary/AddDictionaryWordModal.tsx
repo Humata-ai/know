@@ -37,7 +37,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
       domainId: domain.id,
       domainName: domain.name,
       labelId: label.id,
-      labelName: label.name,
+      labelName: label.name || '(unnamed)',
     }))
   )
 
@@ -198,7 +198,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                                   : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
                               }`}
                             >
-                              {label.name}
+                              {label.name || '(unnamed)'}
                             </button>
                           )
                         })}

@@ -26,7 +26,7 @@ export const PointDimensionValueSchema = z.object({
 
 const QualityDomainLabelBaseSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().optional(),
   domainId: z.string(),
   createdAt: z.date(),
 })

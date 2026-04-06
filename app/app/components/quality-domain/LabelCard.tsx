@@ -113,7 +113,7 @@ export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCa
         <>
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
-              <h3 className="font-medium text-sm">{label.name}</h3>
+              {label.name && <h3 className="font-medium text-sm">{label.name}</h3>}
               <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-700">
                 {isRegion(label) ? 'Region' : 'Point'}
               </span>

@@ -191,7 +191,7 @@ export default function ConceptModal({
                                   onChange={() => toggleLabel(domain.id, label.id)}
                                   className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                                 />
-                                <span className="text-sm">{label.name}</span>
+                                <span className="text-sm">{label.name || '(unnamed)'}</span>
                               </label>
                             ))
                           )}

@@ -73,15 +73,17 @@ function LabelVisualization1D({
         </mesh>
       )}
 
-      <Text
-        position={labelPosition}
-        fontSize={0.5}
-        color="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {label.name}
-      </Text>
+      {label.name && (
+        <Text
+          position={labelPosition}
+          fontSize={0.5}
+          color="#000000"
+          anchorX="center"
+          anchorY="middle"
+        >
+          {label.name}
+        </Text>
+      )}
     </group>
   )
 }

@@ -135,12 +135,14 @@ function LabelVisualization3D({
         {...cursorHandlers}
       />
 
-      <LabelBillboard
-        position={labelPosition}
-        text={label.name}
-        fontSize={1.5}
-        color={color}
-      />
+      {label.name && (
+        <LabelBillboard
+          position={labelPosition}
+          text={label.name}
+          fontSize={1.5}
+          color={color}
+        />
+      )}
     </>
   )
 }

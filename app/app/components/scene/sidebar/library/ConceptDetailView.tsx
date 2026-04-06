@@ -39,7 +39,7 @@ export default function ConceptDetailView({ conceptId, onDelete }: ConceptDetail
               
               return (
                 <div key={index} className="text-sm text-gray-700 bg-gray-50 p-2 rounded border border-gray-200">
-                  <div className="font-medium">{label.name}</div>
+                  <div className="font-medium">{label.name || '(unnamed)'}</div>
                   <div className="text-xs text-gray-500 mt-0.5">in {domain.name}</div>
                 </div>
               )
