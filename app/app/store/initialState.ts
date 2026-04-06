@@ -183,26 +183,16 @@ const jsonData: JsonState = defaultDataJson as unknown as JsonState
  * 
  * Loads default data from JSON and converts it to the proper runtime types.
  */
-const parsedDomains = parseDomains(jsonData.domains)
-const parsedConcepts = parseConcepts(jsonData.concepts)
-const parsedInstances = parseInstances(jsonData.instances || [])
-
-console.log('=== INITIAL STATE DEBUG ===')
-console.log('Parsed domains:', JSON.stringify(parsedDomains, null, 2))
-console.log('Parsed concepts:', JSON.stringify(parsedConcepts, null, 2))
-console.log('Parsed instances:', JSON.stringify(parsedInstances, null, 2))
-console.log('=== END INITIAL STATE DEBUG ===')
-
 export const initialState: AppState = {
   scene: {
-    domains: parsedDomains,
+    domains: parseDomains(jsonData.domains),
     selectedDomainId: null,
     selectedLabelId: null,
     selectedLabelDomainId: null,
     selectedConceptId: null,
     selectedInstanceId: null,
-    concepts: parsedConcepts,
-    instances: parsedInstances,
+    concepts: parseConcepts(jsonData.concepts),
+    instances: parseInstances(jsonData.instances || []),
     hasRestoredState: false,
   },
   library: {
