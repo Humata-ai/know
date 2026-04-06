@@ -1,5 +1,5 @@
 import { useMemo, memo } from 'react'
-import { Text, Billboard, Line } from '@react-three/drei'
+import { Line } from '@react-three/drei'
 import { Vector3 } from 'three'
 import type { Concept } from '../shared/types'
 import type { ThreeEvent } from '@react-three/fiber'
@@ -8,6 +8,7 @@ import { useCursorOnHover } from '@/app/hooks/useCursorOnHover'
 import { normalizeDimensionValue, normalizeToRange } from '@/app/utils/positionCalculations'
 import { calculateLabelPosition, calculateConceptLabelPositions, calculateCentroid } from '@/app/utils/labelPositionCalculations'
 import { areLabelRefsEqual } from '@/app/utils/equality'
+import LabelBillboard from '../shared/LabelBillboard'
 import { VISUALIZATION_SIZE } from '../quality-domain/visualizations/constants'
 import { useConceptualSpace } from '../scene/ConceptualSpaceContext'
 
@@ -245,32 +246,15 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
   return (
     <group>
       {/* Concept label billboard */}
-      <Billboard
+      <LabelBillboard
         position={conceptPosition}
+        text={concept.name}
+        fontSize={1.8}
+        color={isSelected ? '#3b82f6' : '#7c3aed'}
+        fontWeight="bold"
         onClick={handleClick}
         {...cursorHandlers}
-      >
-        {/* Background rectangle */}
-        <mesh position={[0, 0, -0.01]}>
-          <planeGeometry args={[concept.name.length * 1.2, 2.2]} />
-          <meshBasicMaterial color={isSelected ? '#dbeafe' : '#f3e8ff'} opacity={0.95} transparent />
-        </mesh>
-
-        {/* Concept name */}
-        <Text
-          position={[0, 0, 0]}
-          fontSize={1.8}
-          color={isSelected ? '#3b82f6' : '#7c3aed'}
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.1}
-          outlineColor="#000000"
-          fillOpacity={1}
-          fontWeight="bold"
-        >
-          {concept.name}
-        </Text>
-      </Billboard>
+      />
 
       {/* Connection lines from concept to each label */}
       {labelPositions.map(({ labelId, position }) => (
@@ -291,39 +275,18 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       {allInstancesData.map(({ instance, pointPositions, instanceBillboardPosition, isSelected }) => (
         <group key={instance.id}>
           {/* Instance name billboard - positioned above centroid of its points */}
-          <Billboard
+          <LabelBillboard
             position={instanceBillboardPosition}
+            text={instance.name}
+            fontSize={1.8}
+            color={isSelected ? "#3b82f6" : "#60a5fa"}
+            fontWeight={isSelected ? "bold" : "normal"}
             onClick={(e: ThreeEvent<MouseEvent>) => {
               e.stopPropagation()
               // Selection is scene-only; no-op in library mode
             }}
             {...cursorHandlers}
-          >
-            {/* Background rectangle */}
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[instance.name.length * 1.2, 2.2]} />
-              <meshBasicMaterial
-                color={isSelected ? "#dbeafe" : "#eff6ff"}
-                opacity={isSelected ? 0.95 : 0.85}
-                transparent
-              />
-            </mesh>
-
-            {/* Instance name */}
-            <Text
-              position={[0, 0, 0]}
-              fontSize={1.8}
-              color={isSelected ? "#3b82f6" : "#60a5fa"}
-              anchorX="center"
-              anchorY="middle"
-              outlineWidth={0.1}
-              outlineColor="#000000"
-              fillOpacity={1}
-              fontWeight={isSelected ? "bold" : "normal"}
-            >
-              {instance.name}
-            </Text>
-          </Billboard>
+          />
 
           {/* Connection lines from instance billboard to each point */}
           {pointPositions.map(({ pointId, position }) => (
@@ -354,19 +317,14 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
               </mesh>
 
               {/* Point label */}
-              <Billboard position={[position.x, position.y + 1, position.z]}>
-                <Text
-                  fontSize={0.6}
-                  color="#2563eb"
-                  anchorX="center"
-                  anchorY="middle"
-                  outlineWidth={0.05}
-                  outlineColor="#000000"
-                  fillOpacity={isSelected ? 1.0 : 0.7}
-                >
-                  {pointName}
-                </Text>
-              </Billboard>
+              <LabelBillboard
+                position={[position.x, position.y + 1, position.z]}
+                text={pointName}
+                fontSize={0.6}
+                color="#2563eb"
+                outlineWidth={0.05}
+                fillOpacity={isSelected ? 1.0 : 0.7}
+              />
             </group>
           ))}
 

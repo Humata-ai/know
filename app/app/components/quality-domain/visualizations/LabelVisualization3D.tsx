@@ -1,5 +1,4 @@
 import { useMemo, memo, useRef, useLayoutEffect } from 'react'
-import { Text, Billboard } from '@react-three/drei'
 import * as THREE from 'three'
 import type { QualityDomainLabel, QualityDomain } from '../../shared/types'
 import { isRegion, isPoint } from '../../shared/types'
@@ -7,6 +6,7 @@ import { useQualityDomain } from '@/app/store'
 import type { ThreeEvent } from '@react-three/fiber'
 import { useCursorOnHover } from '@/app/hooks/useCursorOnHover'
 import { areLabelDimensionsEqual, areDimensionsEqual } from '@/app/utils/equality'
+import LabelBillboard from '../../shared/LabelBillboard'
 
 interface LabelVisualization3DProps {
   label: QualityDomainLabel
@@ -135,25 +135,12 @@ function LabelVisualization3D({
         {...cursorHandlers}
       />
 
-      <Billboard position={labelPosition}>
-        <mesh position={[0, 0, -0.01]}>
-          <planeGeometry args={[label.name.length * 0.8, 1.8]} />
-          <meshBasicMaterial color="#ffffff" opacity={0.9} transparent={false} />
-        </mesh>
-
-        <Text
-          position={[0, 0, 0]}
-          fontSize={1.5}
-          color={color}
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.1}
-          outlineColor="#000000"
-          fillOpacity={1}
-        >
-          {label.name}
-        </Text>
-      </Billboard>
+      <LabelBillboard
+        position={labelPosition}
+        text={label.name}
+        fontSize={1.5}
+        color={color}
+      />
     </>
   )
 }
