@@ -54,13 +54,28 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
   // not the global store's domains
   const domainPositions = useCircularLayoutMap(domains)
 
-  // Calculate instance point positions for all instances
+  /**
+   * Calculate positions and data for all instances.
+   * 
+   * For each instance:
+   * 1. Calculate world positions for all its points
+   * 2. Calculate the centroid of those points
+   * 3. Position the instance billboard above the centroid
+   * 
+   * This ensures instances are positioned near their actual data points
+   * rather than overlapping at the world origin.
+   */
   const allInstancesData = useMemo(() => {
     return instances.map(instance => {
       const points = getInstancePoints(instance.id)
-      const positions: Array<{ pointId: string; domainName: string; pointName: string; position: Vector3 }> = []
+      const pointPositions: Array<{ 
+        pointId: string
+        domainName: string
+        pointName: string
+        position: Vector3 
+      }> = []
 
-      // Helper to get point value
+      // Helper to extract numeric value from point dimension
       const getPointValue = (
         pointDim: typeof points[0]['dimensions'][0] | undefined
       ): number | undefined => {
@@ -68,6 +83,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         return pointDim.value
       }
 
+      // Calculate world position for each point
       points.forEach((point) => {
         const domain = domains.find((d) => d.id === point.domainId)
         if (!domain) return
@@ -75,83 +91,109 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         // Skip 4D+ points (can't visualize in 3D)
         if (domain.dimensions.length >= 4) return
 
-        // Get domain position in world space
         const domainPos = domainPositions.get(domain.id)
         if (!domainPos) return
 
-        // Use the same scale that the domain is rendered at
         const scale = domainScale
-
-        let worldPosition: Vector3
-
-        if (domain.dimensions.length === 1) {
-          // 1D points: positioned on X-axis at Y=0.3, Z=0
-          const dim = domain.dimensions[0]
-          const pointDim = point.dimensions.find((d) => d.dimensionId === dim.id)
-          const value = getPointValue(pointDim)
-          if (value === undefined) return
-
-          const pos = normalizeDimensionValue(value, dim.range, VISUALIZATION_SIZE.SIZE_1D)
-
-          worldPosition = new Vector3(
-            domainPos[0] + pos * scale,
-            domainPos[1] + 0.3 * scale,
-            domainPos[2]
-          )
-        } else if (domain.dimensions.length === 2) {
-          // 2D points: positioned on XY plane (vertical)
-          const dimX = domain.dimensions[0]
-          const dimY = domain.dimensions[1]
-
-          const pointDimX = point.dimensions.find((d) => d.dimensionId === dimX.id)
-          const pointDimY = point.dimensions.find((d) => d.dimensionId === dimY.id)
-
-          const valueX = getPointValue(pointDimX)
-          const valueY = getPointValue(pointDimY)
-          if (valueX === undefined || valueY === undefined) return
-
-          const posX = normalizeDimensionValue(valueX, dimX.range, VISUALIZATION_SIZE.SIZE_2D)
-          const posY = normalizeDimensionValue(valueY, dimY.range, VISUALIZATION_SIZE.SIZE_2D)
-
-          worldPosition = new Vector3(
-            domainPos[0] + posX * scale,
-            domainPos[1] + posY * scale,
-            domainPos[2]
-          )
-        } else {
-          // 3D points: positioned in 3D space (using smaller size for 3D)
-          const values = domain.dimensions.map((dim) => {
-            const pointDim = point.dimensions.find((d) => d.dimensionId === dim.id)
-            const value = getPointValue(pointDim)
-            if (value === undefined) return null
-
-            return normalizeDimensionValue(value, dim.range, 8) // 3D uses size of 8
+        const worldPosition = calculatePointPosition(point, domain, domainPos, scale, getPointValue)
+        
+        if (worldPosition) {
+          pointPositions.push({
+            pointId: point.id,
+            domainName: domain.name,
+            pointName: point.name,
+            position: worldPosition
           })
-
-          if (values.some(v => v === null)) return
-
-          worldPosition = new Vector3(
-            domainPos[0] + values[0]! * scale,
-            domainPos[1] + values[1]! * scale,
-            domainPos[2] + values[2]! * scale
-          )
         }
-
-        positions.push({
-          pointId: point.id,
-          domainName: domain.name,
-          pointName: point.name,
-          position: worldPosition
-        })
       })
+
+      // Calculate instance billboard position as centroid of points + vertical offset
+      const pointOnlyPositions = pointPositions.map(p => p.position)
+      let instanceBillboardPosition = calculateCentroid(pointOnlyPositions)
+      
+      if (instanceBillboardPosition) {
+        // Position instance label 6 units above its points' centroid
+        instanceBillboardPosition.y += 6
+      } else {
+        // Fallback: if no points, position at origin (shouldn't happen normally)
+        instanceBillboardPosition = new Vector3(0, 10, 0)
+      }
 
       return {
         instance,
-        positions,
+        pointPositions,
+        instanceBillboardPosition,
         isSelected: selectedInstanceId === instance.id
       }
-    }).filter(data => data.positions.length > 0)
+    }).filter(data => data.pointPositions.length > 0)
   }, [instances, getInstancePoints, domains, selectedInstanceId, domainPositions, domainScale])
+
+  /**
+   * Calculate world position for a single point in a domain.
+   * Handles 1D, 2D, and 3D domains.
+   */
+  function calculatePointPosition(
+    point: ReturnType<typeof getInstancePoints>[0],
+    domain: ReturnType<typeof domains.find>,
+    domainPos: readonly [number, number, number],
+    scale: number,
+    getPointValue: (pointDim: any) => number | undefined
+  ): Vector3 | null {
+    if (!domain) return null
+
+    if (domain.dimensions.length === 1) {
+      // 1D: position on X-axis at Y=0.3, Z=0
+      const dim = domain.dimensions[0]
+      const pointDim = point.dimensions.find((d) => d.dimensionId === dim.id)
+      const value = getPointValue(pointDim)
+      if (value === undefined) return null
+
+      const pos = normalizeDimensionValue(value, dim.range, VISUALIZATION_SIZE.SIZE_1D)
+
+      return new Vector3(
+        domainPos[0] + pos * scale,
+        domainPos[1] + 0.3 * scale,
+        domainPos[2]
+      )
+    } else if (domain.dimensions.length === 2) {
+      // 2D: position on XY plane (vertical)
+      const dimX = domain.dimensions[0]
+      const dimY = domain.dimensions[1]
+
+      const pointDimX = point.dimensions.find((d) => d.dimensionId === dimX.id)
+      const pointDimY = point.dimensions.find((d) => d.dimensionId === dimY.id)
+
+      const valueX = getPointValue(pointDimX)
+      const valueY = getPointValue(pointDimY)
+      if (valueX === undefined || valueY === undefined) return null
+
+      const posX = normalizeDimensionValue(valueX, dimX.range, VISUALIZATION_SIZE.SIZE_2D)
+      const posY = normalizeDimensionValue(valueY, dimY.range, VISUALIZATION_SIZE.SIZE_2D)
+
+      return new Vector3(
+        domainPos[0] + posX * scale,
+        domainPos[1] + posY * scale,
+        domainPos[2]
+      )
+    } else {
+      // 3D: position in 3D space
+      const values = domain.dimensions.map((dim) => {
+        const pointDim = point.dimensions.find((d) => d.dimensionId === dim.id)
+        const value = getPointValue(pointDim)
+        if (value === undefined) return null
+
+        return normalizeDimensionValue(value, dim.range, 8) // 3D uses size of 8
+      })
+
+      if (values.some(v => v === null)) return null
+
+      return new Vector3(
+        domainPos[0] + values[0]! * scale,
+        domainPos[1] + values[1]! * scale,
+        domainPos[2] + values[2]! * scale
+      )
+    }
+  }
 
   // Calculate label world positions and centroid
   const { labelPositions, conceptPosition } = useMemo(() => {
@@ -246,11 +288,11 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       ))}
 
       {/* All instances visualization */}
-      {allInstancesData.map(({ instance, positions, isSelected }, idx) => (
+      {allInstancesData.map(({ instance, pointPositions, instanceBillboardPosition, isSelected }) => (
         <group key={instance.id}>
-          {/* Instance name billboard */}
+          {/* Instance name billboard - positioned above centroid of its points */}
           <Billboard
-            position={[0, 10 + idx * 2, 0]}
+            position={instanceBillboardPosition}
             onClick={(e: ThreeEvent<MouseEvent>) => {
               e.stopPropagation()
               // Selection is scene-only; no-op in library mode
@@ -283,12 +325,12 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
             </Text>
           </Billboard>
 
-          {/* Connection lines from instance to each point */}
-          {positions.map(({ pointId, position }) => (
+          {/* Connection lines from instance billboard to each point */}
+          {pointPositions.map(({ pointId, position }) => (
             <Line
               key={`instance-${instance.id}-${pointId}`}
               points={[
-                [0, 10 + idx * 2, 0],
+                [instanceBillboardPosition.x, instanceBillboardPosition.y, instanceBillboardPosition.z],
                 [position.x, position.y, position.z],
               ]}
               color={isSelected ? '#3b82f6' : '#60a5fa'}
@@ -298,8 +340,8 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
             />
           ))}
 
-          {/* Point markers */}
-          {positions.map(({ pointId, domainName, pointName, position }) => (
+          {/* Point markers - spheres showing where instance points exist in domain space */}
+          {pointPositions.map(({ pointId, domainName, pointName, position }) => (
             <group key={pointId}>
               {/* Point sphere */}
               <mesh position={position}>
@@ -328,9 +370,9 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
             </group>
           ))}
 
-          {/* Connection lines between points */}
-          {positions.map(({ pointId: pointId1, position: pos1 }, i) =>
-            positions.slice(i + 1).map(({ pointId: pointId2, position: pos2 }) => (
+          {/* Connection lines between points of the same instance */}
+          {pointPositions.map(({ pointId: pointId1, position: pos1 }, i) =>
+            pointPositions.slice(i + 1).map(({ pointId: pointId2, position: pos2 }) => (
               <Line
                 key={`${pointId1}-${pointId2}`}
                 points={[
