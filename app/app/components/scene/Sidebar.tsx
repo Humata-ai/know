@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { getTabFromPathname } from './sidebar/types'
 import type { SidebarView } from './sidebar/types'
 import SidebarTabStrip from './sidebar/SidebarTabStrip'
@@ -17,6 +17,7 @@ interface SidebarProps {
 export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const activeView = getTabFromPathname(pathname)
   const [collapsed, setCollapsed] = useState(false)
   const { state } = useQualityDomain()
@@ -39,10 +40,19 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
     }
     setCollapsed(false)
     
-    // If navigating to inspect tab and we have saved text, go directly to the visualization
-    if (tab === 'inspect' && state.scene.inspectText) {
-      const encodedText = encodeURIComponent(state.scene.inspectText)
-      router.push(`/inspect?txt=${encodedText}`)
+    // If navigating to inspect tab, check for saved text from state or current URL
+    if (tab === 'inspect') {
+      // Priority: 1) state, 2) current URL param if we're already on inspect
+      const textFromState = state.scene.inspectText
+      const textFromUrl = activeView === 'inspect' ? searchParams.get('txt') : null
+      const textToUse = textFromState || textFromUrl
+      
+      if (textToUse) {
+        const encodedText = encodeURIComponent(textToUse)
+        router.push(`/inspect?txt=${encodedText}`)
+      } else {
+        router.push(`/${tab}`)
+      }
     } else {
       router.push(`/${tab}`)
     }
