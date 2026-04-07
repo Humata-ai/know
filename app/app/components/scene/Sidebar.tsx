@@ -41,6 +41,7 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
     
     // If navigating to inspect tab and we have saved text, go directly to the visualization
     if (tab === 'inspect' && state.scene.inspectText) {
+      alert('hi')
       const encodedText = encodeURIComponent(state.scene.inspectText)
       router.push(`/inspect?txt=${encodedText}`)
     } else {
