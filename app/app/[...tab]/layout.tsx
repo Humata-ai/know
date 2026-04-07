@@ -23,7 +23,7 @@ export default function TabLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-full h-screen">
       <StateRestoration />
-      <Sidebar />
+      <Sidebar hideInspectPanel={showInspectInput} />
       {showInspectInput ? (
         <InspectInput />
       ) : (

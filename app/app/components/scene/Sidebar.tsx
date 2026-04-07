@@ -9,12 +9,18 @@ import InspectPanel from './sidebar/InspectPanel'
 import LibraryPanel from './sidebar/LibraryPanel'
 import ImportExportPanel from './sidebar/ImportExportPanel'
 
-export default function Sidebar() {
+interface SidebarProps {
+  hideInspectPanel?: boolean
+}
+
+export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const activeView = getTabFromPathname(pathname)
   const [collapsed, setCollapsed] = useState(false)
-  const visibleView = collapsed ? null : activeView
+  
+  // Hide inspect panel when on input page, otherwise use collapsed state
+  const visibleView = collapsed ? null : (hideInspectPanel && activeView === 'inspect' ? null : activeView)
 
   const handleTabClick = (tab: SidebarView) => {
     if (activeView === tab) {
