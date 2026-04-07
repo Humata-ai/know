@@ -45,8 +45,7 @@ export default function InspectInput() {
             onKeyDown={handleKeyDown}
             placeholder="Enter text to inspect..."
             multiline
-            minRows={4}
-            maxRows={12}
+            rows={6}
             fullWidth
             sx={{
               '& .MuiOutlinedInput-root': {
