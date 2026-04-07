@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
-import EditIcon from '@mui/icons-material/Edit'
+import TextFieldsIcon from '@mui/icons-material/TextFields'
 import QualityDomainsSection from './QualityDomainsSection'
 import ConceptsSection from './ConceptsSection'
 import TimelinePanel from '../TimelinePanel'
@@ -31,13 +31,13 @@ export default function InspectPanel() {
           Inspect
         </Typography>
         <div className="flex items-center gap-2">
-          <Tooltip title="Edit">
+          <Tooltip title="Edit Text">
             <IconButton
               onClick={() => setIsEditTextModalOpen(true)}
               size="small"
               sx={{ color: 'text.secondary' }}
             >
-              <EditIcon fontSize="small" />
+              <TextFieldsIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           {subView === 'timeline' && (
