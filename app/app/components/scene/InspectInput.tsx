@@ -54,6 +54,10 @@ export default function InspectInput() {
                 paddingRight: { xs: '56px', sm: '64px' },
                 paddingBottom: { xs: '56px', sm: '16px' },
               },
+              '& textarea': {
+                height: '140px !important',
+                overflow: 'auto !important',
+              },
             }}
           />
           <IconButton
