@@ -23,11 +23,11 @@ export default function TabLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-full h-screen">
       <StateRestoration />
+      <Sidebar />
       {showInspectInput ? (
         <InspectInput />
       ) : (
         <>
-          <Sidebar />
           <Scene activeTab={activeTab} />
           {show4DTable && selectedDomain && <TableView domain={selectedDomain} />}
         </>
