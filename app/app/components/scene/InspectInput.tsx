@@ -12,15 +12,9 @@ const DEFAULT_TEXT = 'Mary had a little lamb, Its fleece was white as snow.'
 
 export default function InspectInput() {
   const { state, dispatch } = useQualityDomain()
-  const [text, setText] = useState(state.scene.inspectText || DEFAULT_TEXT)
+  // Initialize with state value or default, but don't update from state changes
+  const [text, setText] = useState(() => state.scene.inspectText || DEFAULT_TEXT)
   const router = useRouter()
-
-  // Update local text when state changes
-  useEffect(() => {
-    if (state.scene.inspectText) {
-      setText(state.scene.inspectText)
-    }
-  }, [state.scene.inspectText])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
