@@ -42,8 +42,8 @@ export default function InspectInput() {
   }
 
   return (
-    <div className="fixed inset-0 w-full h-screen flex items-center justify-center bg-gray-50" style={{ zIndex: 10 }}>
-      <div className="w-full max-w-2xl px-8">
+    <div className="fixed inset-0 w-full h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-8" style={{ zIndex: 10 }}>
+      <div className="w-full max-w-2xl">
         <div className="relative">
           <TextField
             value={text}
@@ -51,13 +51,15 @@ export default function InspectInput() {
             onKeyDown={handleKeyDown}
             placeholder="Enter text to inspect..."
             multiline
-            rows={6}
+            minRows={4}
+            maxRows={12}
             fullWidth
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: '16px',
-                fontSize: '1.125rem',
-                paddingRight: '64px',
+                borderRadius: { xs: '12px', sm: '16px' },
+                fontSize: { xs: '1rem', sm: '1.125rem' },
+                paddingRight: { xs: '56px', sm: '64px' },
+                paddingBottom: { xs: '56px', sm: '16px' },
               },
             }}
           />
@@ -65,19 +67,19 @@ export default function InspectInput() {
             onClick={handleSubmit}
             sx={{
               position: 'absolute',
-              bottom: 16,
-              right: 16,
+              bottom: { xs: 8, sm: 16 },
+              right: { xs: 8, sm: 16 },
               backgroundColor: 'primary.main',
               color: 'white',
               cursor: 'pointer',
               '&:hover': {
                 backgroundColor: 'primary.dark',
               },
-              width: 48,
-              height: 48,
+              width: { xs: 40, sm: 48 },
+              height: { xs: 40, sm: 48 },
             }}
           >
-            <NorthIcon />
+            <NorthIcon fontSize="small" />
           </IconButton>
         </div>
       </div>

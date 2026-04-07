@@ -45,27 +45,30 @@ export default function EditTextModal({ isOpen, onClose, currentText }: EditText
         onChange={(e) => setText(e.target.value)}
         placeholder="Enter text to inspect..."
         multiline
-        rows={6}
+        minRows={4}
+        maxRows={12}
         fullWidth
         sx={{
           mb: 3,
           '& .MuiOutlinedInput-root': {
-            fontSize: '1rem',
+            fontSize: { xs: '0.95rem', sm: '1rem' },
           },
         }}
       />
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-col sm:flex-row justify-end gap-2">
         <Button
           onClick={handleCancel}
           variant="outlined"
-          sx={{ textTransform: 'none' }}
+          fullWidth
+          sx={{ textTransform: 'none', display: { sm: 'inline-flex' } }}
         >
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
-          sx={{ textTransform: 'none' }}
+          fullWidth
+          sx={{ textTransform: 'none', display: { sm: 'inline-flex' } }}
         >
           Update
         </Button>
