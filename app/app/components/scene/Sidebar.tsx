@@ -41,7 +41,7 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
 
   return (
     <div className="fixed top-0 left-0 h-full z-30 flex">
-      <SidebarTabStrip activeTab={visibleView} onTabClick={handleTabClick} />
+      <SidebarTabStrip activeTab={activeView} onTabClick={handleTabClick} />
 
       {visibleView && (
         <div className="bg-white/95 backdrop-blur-sm shadow-xl h-full overflow-y-auto w-80 flex flex-col">
