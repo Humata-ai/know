@@ -37,7 +37,7 @@ export type SceneAction =
   | { type: 'DELETE_INSTANCE'; payload: string }
   
   // State restoration
-  | { type: 'RESTORE_SCENE_STATE'; payload: { domains: QualityDomain[]; concepts: Concept[]; instances: ConceptInstance[] } }
+  | { type: 'RESTORE_SCENE_STATE'; payload: { domains: QualityDomain[]; concepts: Concept[]; instances: ConceptInstance[]; inspectText?: string } }
   | { type: 'MARK_RESTORED' }
 
 /**

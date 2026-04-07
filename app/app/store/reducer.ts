@@ -189,6 +189,7 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
         domains: action.payload.domains,
         concepts: action.payload.concepts,
         instances: action.payload.instances || [],
+        inspectText: action.payload.inspectText || '',
         selectedDomainId: null,
         selectedLabelId: null,
         selectedLabelDomainId: null,

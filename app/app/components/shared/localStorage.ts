@@ -62,7 +62,7 @@ function parseActions(rawActions: JsonAction[]): Action[] {
 }
 
 // Deserialize with migration support
-export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[], actions: Action[] } {
+export function deserializeState(jsonString: string): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[], actions: Action[], inspectText: string } {
   const parsed = JSON.parse(jsonString) as unknown
   if (typeof parsed !== 'object' || parsed === null) {
     throw new Error('Invalid JSON structure')
@@ -78,6 +78,7 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
     const domains = parseDomains((scene.domains as any[]) || [], version)
     const concepts = parseConcepts((scene.concepts as any[]) || [], version)
     const instances = parseInstances((scene.instances as any[]) || [])
+    const inspectText = (scene.inspectText as string) || ''
     // Version 8+ has actions; older versions have none
     const actions = library?.actions
       ? parseActions(library.actions as JsonAction[])
@@ -94,7 +95,7 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
     const libraryDomains = library?.domains
       ? parseDomains(library.domains as any[], version)
       : parseDomains((scene.domains as any[]) || [], version)
-    return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains, actions }
+    return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains, actions, inspectText }
   }
 
   // Versions 1-3: flat structure (backwards compatible migration)
@@ -105,10 +106,11 @@ export function deserializeState(jsonString: string): { domains: QualityDomain[]
   const actions: Action[] = []
   const dictionaryWords: DictionaryWord[] = []
   const libraryConcepts: Concept[] = []
+  const inspectText = ''
   // For old versions, library domains mirror scene domains
   const libraryDomains = parseDomains((data.domains as any[]) || [], version)
 
-  return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains, actions }
+  return { domains, concepts, instances, dictionaryWords, libraryConcepts, libraryDomains, actions, inspectText }
 }
 
 export function saveToLocalStorage(state: AppState): void {
@@ -120,7 +122,7 @@ export function saveToLocalStorage(state: AppState): void {
   }
 }
 
-export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[], actions: Action[] } | null {
+export function loadFromLocalStorage(): { domains: QualityDomain[], concepts: Concept[], instances: ConceptInstance[], dictionaryWords: DictionaryWord[], libraryConcepts: Concept[], libraryDomains: QualityDomain[], actions: Action[], inspectText: string } | null {
   try {
     const serialized = localStorage.getItem(STORAGE_KEY)
     if (!serialized) return null

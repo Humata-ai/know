@@ -21,6 +21,7 @@ export function StateRestoration() {
         domains: savedState.domains,
         concepts: savedState.concepts,
         instances: savedState.instances,
+        inspectText: savedState.inspectText,
       } })
 
       // Restore library state (including dictionary words, library domains, concepts, and actions)
