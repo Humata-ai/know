@@ -3,7 +3,7 @@
 import { notFound } from 'next/navigation'
 import { use } from 'react'
 
-const VALID_TABS = ['scene', 'library', 'import-export'] as const
+const VALID_TABS = ['inspect', 'library', 'import-export'] as const
 const VALID_LIBRARY_SECTIONS = ['dictionary', 'concepts', 'actions', 'quality-domains', 'quality-dimensions', 'properties'] as const
 
 export default function TabPage({ params }: { params: Promise<{ tab: string[] }> }) {

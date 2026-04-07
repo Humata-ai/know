@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { getTabFromPathname } from './sidebar/types'
 import type { SidebarView } from './sidebar/types'
 import SidebarTabStrip from './sidebar/SidebarTabStrip'
-import ScenePanel from './sidebar/ScenePanel'
+import InspectPanel from './sidebar/InspectPanel'
 import LibraryPanel from './sidebar/LibraryPanel'
 import ImportExportPanel from './sidebar/ImportExportPanel'
 
@@ -39,7 +39,7 @@ export default function Sidebar() {
 
       {visibleView && (
         <div className="bg-white/95 backdrop-blur-sm shadow-xl h-full overflow-y-auto w-80 flex flex-col">
-          {activeView === 'scene' && <ScenePanel />}
+          {activeView === 'inspect' && <InspectPanel />}
           {activeView === 'library' && <LibraryPanel />}
           {activeView === 'import-export' && <ImportExportPanel />}
         </div>

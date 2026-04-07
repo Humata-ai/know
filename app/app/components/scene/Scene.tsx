@@ -14,18 +14,18 @@ import type { SidebarView } from './sidebar/types'
  * Determines which visualization mode the 3D viewer should be in
  * based on the active tab.
  */
-type VisualizationMode = 'scene' | 'library'
+type VisualizationMode = 'inspect' | 'library'
 
 function getVisualizationMode(activeTab: SidebarView | null): VisualizationMode {
   if (activeTab === 'library') return 'library'
-  return 'scene'
+  return 'inspect'
 }
 
 /**
- * Camera controls for the scene visualization mode.
+ * Camera controls for the inspect visualization mode.
  * Animates camera target based on selection state.
  */
-function SceneCameraControls() {
+function InspectCameraControls() {
   const { state, getConceptLabels, getInstancePoints } = useQualityDomain()
   const controlsRef = useRef<any>(null)
   const animatingRef = useRef(false)
@@ -293,7 +293,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
   const mode = getVisualizationMode(activeTab)
 
   // Select the conceptual space data based on the active tab.
-  // Scene tab: uses scene state from the store.
+  // Inspect tab: uses scene state from the store.
   // Library tab: only renders the specifically selected item's conceptual structure.
   const visualizationData = useMemo(() => {
     if (mode === 'library') {
@@ -350,7 +350,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
     }
   }, [mode, state.library.selectedItemId, state.library.selectedItemType, state.library.domains, state.library.concepts, state.scene.domains, state.scene.concepts, state.scene.instances, state.scene.selectedDomainId, state.scene.selectedConceptId, state.scene.selectedInstanceId])
 
-  const CameraControls = mode === 'library' ? LibraryCameraControls : SceneCameraControls
+  const CameraControls = mode === 'library' ? LibraryCameraControls : InspectCameraControls
 
   return (
     <div className="w-full h-screen">

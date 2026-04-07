@@ -12,13 +12,13 @@ export function getDictionaryWordName(
     const domain = domains.find((d) => d.id === word.labelRef!.domainId)
     if (domain) {
       const label = domain.labels.find((l) => l.id === word.labelRef!.labelId)
-      if (label) return label.name
+      if (label) return label.name ?? '(unknown label)'
     }
     return '(unknown label)'
   }
   if (word.conceptId) {
     const concept = concepts.find((c) => c.id === word.conceptId)
-    if (concept) return concept.name
+    if (concept) return concept.name ?? '(unknown concept)'
     return '(unknown concept)'
   }
   return '(unlinked)'

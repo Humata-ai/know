@@ -137,7 +137,7 @@ function LabelVisualization3D({
 
       {label.name && (
         <LabelBillboard
-          position={labelPosition}
+          position={[...labelPosition] as [number, number, number]}
           text={label.name}
           fontSize={1.5}
           color={color}

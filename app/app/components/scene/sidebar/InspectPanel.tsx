@@ -10,17 +10,17 @@ import ConceptsSection from './ConceptsSection'
 import TimelinePanel from '../TimelinePanel'
 import EventModal from '../EventModal'
 
-type SceneSubView = 'state' | 'timeline'
+type InspectSubView = 'state' | 'timeline'
 
-export default function ScenePanel() {
-  const [subView, setSubView] = useState<SceneSubView>('state')
+export default function InspectPanel() {
+  const [subView, setSubView] = useState<InspectSubView>('state')
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
 
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
         <Typography variant="subtitle1" fontWeight="bold">
-          Scene
+          Inspect
         </Typography>
         {subView === 'timeline' && (
           <Button

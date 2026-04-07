@@ -110,7 +110,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
           pointPositions.push({
             pointId: point.id,
             domainName: domain.name,
-            pointName: shouldShowLabel ? point.name : '',
+            pointName: shouldShowLabel ? (point.name ?? '') : '',
             position: worldPosition
           })
         }
