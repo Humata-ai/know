@@ -53,6 +53,12 @@ export const clearSelection = (): SceneAction => ({
   type: 'CLEAR_SELECTION',
 })
 
+// Inspect text action creators
+export const setInspectText = (text: string): SceneAction => ({
+  type: 'SET_INSPECT_TEXT',
+  payload: text,
+})
+
 // Label action creators
 export const addLabel = (domainId: string, label: QualityDomainLabel): SceneAction => ({
   type: 'ADD_LABEL',

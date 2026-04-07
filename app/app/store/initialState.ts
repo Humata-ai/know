@@ -194,6 +194,7 @@ export const initialState: AppState = {
     concepts: parseConcepts(jsonData.concepts),
     instances: parseInstances(jsonData.instances || []),
     hasRestoredState: false,
+    inspectText: '',
   },
   library: {
     dictionaryWords: [],

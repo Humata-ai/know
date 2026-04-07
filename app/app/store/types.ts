@@ -18,6 +18,9 @@ export type SceneAction =
   | { type: 'SELECT_INSTANCE'; payload: string | null }
   | { type: 'CLEAR_SELECTION' }
   
+  // Inspect text actions
+  | { type: 'SET_INSPECT_TEXT'; payload: string }
+  
   // Label actions
   | { type: 'ADD_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
   | { type: 'UPDATE_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
@@ -105,6 +108,7 @@ export interface SceneState {
   concepts: Concept[]
   instances: ConceptInstance[]
   hasRestoredState: boolean
+  inspectText: string
 }
 
 /**

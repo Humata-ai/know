@@ -1,22 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import NorthIcon from '@mui/icons-material/North'
+import { useQualityDomain } from '@/app/store'
+import { actions } from '@/app/store'
 
 const DEFAULT_TEXT = 'Mary had a little lamb, Its fleece was white as snow.'
 
 export default function InspectInput() {
-  const [text, setText] = useState(DEFAULT_TEXT)
+  const { state, dispatch } = useQualityDomain()
+  const [text, setText] = useState(state.scene.inspectText || DEFAULT_TEXT)
   const router = useRouter()
+
+  // Update local text when state changes
+  useEffect(() => {
+    if (state.scene.inspectText) {
+      setText(state.scene.inspectText)
+    }
+  }, [state.scene.inspectText])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
   }
 
   const handleSubmit = () => {
+    // Save text to state
+    dispatch(actions.setInspectText(text))
+    
     // Navigate to inspect page with query parameter
     const encodedText = encodeURIComponent(text)
     router.push(`/inspect?txt=${encodedText}`)

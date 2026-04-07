@@ -91,6 +91,13 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
         selectedInstanceId: null,
       }
 
+    // Inspect text actions
+    case 'SET_INSPECT_TEXT':
+      return {
+        ...state,
+        inspectText: action.payload,
+      }
+
     // Label actions
     case 'ADD_LABEL':
       return {

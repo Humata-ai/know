@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import Modal from '../common/Modal'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import { useQualityDomain } from '@/app/store'
+import { actions } from '@/app/store'
 
 interface EditTextModalProps {
   isOpen: boolean
@@ -15,6 +17,7 @@ interface EditTextModalProps {
 export default function EditTextModal({ isOpen, onClose, currentText }: EditTextModalProps) {
   const [text, setText] = useState(currentText)
   const router = useRouter()
+  const { dispatch } = useQualityDomain()
 
   // Update local state when currentText changes
   useEffect(() => {
@@ -22,6 +25,9 @@ export default function EditTextModal({ isOpen, onClose, currentText }: EditText
   }, [currentText])
 
   const handleSubmit = () => {
+    // Save text to state
+    dispatch(actions.setInspectText(text))
+    
     const encodedText = encodeURIComponent(text)
     router.push(`/inspect?txt=${encodedText}`)
     onClose()
