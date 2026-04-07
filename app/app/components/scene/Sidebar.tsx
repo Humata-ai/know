@@ -8,6 +8,7 @@ import SidebarTabStrip from './sidebar/SidebarTabStrip'
 import InspectPanel from './sidebar/InspectPanel'
 import LibraryPanel from './sidebar/LibraryPanel'
 import ImportExportPanel from './sidebar/ImportExportPanel'
+import { useQualityDomain } from '../../store'
 
 interface SidebarProps {
   hideInspectPanel?: boolean
@@ -18,6 +19,7 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
   const router = useRouter()
   const activeView = getTabFromPathname(pathname)
   const [collapsed, setCollapsed] = useState(false)
+  const { state } = useQualityDomain()
   
   // Hide inspect panel when on input page, otherwise use collapsed state
   const visibleView = collapsed ? null : (hideInspectPanel && activeView === 'inspect' ? null : activeView)
@@ -36,7 +38,14 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
       return
     }
     setCollapsed(false)
-    router.push(`/${tab}`)
+    
+    // If navigating to inspect tab and we have saved text, go directly to the visualization
+    if (tab === 'inspect' && state.scene.inspectText) {
+      const encodedText = encodeURIComponent(state.scene.inspectText)
+      router.push(`/inspect?txt=${encodedText}`)
+    } else {
+      router.push(`/${tab}`)
+    }
   }
 
   return (
