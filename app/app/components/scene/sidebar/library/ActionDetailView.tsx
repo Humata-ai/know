@@ -20,7 +20,6 @@ export default function ActionDetailView({ actionId }: { actionId: string }) {
   let verbTypeLabel = ''
   if (action.verbType === 'manner') verbTypeLabel = 'Manner Verb'
   else if (action.verbType === 'result') verbTypeLabel = 'Result Verb'
-  else if (action.verbType === 'path') verbTypeLabel = 'Path Verb'
 
   const handleDelete = () => {
     deleteLibraryAction(action.id)

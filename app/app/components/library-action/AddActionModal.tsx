@@ -66,35 +66,22 @@ export default function AddActionModal({ isOpen, onClose }: AddActionModalProps)
             <button
               type="button"
               onClick={() => setVerbType('manner')}
-              className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                verbType === 'manner'
+              className={`px-3 py-1.5 rounded border text-sm transition-colors ${verbType === 'manner'
                   ? 'bg-purple-600 text-white border-purple-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
+                }`}
             >
               Manner Verb
             </button>
             <button
               type="button"
               onClick={() => setVerbType('result')}
-              className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                verbType === 'result'
+              className={`px-3 py-1.5 rounded border text-sm transition-colors ${verbType === 'result'
                   ? 'bg-purple-600 text-white border-purple-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
+                }`}
             >
               Result Verb
-            </button>
-            <button
-              type="button"
-              onClick={() => setVerbType('path')}
-              className={`px-3 py-1.5 rounded border text-sm transition-colors ${
-                verbType === 'path'
-                  ? 'bg-purple-600 text-white border-purple-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Path Verb
             </button>
           </div>
         </div>

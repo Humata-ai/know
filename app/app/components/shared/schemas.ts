@@ -143,7 +143,7 @@ export const DictionaryWordSchema = z.object({
 
 // ===== Verb Type & Action =====
 
-export const VerbTypeSchema = z.enum(['manner', 'result', 'path'])
+export const VerbTypeSchema = z.enum(['manner', 'result'])
 
 export const ActionSchema = z.object({
   id: z.string(),

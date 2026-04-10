@@ -22,8 +22,7 @@ export default function ActionsView() {
         let verbTypeLabel = ''
         if (action.verbType === 'manner') verbTypeLabel = 'Manner Verb'
         else if (action.verbType === 'result') verbTypeLabel = 'Result Verb'
-        else if (action.verbType === 'path') verbTypeLabel = 'Path Verb'
-        
+
         return (
           <LibraryListItem
             key={action.id}

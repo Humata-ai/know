@@ -102,7 +102,6 @@ export type VerbType = z.infer<typeof VerbTypeSchema>
 export const VERB_TYPE_LABELS: Record<VerbType, string> = {
   manner: 'Manner Verb',
   result: 'Result Verb',
-  path: 'Path Verb',
 }
 
 export type Action = z.infer<typeof ActionSchema>
