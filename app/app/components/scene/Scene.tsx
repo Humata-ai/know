@@ -252,14 +252,110 @@ function InspectCameraControls() {
  * Centers on the origin (placeholder until library has spatial data).
  */
 function LibraryCameraControls() {
+  const { state, getConceptLabels } = useQualityDomain()
   const controlsRef = useRef<any>(null)
+  const animatingRef = useRef(false)
+  const startTargetRef = useRef(new Vector3(0, 0, 0))
+  const endTargetRef = useRef(new Vector3(0, 0, 0))
+  const startTimeRef = useRef(0)
 
-  useEffect(() => {
-    if (controlsRef.current) {
-      controlsRef.current.target.set(0, 0, 0)
-      controlsRef.current.update()
+  // Calculate position of selected library item
+  const targetPosition = useMemo(() => {
+    const { selectedItemId, selectedItemType } = state.library
+
+    if (!selectedItemId || !selectedItemType) {
+      return new Vector3(0, 0, 0)
     }
-  }, [])
+
+    // For quality domains, focus on center (they're rendered at origin in library mode)
+    if (selectedItemType === 'quality-domain') {
+      return new Vector3(0, 0, 0)
+    }
+
+    // For concepts, focus on the centroid of the concept's labels
+    if (selectedItemType === 'concept') {
+      const concept = state.library.concepts.find(c => c.id === selectedItemId)
+      if (concept) {
+        const labels = getConceptLabels(concept.id)
+        
+        // Calculate domain positions (same as ConceptualSpaceVisualizer)
+        const radius = 15
+        const domains = state.library.domains.filter(d => 
+          concept.labelRefs.some(ref => ref.domainId === d.id)
+        )
+        const total = domains.length
+        const angleStep = (2 * Math.PI) / total
+
+        const domainPositions = new Map<string, readonly [number, number, number]>()
+        domains.forEach((domain, index) => {
+          const angle = index * angleStep
+          const x = radius * Math.cos(angle)
+          const z = radius * Math.sin(angle) - 15
+          domainPositions.set(domain.id, [x, 0, z] as const)
+        })
+
+        const scale = 0.5
+
+        // Calculate positions for all labels and find centroid
+        const positions = calculateConceptLabelPositions(
+          labels,
+          domains,
+          domainPositions,
+          scale
+        )
+
+        const centroid = calculateCentroid(positions)
+        if (centroid) {
+          centroid.y += 8 // Concept label is 8 units above centroid
+          return centroid
+        }
+      }
+    }
+
+    return new Vector3(0, 0, 0)
+  }, [state.library.selectedItemId, state.library.selectedItemType, state.library.concepts, state.library.domains, getConceptLabels])
+
+  // Update controls target when selection changes with smooth animation
+  useEffect(() => {
+    if (!controlsRef.current) return
+
+    // Start animation
+    startTargetRef.current.copy(controlsRef.current.target)
+    endTargetRef.current.copy(targetPosition)
+    startTimeRef.current = performance.now()
+    animatingRef.current = true
+
+    const animate = () => {
+      if (!animatingRef.current || !controlsRef.current) return
+
+      const elapsed = performance.now() - startTimeRef.current
+      const duration = 300 // 300ms animation
+      const progress = Math.min(elapsed / duration, 1)
+
+      // Ease-out cubic for smooth deceleration
+      const easeProgress = 1 - Math.pow(1 - progress, 3)
+
+      // Interpolate between start and end positions
+      controlsRef.current.target.lerpVectors(
+        startTargetRef.current,
+        endTargetRef.current,
+        easeProgress
+      )
+      controlsRef.current.update()
+
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      } else {
+        animatingRef.current = false
+      }
+    }
+
+    requestAnimationFrame(animate)
+
+    return () => {
+      animatingRef.current = false
+    }
+  }, [targetPosition])
 
   return (
     <OrbitControls
@@ -312,7 +408,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
           domains: [domain],
           concepts: [],
           instances: [],
-          selectedDomainId: null,
+          selectedDomainId: selectedItemId,
           selectedConceptId: null,
           selectedInstanceId: null,
         }

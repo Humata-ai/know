@@ -11,6 +11,7 @@ import { areLabelRefsEqual } from '@/app/utils/equality'
 import LabelBillboard from '../shared/LabelBillboard'
 import { VISUALIZATION_SIZE } from '../quality-domain/visualizations/constants'
 import { useConceptualSpace } from '../scene/ConceptualSpaceContext'
+import { useQualityDomain } from '@/app/store'
 
 interface ConceptVisualization3DProps {
   concept: Concept
@@ -40,6 +41,8 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
     getInstancePoints,
   } = useConceptualSpace()
 
+  const { selectConcept, selectInstance } = useQualityDomain()
+
   const labels = getConceptLabels(concept.id)
   const instances = getConceptInstances(concept.id)
 
@@ -47,8 +50,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
-    // Note: selection is a scene-only concept; in library mode this is a no-op
-    // because selectedConceptId is always null. We could wire this up later if needed.
+    selectConcept(concept.id)
   }
 
   // Calculate domain positions using shared hook -- uses the context's domains,
@@ -291,7 +293,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
             fontWeight={isSelected ? "bold" : "normal"}
             onClick={(e: ThreeEvent<MouseEvent>) => {
               e.stopPropagation()
-              // Selection is scene-only; no-op in library mode
+              selectInstance(instance.id)
             }}
             {...cursorHandlers}
           />
