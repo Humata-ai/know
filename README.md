@@ -1,27 +1,37 @@
 ConceptsLM is a next generation language model. The biggest architectural difference between ConceptsLM and existing LLMs is in the shape of the internal representational structure. For both traditional LLMs and ConceptsLM this internal representational structure functions as the method for which knowledge is encoded and decoded. The difference is that in the case with ConceptsLM the internal representational structure is much lower dimensional and also human readable and understandable.
 
-An LLM's internal representation is hard to interpret because it encodes meaning as tangled patterns in high-dimensional math rather than in clear human-readable concepts. ConceptsLM encodes traditional human pyschology (I.E. human concepts) into low dimensional geometric representation.
+An LLM's internal representation is hard to interpret because it encodes meaning as tangled patterns of very high-dimensional math rather than in clear human-readable concepts. ConceptsLM encodes traditional human concepts into low dimensional geometric representations.
 
-Lets take for example the concept "apple". In the ConceptsLM representational structure apple is represented like so...
+Lets take for example the concept "apple". In the ConceptsLM representational structure apple is depicted like so...
 
 ![apple_conceptual_datastructure_visualization.png](./assets/apple_conceptual_datastructure_visualization.png)
 
-You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. In this example, its taste, color, and shape. The qualitative taste of apples will be within the range of the taste domain, the shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. Read more about the ![ConceptsLM data structure](./wiki/Conceptual-Space-Framework.md)
+You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. The qualitative taste of apples will be within the range of the taste domain, the visual shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. By representing the concept of an apple in this way we've have a shared representation from which both a language model and human can understand. Read more about the ![ConceptsLM data structure](./wiki/ConceptsLM-data-structure.md).
+
+We plan to take this low dimensional conceptual data structure and fill in the framework with the roughly ~100,000 words of modern day english. This work is ongoing.
 
 
-The internal representation used to power ConceptsLM is human readable and understandable, while existing LLMs have 500,000,000 parameters a
+# Benefits 
 
-Large language models are powerful but opaque, expensive, and difficult to control. ConceptsLM is building the first conceptual language model (CLM), replacing statistical patterns with geometric concept representations. By structuring the semantic meaning of natural language geometrically, ConceptsLM will achieve intelligent language generation with full transparency and near-zero inference computational cost.
+ConceptsLM does not use a neural network architecture instead it uses the conceptual data structure described above. For this reason, ConceptsLM does not require a GPU. Since ConceptsLM runs on a CPU several important benefits arise.
 
-1. ConceptsLM will be composed of only human-readable code and will be fully CPU executable, traceable, debuggable, modifiable, versionable, and portable to any runtime or device.
-2. The speed of inference will be near instantaneous.
-3. The cost of inference will be near zero.
-4. There will be no context limit.
-5. ConceptsLM will support memory and recall
-6. ConceptsLM will be queryable like a relational database.
-7. Deductive and inductive reasoning are possible based on the structure of the representation.
+1. Inference speed is near instant
+2. Mobile & offline inference is supported
+3. Cost of inference is near zero
 
-The heart of ConceptsLM is the quality of its representational model. The current focus of this project is to model the approximately 100,000 words and the semantics of modern day English. This work is ongoing. 
+Additionally, since the internal representation is human understandable that provides important benefits as well.
+
+1. Easy to debug
+2. Easy to modify (training by labeling is possible but not required)
+3. Easy to version
+4. Easy memory support
+5. Easy to query
+
+Lastly, because of the arcitectual difference in generation ConceptsLM also has the benefits of...
+
+1. No context limit
+2. Inductive and deductive reasoning
+
 
 ## Applications
 
