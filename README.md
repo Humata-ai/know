@@ -6,7 +6,7 @@ Lets take for example the concept "apple". In the ConceptsLM representational st
 
 ![apple_conceptual_datastructure_visualization.png](./assets/apple_conceptual_datastructure_visualization.png)
 
-You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. The qualitative taste of apples will be within the range of the taste domain, the visual shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. By representing the concept of an apple in this way we have a shared representation from which both a language model and human can understand. Read more about the ![ConceptsLM data structure](./wiki/ConceptsLM-data-structure.md).
+You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. The qualitative taste of apples will be within the range of the taste domain, the visual shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. By representing the concept of an apple in this way we have a shared representation from which both a language model and human can understand. Read more about the [ConceptsLM data structure](./wiki/ConceptsLM-data-structure.md).
 
 We plan to take this low dimensional conceptual data structure and fill in the framework with the roughly ~100,000 words of modern day English. This work is ongoing.
 
