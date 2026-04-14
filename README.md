@@ -1,3 +1,12 @@
+ConceptsLM is a next generation language model. The biggest architectural difference between ConceptsLM and existing LLMs is in the shape of the internal representational structure. For both traditional LLMs and ConceptsLM this internal representational structure functions as the method for which knowledge is encoded and decoded. The difference is that in the case with ConceptsLM the internal representational structure is much lower dimensional and also human readable and understandable.
+
+An LLM's internal representation is hard to interpret because it encodes meaning as tangled patterns in high-dimensional math rather than in clear human-readable concepts. ConceptsLM encodes traditional human pyschology (I.E. human concepts) into low dimensional geometric representation.
+
+Lets take for example the concept "apple". We can represent apple 
+
+
+The internal representation used to power ConceptsLM is human readable and understandable, while existing LLMs have 500,000,000 parameters a
+
 Large language models are powerful but opaque, expensive, and difficult to control. ConceptsLM is building the first conceptual language model (CLM), replacing statistical patterns with geometric concept representations. By structuring the semantic meaning of natural language geometrically, ConceptsLM will achieve intelligent language generation with full transparency and near-zero inference computational cost.
 
 1. ConceptsLM will be composed of only human-readable code and will be fully CPU executable, traceable, debuggable, modifiable, versionable, and portable to any runtime or device.
