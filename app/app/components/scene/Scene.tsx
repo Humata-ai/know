@@ -86,7 +86,7 @@ function InspectCameraControls() {
 
         points.forEach(point => {
           const domain = state.scene.domains.find(d => d.id === point.domainId)
-          if (!domain || domain.dimensions.length >= 4) return
+          if (!domain) return
 
           const domainPos = domainPositions.get(domain.id)
           if (!domainPos) return
@@ -133,7 +133,7 @@ function InspectCameraControls() {
               domainPos[1] + posY * scale,
               domainPos[2]
             )
-          } else {
+          } else if (domain.dimensions.length === 3) {
             // 3D points
             const values = domain.dimensions.map(dim => {
               const pointDim = point.dimensions.find(d => d.dimensionId === dim.id)
@@ -150,6 +150,38 @@ function InspectCameraControls() {
               domainPos[0] + values[0]! * scale,
               domainPos[1] + values[1]! * scale,
               domainPos[2] + values[2]! * scale
+            )
+          } else {
+            // 4D+ points - calculate spider graph position (in XY plane)
+            const spiderRadius = 5
+            const dimensionCount = domain.dimensions.length
+            let sumX = 0
+            let sumY = 0
+            let validPoints = 0
+
+            domain.dimensions.forEach((dim, index) => {
+              const pointDim = point.dimensions.find(d => d.dimensionId === dim.id)
+              const value = getPointValue(pointDim)
+              if (value === undefined) return
+
+              const [dimMin, dimMax] = dim.range
+              const normalizedValue = Math.max(0, Math.min(1, (value - dimMin) / (dimMax - dimMin)))
+              
+              const angle = (index / dimensionCount) * Math.PI * 2 - Math.PI / 2
+              const x = Math.cos(angle) * spiderRadius * normalizedValue
+              const y = Math.sin(angle) * spiderRadius * normalizedValue
+              
+              sumX += x
+              sumY += y
+              validPoints++
+            })
+
+            if (validPoints === 0) return
+
+            worldPosition = new Vector3(
+              domainPos[0] + (sumX / validPoints) * scale,
+              domainPos[1] + (sumY / validPoints) * scale,
+              domainPos[2]
             )
           }
 

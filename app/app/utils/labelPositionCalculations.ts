@@ -44,7 +44,7 @@ export function getLabelRange(
 /**
  * Calculate the world position for a label in a quality domain
  * 
- * Handles 1D, 2D, and 3D labels by calculating their center position
+ * Handles 1D, 2D, 3D, and 4D+ (spider graph) labels by calculating their center position
  * within the domain's coordinate space.
  * 
  * @param label - The label to position
@@ -59,8 +59,6 @@ export function calculateLabelPosition(
   domainPos: readonly [number, number, number],
   scale: number
 ): Vector3 | null {
-  // Skip 4D+ labels (can't visualize in 3D)
-  if (domain.dimensions.length >= 4) return null
 
   const getDimensionRange = (dimId: string): readonly [number, number] => {
     const dim = domain.dimensions.find(d => d.id === dimId)
@@ -117,9 +115,41 @@ export function calculateLabelPosition(
       domainPos[1] + ranges[1].center * scale,
       domainPos[2] + ranges[2].center * scale
     )
-  }
+  } else {
+    // 4D+ label: positioned on spider graph (in XY plane)
+    const spiderRadius = 5
+    const dimensionCount = domain.dimensions.length
+    let sumX = 0
+    let sumY = 0
+    let validDimensions = 0
 
-  return null
+    domain.dimensions.forEach((dim, index) => {
+      const labelRange = getLabelRange(label, dim.id, dim.range)
+      
+      // Use center of label's range
+      const centerValue = (labelRange[0] + labelRange[1]) / 2
+      
+      // Normalize to [0, 1]
+      const normalizedValue = Math.max(0, Math.min(1, (centerValue - dim.range[0]) / (dim.range[1] - dim.range[0])))
+      
+      // Calculate position on spider graph
+      const angle = (index / dimensionCount) * Math.PI * 2 - Math.PI / 2
+      const x = Math.cos(angle) * spiderRadius * normalizedValue
+      const y = Math.sin(angle) * spiderRadius * normalizedValue
+      
+      sumX += x
+      sumY += y
+      validDimensions++
+    })
+
+    if (validDimensions === 0) return null
+
+    return new Vector3(
+      domainPos[0] + (sumX / validDimensions) * scale,
+      domainPos[1] + (sumY / validDimensions) * scale,
+      domainPos[2]
+    )
+  }
 }
 
 /**

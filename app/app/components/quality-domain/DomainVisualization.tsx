@@ -3,6 +3,7 @@ import type { QualityDomain } from '../shared/types'
 import Visualization1D from './visualizations/Visualization1D'
 import Visualization2D from './visualizations/Visualization2D'
 import Visualization3D from './visualizations/Visualization3D'
+import VisualizationSpider from './visualizations/VisualizationSpider'
 
 interface DomainVisualizationProps {
   domain: QualityDomain | null
@@ -31,8 +32,8 @@ function DomainVisualization({ domain }: DomainVisualizationProps) {
     return <Visualization3D domain={domain} />
   }
 
-  // 4D+ is handled by TableView which is rendered outside the Canvas
-  return null
+  // 4D+ uses spider graph visualization
+  return <VisualizationSpider domain={domain} />
 }
 
 export default memo(DomainVisualization)

@@ -124,11 +124,6 @@ function ConceptualSpaceVisualizer({
       <group>
         {/* Render each domain at its position */}
         {domains.map((domain, index) => {
-          // Skip 4D+ domains as they're handled by TableView
-          if (domain.dimensions.length >= 4) {
-            return null
-          }
-
           const position = domainPositions[index]
           const isSelected = selectedDomainId === domain.id
           const scale = domainScale

@@ -91,9 +91,6 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         const domain = domains.find((d) => d.id === point.domainId)
         if (!domain) return
 
-        // Skip 4D+ points (can't visualize in 3D)
-        if (domain.dimensions.length >= 4) return
-
         const domainPos = domainPositions.get(domain.id)
         if (!domainPos) return
 
@@ -141,7 +138,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
 
   /**
    * Calculate world position for a single point in a domain.
-   * Handles 1D, 2D, and 3D domains.
+   * Handles 1D, 2D, 3D, and 4D+ (spider graph) domains.
    */
   function calculatePointPosition(
     point: ReturnType<typeof getInstancePoints>[0],
@@ -186,7 +183,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         domainPos[1] + posY * scale,
         domainPos[2]
       )
-    } else {
+    } else if (domain.dimensions.length === 3) {
       // 3D: position in 3D space
       const values = domain.dimensions.map((dim) => {
         const pointDim = point.dimensions.find((d) => d.dimensionId === dim.id)
@@ -202,6 +199,38 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         domainPos[0] + values[0]! * scale,
         domainPos[1] + values[1]! * scale,
         domainPos[2] + values[2]! * scale
+      )
+    } else {
+      // 4D+: position on spider graph (in XY plane)
+      const spiderRadius = 5
+      const dimensionCount = domain.dimensions.length
+      let sumX = 0
+      let sumY = 0
+      let validDimensions = 0
+
+      domain.dimensions.forEach((dim, index) => {
+        const pointDim = point.dimensions.find((d) => d.dimensionId === dim.id)
+        const value = getPointValue(pointDim)
+        if (value === undefined) return
+
+        const [dimMin, dimMax] = dim.range
+        const normalizedValue = Math.max(0, Math.min(1, (value - dimMin) / (dimMax - dimMin)))
+        
+        const angle = (index / dimensionCount) * Math.PI * 2 - Math.PI / 2
+        const x = Math.cos(angle) * spiderRadius * normalizedValue
+        const y = Math.sin(angle) * spiderRadius * normalizedValue
+        
+        sumX += x
+        sumY += y
+        validDimensions++
+      })
+
+      if (validDimensions === 0) return null
+
+      return new Vector3(
+        domainPos[0] + (sumX / validDimensions) * scale,
+        domainPos[1] + (sumY / validDimensions) * scale,
+        domainPos[2]
       )
     }
   }
