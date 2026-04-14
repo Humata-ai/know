@@ -2,7 +2,11 @@ ConceptsLM is a next generation language model. The biggest architectural differ
 
 An LLM's internal representation is hard to interpret because it encodes meaning as tangled patterns in high-dimensional math rather than in clear human-readable concepts. ConceptsLM encodes traditional human pyschology (I.E. human concepts) into low dimensional geometric representation.
 
-Lets take for example the concept "apple". We can represent apple 
+Lets take for example the concept "apple". In the ConceptsLM representational structure apple is represented like so...
+
+![apple_conceptual_datastructure_visualization.png](./assets/apple_conceptual_datastructure_visualization.png)
+
+You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. In this example, its taste, color, and shape. The qualitative taste of apples will be within the range of the taste domain, the shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. Read more about the ![ConceptsLM data structure](./wiki/Conceptual-Space-Framework.md)
 
 
 The internal representation used to power ConceptsLM is human readable and understandable, while existing LLMs have 500,000,000 parameters a
