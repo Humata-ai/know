@@ -6,9 +6,9 @@ Lets take for example the concept "apple". In the ConceptsLM representational st
 
 ![apple_conceptual_datastructure_visualization.png](./assets/apple_conceptual_datastructure_visualization.png)
 
-You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. The qualitative taste of apples will be within the range of the taste domain, the visual shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. By representing the concept of an apple in this way we've have a shared representation from which both a language model and human can understand. Read more about the ![ConceptsLM data structure](./wiki/ConceptsLM-data-structure.md).
+You can notice the definition of Apple is broken apart into distinct graphs according to the various qualities we understand about an apple. The qualitative taste of apples will be within the range of the taste domain, the visual shape of apples will be within the range of the shape domain, and the color of apples will be within the range of the color domain. By representing the concept of an apple in this way we have a shared representation from which both a language model and human can understand. Read more about the ![ConceptsLM data structure](./wiki/ConceptsLM-data-structure.md).
 
-We plan to take this low dimensional conceptual data structure and fill in the framework with the roughly ~100,000 words of modern day english. This work is ongoing.
+We plan to take this low dimensional conceptual data structure and fill in the framework with the roughly ~100,000 words of modern day English. This work is ongoing.
 
 
 # Benefits 
@@ -27,7 +27,7 @@ Additionally, since the internal representation is human understandable that pro
 4. Easy memory support
 5. Easy to query
 
-Lastly, because of the arcitectual difference in generation ConceptsLM also has the benefits of...
+Lastly, because of the architectural difference in generation ConceptsLM also has the benefits of...
 
 1. No context limit
 2. Inductive and deductive reasoning
@@ -47,7 +47,7 @@ Lastly, because of the arcitectual difference in generation ConceptsLM also has 
 
 **Personalized AI** — Enable AI agents to learn and remember information about you in a queryable way. For example, a web agent booking travel can remember you prefer aisle seats, avoid early morning flights, and always need vegetarian meals—then automatically apply these preferences without asking each time.
 
-**Big Data Searching** — Get structured database benefits without the setup cost. ConceptsLM learns conceptual schemas from natural language, so you can query knowledge like a database without spending weeks designing tables and normalizing data. The structure emerges automatically from understanding our natural languages.
+**Big Data Searching** — Get structured database benefits without the setup cost. ConceptsLM learns conceptual schemas from natural language, so you can query knowledge like a database without spending weeks designing tables and normalizing data. The structure emerges automatically from understanding natural language.
 
 ## MVP Roadmap
 
