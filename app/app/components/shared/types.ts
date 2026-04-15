@@ -5,11 +5,8 @@ import {
   PointDimensionValueSchema,
   QualityDomainRegionSchema,
   QualityDomainPointSchema,
-  QualityDomainLabelSchema,
-  PropertyDimensionRangeSchema,
-  PropertySchema,
+  QualityDomainPropertySchema,
   QualityDomainSchema,
-  LabelReferenceSchema,
   PropertyReferenceSchema,
   PointReferenceSchema,
   ConceptSchema,
@@ -26,13 +23,13 @@ import {
 
 export type QualityDimension = z.infer<typeof QualityDimensionSchema>
 
-// ===== Region/Point Label Types (Discriminated Union) =====
+// ===== Region/Point Property Types (Discriminated Union) =====
 
 export type RegionDimensionRange = z.infer<typeof RegionDimensionRangeSchema>
 export type PointDimensionValue = z.infer<typeof PointDimensionValueSchema>
 
-// Base interface for labels (kept as manual type since it's not directly used by consumers)
-export interface QualityDomainLabelBase {
+// Base interface for properties (kept as manual type since it's not directly used by consumers)
+export interface QualityDomainPropertyBase {
   id: string
   name: string
   domainId: string
@@ -43,25 +40,19 @@ export type QualityDomainRegion = z.infer<typeof QualityDomainRegionSchema>
 export type QualityDomainPoint = z.infer<typeof QualityDomainPointSchema>
 
 // Union type
-export type QualityDomainLabel = z.infer<typeof QualityDomainLabelSchema>
+export type QualityDomainProperty = z.infer<typeof QualityDomainPropertySchema>
 
 // Type guards
-export function isRegion(label: QualityDomainLabel): label is QualityDomainRegion {
-  return label.type === 'region'
+export function isRegion(property: QualityDomainProperty): property is QualityDomainRegion {
+  return property.type === 'region'
 }
 
-export function isPoint(label: QualityDomainLabel): label is QualityDomainPoint {
-  return label.type === 'point'
+export function isPoint(property: QualityDomainProperty): property is QualityDomainPoint {
+  return property.type === 'point'
 }
-
-// ===== Backward Compatibility Aliases =====
-
-export type PropertyDimensionRange = z.infer<typeof PropertyDimensionRangeSchema>
-export type Property = z.infer<typeof PropertySchema>
 
 export type QualityDomain = z.infer<typeof QualityDomainSchema>
 
-export type LabelReference = z.infer<typeof LabelReferenceSchema>
 export type PropertyReference = z.infer<typeof PropertyReferenceSchema>
 
 export type Concept = z.infer<typeof ConceptSchema>
@@ -109,8 +100,8 @@ export type Action = z.infer<typeof ActionSchema>
 export interface QualityDomainState {
   domains: QualityDomain[]
   selectedDomainId: string | null
-  selectedLabelId: string | null
-  selectedLabelDomainId: string | null
+  selectedPropertyId: string | null
+  selectedPropertyDomainId: string | null
   selectedConceptId: string | null
   selectedInstanceId: string | null
   concepts: Concept[]
@@ -122,13 +113,13 @@ export type QualityDomainAction =
   | { type: 'UPDATE_DOMAIN'; payload: QualityDomain }
   | { type: 'DELETE_DOMAIN'; payload: string }
   | { type: 'SELECT_DOMAIN'; payload: string | null }
-  | { type: 'SELECT_LABEL'; payload: { domainId: string; labelId: string } | null }
+  | { type: 'SELECT_PROPERTY'; payload: { domainId: string; propertyId: string } | null }
   | { type: 'SELECT_CONCEPT'; payload: string | null }
   | { type: 'SELECT_INSTANCE'; payload: string | null }
   | { type: 'CLEAR_SELECTION' }
-  | { type: 'ADD_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
-  | { type: 'UPDATE_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
-  | { type: 'DELETE_LABEL'; payload: { domainId: string; labelId: string } }
+  | { type: 'ADD_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'UPDATE_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'DELETE_PROPERTY'; payload: { domainId: string; propertyId: string } }
   | { type: 'ADD_CONCEPT'; payload: Concept }
   | { type: 'UPDATE_CONCEPT'; payload: Concept }
   | { type: 'DELETE_CONCEPT'; payload: string }

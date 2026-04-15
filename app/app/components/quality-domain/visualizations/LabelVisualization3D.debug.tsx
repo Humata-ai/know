@@ -34,7 +34,7 @@ function LabelVisualization3DDebug({
     }
     renderCount.current += 1
     console.log(`[LabelViz3D] RENDER #${renderCount.current}`, {
-      labelId: label.id,
+      propertyId: label.id,
       labelName: label.name,
       domainId: domain.id,
       domainName: domain.name,
@@ -138,7 +138,7 @@ const areEqual = (prevProps: LabelVisualization3DProps, nextProps: LabelVisualiz
 
   if (!equal) {
     console.log('[LabelViz3D] areEqual = FALSE', {
-      labelIdChanged: prevProps.label.id !== nextProps.label.id,
+      propertyIdChanged: prevProps.label.id !== nextProps.label.id,
       indexChanged: prevProps.index !== nextProps.index,
       domainIdChanged: prevProps.domain.id !== nextProps.domain.id,
       labelDimensionsChanged: JSON.stringify(prevProps.label.dimensions) !== JSON.stringify(nextProps.label.dimensions),

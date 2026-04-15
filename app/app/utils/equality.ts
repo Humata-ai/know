@@ -91,7 +91,7 @@ export function areLabelsEqual(
 
 /**
  * Compare two label reference arrays for equality
- * Checks domainId and labelId
+ * Checks domainId and propertyId
  */
 export function areLabelRefsEqual(
   a: readonly LabelReference[] | LabelReference[],
@@ -103,7 +103,7 @@ export function areLabelRefsEqual(
     const refB = b[index]
     return (
       refA.domainId === refB.domainId &&
-      refA.labelId === refB.labelId
+      refA.propertyId === refB.propertyId
     )
   })
 }

@@ -42,30 +42,19 @@ export interface JsonPointDimension {
 }
 
 /**
- * JSON representation of a label dimension (union of region and point)
+ * JSON representation of a property dimension (union of region and point)
  */
-export type JsonLabelDimension = JsonRegionDimension | JsonPointDimension
+export type JsonPropertyDimension = JsonRegionDimension | JsonPointDimension
 
 /**
- * JSON representation of a quality domain label
+ * JSON representation of a quality domain property
  */
-export interface JsonQualityDomainLabel {
+export interface JsonQualityDomainProperty {
   id: string
   name: string
   domainId: string
   type: 'region' | 'point'
-  dimensions: JsonLabelDimension[]
-  createdAt: string // ISO date string
-}
-
-/**
- * JSON representation of an old Property (for migration)
- */
-export interface JsonProperty {
-  id: string
-  name: string
-  domainId: string
-  dimensions: JsonRegionDimension[]
+  dimensions: JsonPropertyDimension[]
   createdAt: string // ISO date string
 }
 
@@ -76,21 +65,13 @@ export interface JsonQualityDomain {
   id: string
   name: string
   dimensions: JsonQualityDimension[]
-  labels?: JsonQualityDomainLabel[]
-  properties?: JsonProperty[] // Old format for migration
+  properties?: JsonQualityDomainProperty[]
+  labels?: any[] // Old format for backward compatibility migration
   createdAt: string // ISO date string
 }
 
 /**
- * JSON representation of a label reference
- */
-export interface JsonLabelReference {
-  domainId: string
-  labelId: string
-}
-
-/**
- * JSON representation of an old property reference (for migration)
+ * JSON representation of a property reference
  */
 export interface JsonPropertyReference {
   domainId: string
@@ -103,8 +84,8 @@ export interface JsonPropertyReference {
 export interface JsonConcept {
   id: string
   name: string
-  labelRefs?: JsonLabelReference[]
-  propertyRefs?: JsonPropertyReference[] // Old format for migration
+  propertyRefs?: JsonPropertyReference[]
+  propertyRefs?: any[] // Old format for backward compatibility migration
   createdAt: string // ISO date string
 }
 
@@ -142,7 +123,8 @@ export interface JsonConceptualStructure {
 export interface JsonDictionaryWord {
   id: string
   name: string
-  labelRef?: JsonLabelReference
+  propertyRef?: JsonPropertyReference
+  propertyRef?: any // Old format for backward compatibility migration
   conceptId?: string
   createdAt: string // ISO date string
 }
@@ -160,7 +142,7 @@ export function isJsonDimensionRange(value: unknown): value is [number | string,
 }
 
 /**
- * Type guard to check if a label dimension is a region (has range)
+ * Type guard to check if a property dimension is a region (has range)
  */
 export function isJsonRegionDimension(dim: unknown): dim is JsonRegionDimension {
   return (
@@ -172,7 +154,7 @@ export function isJsonRegionDimension(dim: unknown): dim is JsonRegionDimension 
 }
 
 /**
- * Type guard to check if a label dimension is a point (has value)
+ * Type guard to check if a property dimension is a point (has value)
  */
 export function isJsonPointDimension(dim: unknown): dim is JsonPointDimension {
   return (

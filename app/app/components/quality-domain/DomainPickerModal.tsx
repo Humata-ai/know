@@ -74,7 +74,7 @@ export default function DomainPickerModal({
                     {domain.dimensions.length}D
                   </span>
                   <span className="text-xs text-gray-500">
-                    {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
+                    {domain.properties.length} {domain.properties.length === 1 ? 'label' : 'labels'}
                   </span>
                 </div>
               </button>

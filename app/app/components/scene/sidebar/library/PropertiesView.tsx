@@ -13,7 +13,7 @@ export default function PropertiesView() {
   // Collect all labels across all library domains
   const allProperties = useMemo(() => {
     return state.library.domains.flatMap((domain) =>
-      domain.labels.map((label) => ({
+      domain.properties.map((property) => ({
         label,
         domain,
       }))

@@ -134,10 +134,10 @@ function VisualizationSpider({ domain }: VisualizationSpiderProps) {
       ))}
 
       {/* Render labels */}
-      {domain.labels.map((label, index) => {
+      {domain.properties.map((label, index) => {
         const isLabelSelected =
-          state.scene.selectedLabelId === label.id &&
-          state.scene.selectedLabelDomainId === domain.id
+          state.scene.selectedPropertyId === label.id &&
+          state.scene.selectedPropertyDomainId === domain.id
 
         return (
           <LabelVisualizationSpider

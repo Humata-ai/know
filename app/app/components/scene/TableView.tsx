@@ -49,9 +49,9 @@ export default function TableView({ domain }: TableViewProps) {
         {/* Labels */}
         <div>
           <h3 className="text-lg font-semibold mb-2">
-            Labels ({domain.labels.length})
+            Labels ({domain.properties.length})
           </h3>
-          {domain.labels.length === 0 ? (
+          {domain.properties.length === 0 ? (
             <p className="text-sm text-gray-500 italic">No labels in this domain</p>
           ) : (
             <div className="overflow-x-auto">
@@ -68,7 +68,7 @@ export default function TableView({ domain }: TableViewProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {domain.labels.map((label, index) => (
+                  {domain.properties.map((label, index) => (
                     <tr
                       key={label.id}
                       className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}

@@ -65,7 +65,7 @@ export default function Visualization1D({ domain }: Visualization1DProps) {
       </Text>
 
       {/* Render labels */}
-      {domain.labels.map((label, index) => (
+      {domain.properties.map((label, index) => (
         <LabelVisualization1D
           key={label.id}
           label={label}

@@ -12,7 +12,7 @@ export const QualityDimensionSchema = z.object({
   range: NumberRangeTuple,
 })
 
-// ===== Region/Point Label Types (Discriminated Union) =====
+// ===== Region/Point Property Types (Discriminated Union) =====
 
 export const RegionDimensionRangeSchema = z.object({
   dimensionId: z.string(),
@@ -24,42 +24,27 @@ export const PointDimensionValueSchema = z.object({
   value: z.number(),
 })
 
-const QualityDomainLabelBaseSchema = z.object({
+const QualityDomainPropertyBaseSchema = z.object({
   id: z.string(),
   name: z.string().optional(),
   domainId: z.string(),
   createdAt: z.date(),
 })
 
-export const QualityDomainRegionSchema = QualityDomainLabelBaseSchema.extend({
+export const QualityDomainRegionSchema = QualityDomainPropertyBaseSchema.extend({
   type: z.literal('region'),
   dimensions: z.array(RegionDimensionRangeSchema),
 })
 
-export const QualityDomainPointSchema = QualityDomainLabelBaseSchema.extend({
+export const QualityDomainPointSchema = QualityDomainPropertyBaseSchema.extend({
   type: z.literal('point'),
   dimensions: z.array(PointDimensionValueSchema),
 })
 
-export const QualityDomainLabelSchema = z.discriminatedUnion('type', [
+export const QualityDomainPropertySchema = z.discriminatedUnion('type', [
   QualityDomainRegionSchema,
   QualityDomainPointSchema,
 ])
-
-// ===== Backward Compatibility Aliases =====
-
-export const PropertyDimensionRangeSchema = z.object({
-  dimensionId: z.string(),
-  range: NumberRangeTuple,
-})
-
-export const PropertySchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  domainId: z.string(),
-  dimensions: z.array(PropertyDimensionRangeSchema),
-  createdAt: z.date(),
-})
 
 // ===== Quality Domain =====
 
@@ -67,17 +52,11 @@ export const QualityDomainSchema = z.object({
   id: z.string(),
   name: z.string(),
   dimensions: z.array(QualityDimensionSchema),
-  labels: z.array(QualityDomainLabelSchema),
-  properties: z.array(PropertySchema).optional(),
+  properties: z.array(QualityDomainPropertySchema),
   createdAt: z.date(),
 })
 
 // ===== References =====
-
-export const LabelReferenceSchema = z.object({
-  domainId: z.string(),
-  labelId: z.string(),
-})
 
 export const PropertyReferenceSchema = z.object({
   domainId: z.string(),
@@ -94,8 +73,7 @@ export const PointReferenceSchema = z.object({
 export const ConceptSchema = z.object({
   id: z.string(),
   name: z.string(),
-  labelRefs: z.array(LabelReferenceSchema),
-  propertyRefs: z.array(PropertyReferenceSchema).optional(),
+  propertyRefs: z.array(PropertyReferenceSchema),
   createdAt: z.date(),
 })
 
@@ -134,8 +112,8 @@ export const WordSchema = z.object({
 export const DictionaryWordSchema = z.object({
   id: z.string(),
   name: z.string(),
-  /** Reference to a label (region/point) in a quality domain */
-  labelRef: LabelReferenceSchema.optional(),
+  /** Reference to a property (region/point) in a quality domain */
+  propertyRef: PropertyReferenceSchema.optional(),
   /** Reference to a concept */
   conceptId: z.string().optional(),
   createdAt: z.date(),
@@ -152,8 +130,8 @@ export const ActionSchema = z.object({
   createdAt: z.date(),
 })
 
-// ===== Generate Label API Schemas =====
-// These schemas are used for OpenAI structured output in the generate-label API.
+// ===== Generate Property API Schemas =====
+// These schemas are used for OpenAI structured output in the generate-property API.
 
 export const DimensionInputSchema = z.object({
   id: z.string(),
@@ -161,25 +139,20 @@ export const DimensionInputSchema = z.object({
   range: z.tuple([z.number(), z.number()]),
 })
 
-export const GenerateLabelRequestSchema = z.object({
+export const GeneratePropertyRequestSchema = z.object({
   propertyName: z.string().optional(),
   propertyType: z.enum(['region', 'point']).optional(),
-  labelName: z.string().optional(),
-  labelType: z.enum(['region', 'point']).optional(),
   domainName: z.string(),
   dimensions: z.array(DimensionInputSchema),
 }).transform((data) => ({
-  // Support both old (labelName/labelType) and new (propertyName/propertyType) parameters
-  propertyName: data.propertyName || data.labelName || '',
-  propertyType: data.propertyType || data.labelType || 'region',
-  labelName: data.propertyName || data.labelName || '',
-  labelType: data.propertyType || data.labelType || 'region',
+  propertyName: data.propertyName || '',
+  propertyType: data.propertyType || 'region',
   domainName: data.domainName,
   dimensions: data.dimensions,
 }))
 
 /**
- * Build a zod schema for the AI-generated region label response.
+ * Build a zod schema for the AI-generated region property response.
  * Each dimension gets a { min, max } object.
  */
 export function buildRegionResponseSchema(dimensions: z.infer<typeof DimensionInputSchema>[]) {
@@ -196,7 +169,7 @@ export function buildRegionResponseSchema(dimensions: z.infer<typeof DimensionIn
 }
 
 /**
- * Build a zod schema for the AI-generated point label response.
+ * Build a zod schema for the AI-generated point property response.
  * Each dimension gets a single number value.
  */
 export function buildPointResponseSchema(dimensions: z.infer<typeof DimensionInputSchema>[]) {

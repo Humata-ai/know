@@ -37,7 +37,7 @@ const domainItemAreEqual = (
     prevProps.position === nextProps.position &&
     prevProps.scale === nextProps.scale &&
     areDimensionsEqual(prevProps.domain.dimensions, nextProps.domain.dimensions) &&
-    areLabelsEqual(prevProps.domain.labels, nextProps.domain.labels)
+    areLabelsEqual(prevProps.domain.properties, nextProps.domain.properties)
   )
 }
 

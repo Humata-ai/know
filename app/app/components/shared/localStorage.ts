@@ -24,8 +24,8 @@ export function serializeState(state: AppState): string {
   const persistableState = JSON.stringify(stateWithVersion, (key, value) => {
     // Filter out selection state and transient flags
     if (key === 'selectedDomainId' ||
-        key === 'selectedLabelId' ||
-        key === 'selectedLabelDomainId' ||
+        key === 'selectedPropertyId' ||
+        key === 'selectedPropertyDomainId' ||
         key === 'selectedConceptId' ||
         key === 'selectedInstanceId' ||
         key === 'selectedItemId' ||

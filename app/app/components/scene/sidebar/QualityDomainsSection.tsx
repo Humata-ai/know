@@ -36,22 +36,22 @@ export default function QualityDomainsSection() {
                   setIsModalOpen(true)
                 }}
               >
-                {(state.scene.selectedDomainId === domain.id || state.scene.selectedLabelDomainId === domain.id) && (
+                {(state.scene.selectedDomainId === domain.id || state.scene.selectedPropertyDomainId === domain.id) && (
                   <div className="pl-2">
-                    {domain.labels.length === 0 ? (
+                    {domain.properties.length === 0 ? (
                       <div className="text-center py-4 text-gray-500">
                         <p className="text-xs">No properties yet.</p>
                       </div>
                     ) : (
                       <div className="space-y-2 mb-2">
-                        {domain.labels.map((property) => (
+                        {domain.properties.map((property) => (
                           <PropertyCard
                             key={property.id}
                             property={property}
                             domain={domain}
                             isSelected={
-                              state.scene.selectedLabelId === property.id &&
-                              state.scene.selectedLabelDomainId === domain.id
+                              state.scene.selectedPropertyId === property.id &&
+                              state.scene.selectedPropertyDomainId === domain.id
                             }
                             onEdit={(id) => {
                               setEditingPropertyId(id)
@@ -101,10 +101,10 @@ export default function QualityDomainsSection() {
         onClose={() => setIsModalOpen(false)}
       />
 
-      {(state.scene.selectedDomainId || state.scene.selectedLabelDomainId) && (
+      {(state.scene.selectedDomainId || state.scene.selectedPropertyDomainId) && (
         <PropertyModal
           isOpen={isPropertyModalOpen}
-          domainId={state.scene.selectedDomainId || state.scene.selectedLabelDomainId}
+          domainId={state.scene.selectedDomainId || state.scene.selectedPropertyDomainId}
           editingPropertyId={editingPropertyId}
           onClose={() => setIsPropertyModalOpen(false)}
         />

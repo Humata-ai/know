@@ -25,7 +25,7 @@ export default function usePropertyForm({ isOpen, domainId, editingPropertyId, u
   const domains = useLibraryState ? state.library.domains : state.scene.domains
   const domain = domainId ? domains.find((d) => d.id === domainId) : null
   const editingProperty = editingPropertyId && domain
-    ? domain.labels.find((l) => l.id === editingPropertyId)
+    ? domain.properties.find((l) => l.id === editingPropertyId)
     : null
 
   useEffect(() => {

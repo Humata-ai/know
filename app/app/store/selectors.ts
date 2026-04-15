@@ -1,5 +1,5 @@
 import type { SceneState, LibraryState } from './types'
-import type { QualityDomain, QualityDomainLabel, QualityDomainPoint, ConceptInstance, Concept, DictionaryWord } from '../components/shared/types'
+import type { QualityDomain, QualityDomainProperty, QualityDomainPoint, ConceptInstance, Concept, DictionaryWord } from '../components/shared/types'
 import { isPoint } from '../components/shared/types'
 
 // Re-export for convenience
@@ -19,23 +19,23 @@ export function getSelectedDomain(state: SceneState): QualityDomain | null {
 }
 
 /**
- * Get all labels for a given concept
+ * Get all properties for a given concept
  */
-export function getConceptLabels(state: SceneState, conceptId: string): QualityDomainLabel[] {
+export function getConceptProperties(state: SceneState, conceptId: string): QualityDomainProperty[] {
   const concept = state.concepts.find((c) => c.id === conceptId)
   if (!concept) return []
 
-  const labels: QualityDomainLabel[] = []
-  for (const ref of concept.labelRefs) {
+  const properties: QualityDomainProperty[] = []
+  for (const ref of concept.propertyRefs) {
     const domain = state.domains.find((d) => d.id === ref.domainId)
     if (domain) {
-      const label = domain.labels.find((l) => l.id === ref.labelId)
-      if (label) {
-        labels.push(label)
+      const property = domain.properties.find((p) => p.id === ref.propertyId)
+      if (property) {
+        properties.push(property)
       }
     }
   }
-  return labels
+  return properties
 }
 
 /**
@@ -49,8 +49,8 @@ export function getInstancePoints(state: SceneState, instanceId: string): Qualit
     .map(ref => {
       const domain = state.domains.find((d) => d.id === ref.domainId)
       if (!domain) return null
-      const label = domain.labels.find((l) => l.id === ref.pointId)
-      return label && isPoint(label) ? label : null
+      const property = domain.properties.find((p) => p.id === ref.pointId)
+      return property && isPoint(property) ? property : null
     })
     .filter((p): p is QualityDomainPoint => p !== null)
 }
@@ -70,12 +70,12 @@ export function getDomainById(state: SceneState, domainId: string): QualityDomai
 }
 
 /**
- * Get a label by domain ID and label ID
+ * Get a property by domain ID and property ID
  */
-export function getLabelById(state: SceneState, domainId: string, labelId: string): QualityDomainLabel | null {
+export function getPropertyById(state: SceneState, domainId: string, propertyId: string): QualityDomainProperty | null {
   const domain = getDomainById(state, domainId)
   if (!domain) return null
-  return domain.labels.find((l) => l.id === labelId) || null
+  return domain.properties.find((p) => p.id === propertyId) || null
 }
 
 /**

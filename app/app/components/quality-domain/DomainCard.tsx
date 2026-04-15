@@ -104,7 +104,7 @@ export default function DomainCard({ domain, isSelected, onEdit, children }: Dom
                 {getDimensionLabel()}
               </span>
               <span className="px-2 py-0.5 bg-green-200 text-green-700 text-xs rounded-full font-medium">
-                {domain.labels.length} {domain.labels.length === 1 ? 'label' : 'labels'}
+                {domain.properties.length} {domain.properties.length === 1 ? 'label' : 'labels'}
               </span>
               <IconButton
                 size="small"

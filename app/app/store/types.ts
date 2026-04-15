@@ -1,4 +1,4 @@
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
+import type { QualityDomain, QualityDomainProperty, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
 
 /**
  * Scene Action Types
@@ -13,7 +13,7 @@ export type SceneAction =
   
   // Selection actions
   | { type: 'SELECT_DOMAIN'; payload: string | null }
-  | { type: 'SELECT_LABEL'; payload: { domainId: string; labelId: string } | null }
+  | { type: 'SELECT_PROPERTY'; payload: { domainId: string; propertyId: string } | null }
   | { type: 'SELECT_CONCEPT'; payload: string | null }
   | { type: 'SELECT_INSTANCE'; payload: string | null }
   | { type: 'CLEAR_SELECTION' }
@@ -21,10 +21,10 @@ export type SceneAction =
   // Inspect text actions
   | { type: 'SET_INSPECT_TEXT'; payload: string }
   
-  // Label actions
-  | { type: 'ADD_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
-  | { type: 'UPDATE_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
-  | { type: 'DELETE_LABEL'; payload: { domainId: string; labelId: string } }
+  // Property actions
+  | { type: 'ADD_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'UPDATE_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'DELETE_PROPERTY'; payload: { domainId: string; propertyId: string } }
   
   // Concept actions
   | { type: 'ADD_CONCEPT'; payload: Concept }
@@ -73,10 +73,10 @@ export type LibraryAction =
   | { type: 'UPDATE_LIBRARY_ACTION'; payload: Action }
   | { type: 'DELETE_LIBRARY_ACTION'; payload: string }
   
-  // Library label actions
-  | { type: 'ADD_LIBRARY_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
-  | { type: 'UPDATE_LIBRARY_LABEL'; payload: { domainId: string; label: QualityDomainLabel } }
-  | { type: 'DELETE_LIBRARY_LABEL'; payload: { domainId: string; labelId: string } }
+  // Library property actions
+  | { type: 'ADD_LIBRARY_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'UPDATE_LIBRARY_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'DELETE_LIBRARY_PROPERTY'; payload: { domainId: string; propertyId: string } }
   
   // Library selection actions
   | { type: 'SELECT_LIBRARY_ITEM'; payload: { id: string; itemType: LibrarySelectionType } }
@@ -101,8 +101,8 @@ export type AppAction = SceneAction | LibraryAction
 export interface SceneState {
   domains: QualityDomain[]
   selectedDomainId: string | null
-  selectedLabelId: string | null
-  selectedLabelDomainId: string | null
+  selectedPropertyId: string | null
+  selectedPropertyDomainId: string | null
   selectedConceptId: string | null
   selectedInstanceId: string | null
   concepts: Concept[]

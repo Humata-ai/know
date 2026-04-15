@@ -35,7 +35,7 @@ export default function DomainDetailView({ domainId }: { domainId: string }) {
           {domain.dimensions.length}D
         </span>
         <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
-          {domain.labels.length} {domain.labels.length === 1 ? 'property' : 'properties'}
+          {domain.properties.length} {domain.properties.length === 1 ? 'property' : 'properties'}
         </span>
       </div>
 
@@ -53,11 +53,11 @@ export default function DomainDetailView({ domainId }: { domainId: string }) {
         </div>
       )}
 
-      {domain.labels.length > 0 && (
+      {domain.properties.length > 0 && (
         <div>
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Properties</h4>
           <div className="space-y-1">
-            {domain.labels.map((property) => (
+            {domain.properties.map((property) => (
               <div key={property.id} className="text-sm text-gray-700">
                 {property.name || '(unnamed)'}
               </div>

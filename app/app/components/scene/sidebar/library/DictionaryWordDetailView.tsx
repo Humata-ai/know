@@ -24,11 +24,11 @@ export default function DictionaryWordDetailView({ wordId }: { wordId: string })
     ? state.library.concepts.find((c) => c.id === word.conceptId)
     : null
 
-  const linkedProperty = word.labelRef
+  const linkedProperty = word.propertyRef
     ? (() => {
-        const domain = state.library.domains.find((d) => d.id === word.labelRef!.domainId)
+        const domain = state.library.domains.find((d) => d.id === word.propertyRef!.domainId)
         if (!domain) return null
-        const property = domain.labels.find((l) => l.id === word.labelRef!.labelId)
+        const property = domain.properties.find((l) => l.id === word.propertyRef!.propertyId)
         return property ? { property, domain } : null
       })()
     : null
@@ -61,7 +61,7 @@ export default function DictionaryWordDetailView({ wordId }: { wordId: string })
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Concept</h4>
           <p className="text-sm text-gray-700">{linkedConcept.name}</p>
           <p className="text-xs text-gray-400 mt-0.5">
-            {linkedConcept.labelRefs.length} {linkedConcept.labelRefs.length === 1 ? 'property' : 'properties'}
+            {linkedConcept.propertyRefs.length} {linkedConcept.propertyRefs.length === 1 ? 'property' : 'properties'}
           </p>
         </div>
       )}

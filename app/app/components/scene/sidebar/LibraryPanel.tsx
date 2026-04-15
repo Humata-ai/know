@@ -109,7 +109,7 @@ export default function LibraryPanel() {
         // Find property across all domains
         let property = null
         for (const domain of state.library.domains) {
-          const label = domain.labels.find((l) => l.id === itemId)
+          const property = domain.properties.find((l) => l.id === itemId)
           if (label) {
             property = label
             break

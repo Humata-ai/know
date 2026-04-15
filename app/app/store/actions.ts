@@ -1,5 +1,5 @@
 import type { SceneAction, LibraryAction, LibrarySelectionType } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
+import type { QualityDomain, QualityDomainProperty, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
 
 /**
  * Scene Action Creators
@@ -29,13 +29,13 @@ export const selectDomain = (id: string | null): SceneAction => ({
   payload: id,
 })
 
-export const selectLabel = (domainId: string, labelId: string): SceneAction => ({
-  type: 'SELECT_LABEL',
-  payload: { domainId, labelId },
+export const selectProperty = (domainId: string, propertyId: string): SceneAction => ({
+  type: 'SELECT_PROPERTY',
+  payload: { domainId, propertyId },
 })
 
-export const deselectLabel = (): SceneAction => ({
-  type: 'SELECT_LABEL',
+export const deselectProperty = (): SceneAction => ({
+  type: 'SELECT_PROPERTY',
   payload: null,
 })
 
@@ -59,20 +59,20 @@ export const setInspectText = (text: string): SceneAction => ({
   payload: text,
 })
 
-// Label action creators
-export const addLabel = (domainId: string, label: QualityDomainLabel): SceneAction => ({
-  type: 'ADD_LABEL',
-  payload: { domainId, label },
+// Property action creators
+export const addProperty = (domainId: string, property: QualityDomainProperty): SceneAction => ({
+  type: 'ADD_PROPERTY',
+  payload: { domainId, property },
 })
 
-export const updateLabel = (domainId: string, label: QualityDomainLabel): SceneAction => ({
-  type: 'UPDATE_LABEL',
-  payload: { domainId, label },
+export const updateProperty = (domainId: string, property: QualityDomainProperty): SceneAction => ({
+  type: 'UPDATE_PROPERTY',
+  payload: { domainId, property },
 })
 
-export const deleteLabel = (domainId: string, labelId: string): SceneAction => ({
-  type: 'DELETE_LABEL',
-  payload: { domainId, labelId },
+export const deleteProperty = (domainId: string, propertyId: string): SceneAction => ({
+  type: 'DELETE_PROPERTY',
+  payload: { domainId, propertyId },
 })
 
 // Concept action creators

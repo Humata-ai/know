@@ -35,25 +35,25 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
       return {
         ...state,
         selectedDomainId: action.payload,
-        selectedLabelId: null,
-        selectedLabelDomainId: null,
+        selectedPropertyId: null,
+        selectedPropertyDomainId: null,
         selectedConceptId: null,
         selectedInstanceId: null,
       }
 
-    case 'SELECT_LABEL':
+    case 'SELECT_PROPERTY':
       if (!action.payload) {
         return {
           ...state,
-          selectedLabelId: null,
-          selectedLabelDomainId: null,
+          selectedPropertyId: null,
+          selectedPropertyDomainId: null,
         }
       }
       return {
         ...state,
         selectedDomainId: null,
-        selectedLabelId: action.payload.labelId,
-        selectedLabelDomainId: action.payload.domainId,
+        selectedPropertyId: action.payload.propertyId,
+        selectedPropertyDomainId: action.payload.domainId,
         selectedConceptId: null,
         selectedInstanceId: null,
       }
@@ -62,8 +62,8 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
       return {
         ...state,
         selectedDomainId: null,
-        selectedLabelId: null,
-        selectedLabelDomainId: null,
+        selectedPropertyId: null,
+        selectedPropertyDomainId: null,
         selectedConceptId: action.payload,
         selectedInstanceId: null,
       }
@@ -75,8 +75,8 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
       return {
         ...state,
         selectedDomainId: null,
-        selectedLabelId: null,
-        selectedLabelDomainId: null,
+        selectedPropertyId: null,
+        selectedPropertyDomainId: null,
         selectedConceptId: instance ? instance.conceptId : null,
         selectedInstanceId: action.payload,
       }
@@ -85,8 +85,8 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
       return {
         ...state,
         selectedDomainId: null,
-        selectedLabelId: null,
-        selectedLabelDomainId: null,
+        selectedPropertyId: null,
+        selectedPropertyDomainId: null,
         selectedConceptId: null,
         selectedInstanceId: null,
       }
@@ -98,41 +98,41 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
         inspectText: action.payload,
       }
 
-    // Label actions
-    case 'ADD_LABEL':
+    // Property actions
+    case 'ADD_PROPERTY':
       return {
         ...state,
         domains: state.domains.map((domain) =>
           domain.id === action.payload.domainId
-            ? { ...domain, labels: [...domain.labels, action.payload.label] }
+            ? { ...domain, properties: [...domain.properties, action.payload.property] }
             : domain
         ),
       }
 
-    case 'UPDATE_LABEL':
+    case 'UPDATE_PROPERTY':
       return {
         ...state,
         domains: state.domains.map((domain) =>
           domain.id === action.payload.domainId
             ? {
                 ...domain,
-                labels: domain.labels.map((label) =>
-                  label.id === action.payload.label.id ? action.payload.label : label
+                properties: domain.properties.map((property) =>
+                  property.id === action.payload.property.id ? action.payload.property : property
                 ),
               }
             : domain
         ),
       }
 
-    case 'DELETE_LABEL':
+    case 'DELETE_PROPERTY':
       return {
         ...state,
         domains: state.domains.map((domain) =>
           domain.id === action.payload.domainId
             ? {
                 ...domain,
-                labels: domain.labels.filter(
-                  (label) => label.id !== action.payload.labelId
+                properties: domain.properties.filter(
+                  (property) => property.id !== action.payload.propertyId
                 ),
               }
             : domain
@@ -191,8 +191,8 @@ export function sceneReducer(state: SceneState, action: SceneAction): SceneState
         instances: action.payload.instances || [],
         inspectText: action.payload.inspectText || '',
         selectedDomainId: null,
-        selectedLabelId: null,
-        selectedLabelDomainId: null,
+        selectedPropertyId: null,
+        selectedPropertyDomainId: null,
         selectedConceptId: null,
         selectedInstanceId: null,
         hasRestoredState: true,
@@ -325,41 +325,41 @@ export function libraryReducer(state: LibraryState, action: LibraryAction): Libr
         selectedItemType: null,
       }
 
-    // Library label actions
-    case 'ADD_LIBRARY_LABEL':
+    // Library property actions
+    case 'ADD_LIBRARY_PROPERTY':
       return {
         ...state,
         domains: state.domains.map((domain) =>
           domain.id === action.payload.domainId
-            ? { ...domain, labels: [...domain.labels, action.payload.label] }
+            ? { ...domain, properties: [...domain.properties, action.payload.property] }
             : domain
         ),
       }
 
-    case 'UPDATE_LIBRARY_LABEL':
+    case 'UPDATE_LIBRARY_PROPERTY':
       return {
         ...state,
         domains: state.domains.map((domain) =>
           domain.id === action.payload.domainId
             ? {
                 ...domain,
-                labels: domain.labels.map((label) =>
-                  label.id === action.payload.label.id ? action.payload.label : label
+                properties: domain.properties.map((property) =>
+                  property.id === action.payload.property.id ? action.payload.property : property
                 ),
               }
             : domain
         ),
       }
 
-    case 'DELETE_LIBRARY_LABEL':
+    case 'DELETE_LIBRARY_PROPERTY':
       return {
         ...state,
         domains: state.domains.map((domain) =>
           domain.id === action.payload.domainId
             ? {
                 ...domain,
-                labels: domain.labels.filter(
-                  (label) => label.id !== action.payload.labelId
+                properties: domain.properties.filter(
+                  (property) => property.id !== action.payload.propertyId
                 ),
               }
             : domain
@@ -391,11 +391,11 @@ export function appReducer(state: AppState, action: AppAction): AppState {
   // Determine which sub-reducer handles the action
   const sceneActionTypes = [
     'ADD_DOMAIN', 'UPDATE_DOMAIN', 'DELETE_DOMAIN',
-    'SELECT_DOMAIN', 'SELECT_LABEL', 'SELECT_CONCEPT', 'SELECT_INSTANCE', 'CLEAR_SELECTION',
-    'ADD_LABEL', 'UPDATE_LABEL', 'DELETE_LABEL',
+    'SELECT_DOMAIN', 'SELECT_PROPERTY', 'SELECT_CONCEPT', 'SELECT_INSTANCE', 'CLEAR_SELECTION',
+    'ADD_PROPERTY', 'UPDATE_PROPERTY', 'DELETE_PROPERTY',
     'ADD_CONCEPT', 'UPDATE_CONCEPT', 'DELETE_CONCEPT',
     'ADD_INSTANCE', 'UPDATE_INSTANCE', 'DELETE_INSTANCE',
-    'RESTORE_SCENE_STATE', 'MARK_RESTORED',
+    'RESTORE_SCENE_STATE', 'MARK_RESTORED', 'SET_INSPECT_TEXT',
   ]
 
   const libraryActionTypes = [

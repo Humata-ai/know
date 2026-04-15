@@ -33,10 +33,10 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
 
   // Collect all labels across all library domains
   const allLabels = state.library.domains.flatMap((domain) =>
-    domain.labels.map((label) => ({
+    domain.properties.map((property) => ({
       domainId: domain.id,
       domainName: domain.name,
-      labelId: label.id,
+      propertyId: label.id,
       labelName: label.name || '(unnamed)',
     }))
   )
@@ -71,8 +71,8 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
     if (refType === 'label' && selectedLabelRef) {
       const exists = state.library.dictionaryWords.some(
         (w) =>
-          w.labelRef?.domainId === selectedLabelRef.domainId &&
-          w.labelRef?.labelId === selectedLabelRef.labelId
+          w.propertyRef?.domainId === selectedLabelRef.domainId &&
+          w.propertyRef?.propertyId === selectedLabelRef.propertyId
       )
       if (exists) {
         newErrors.push('This label is already in the dictionary')
@@ -98,7 +98,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
     addDictionaryWord({
       id: generateId(),
       name: name.trim(),
-      labelRef: refType === 'label' && selectedLabelRef ? selectedLabelRef : undefined,
+      propertyRef: refType === 'label' && selectedLabelRef ? selectedLabelRef : undefined,
       conceptId: refType === 'concept' && selectedConceptId ? selectedConceptId : undefined,
       createdAt: new Date(),
     })
@@ -106,8 +106,8 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
     onClose()
   }
 
-  const handleLabelSelect = (domainId: string, labelId: string) => {
-    setSelectedLabelRef({ domainId, labelId })
+  const handleLabelSelect = (domainId: string, propertyId: string) => {
+    setSelectedLabelRef({ domainId, propertyId })
   }
 
   const hasLabels = allLabels.length > 0
@@ -176,17 +176,17 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded p-2">
                 {state.library.domains.map((domain) => {
-                  if (domain.labels.length === 0) return null
+                  if (domain.properties.length === 0) return null
                   return (
                     <div key={domain.id}>
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                         {domain.name}
                       </p>
                       <div className="space-y-1">
-                        {domain.labels.map((label) => {
+                        {domain.properties.map((property) => {
                           const isSelected =
                             selectedLabelRef?.domainId === domain.id &&
-                            selectedLabelRef?.labelId === label.id
+                            selectedLabelRef?.propertyId === label.id
                           return (
                             <button
                               key={label.id}
@@ -236,7 +236,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                     >
                       <span>{concept.name}</span>
                       <span className="ml-2 text-xs text-gray-400">
-                        {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'property' : 'properties'}
+                        {concept.propertyRefs.length} {concept.propertyRefs.length === 1 ? 'property' : 'properties'}
                       </span>
                     </button>
                   )

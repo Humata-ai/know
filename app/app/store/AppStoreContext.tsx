@@ -7,7 +7,7 @@ import { appReducer } from './reducer'
 import { initialState } from './initialState'
 import { 
   getSelectedDomain, 
-  getConceptLabels, 
+  getConceptProperties, 
   getInstancePoints, 
   getConceptInstances 
 } from './selectors'
@@ -29,7 +29,7 @@ interface AppStoreContextType {
   
   // Selection methods
   selectDomain: (id: string | null) => void
-  selectLabel: (domainId: string, labelId: string) => void
+  selectLabel: (domainId: string, propertyId: string) => void
   selectConcept: (conceptId: string | null) => void
   selectInstance: (instanceId: string | null) => void
   clearSelection: () => void
@@ -41,9 +41,9 @@ interface AppStoreContextType {
   selectProperty: (domainId: string, propertyId: string) => void
   
   // Label methods (deprecated - use property methods)
-  addLabel: (domainId: string, label: QualityDomainLabel) => void
-  updateLabel: (domainId: string, label: QualityDomainLabel) => void
-  deleteLabel: (domainId: string, labelId: string) => void
+  addLabel: (domainId: string, property: QualityDomainProperty) => void
+  updateLabel: (domainId: string, property: QualityDomainProperty) => void
+  deleteLabel: (domainId: string, propertyId: string) => void
   
   // Concept methods
   addConcept: (concept: Concept) => void
@@ -81,9 +81,9 @@ interface AppStoreContextType {
   deleteLibraryProperty: (domainId: string, propertyId: string) => void
   
   // Library label methods (deprecated - use property methods)
-  addLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
-  updateLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
-  deleteLibraryLabel: (domainId: string, labelId: string) => void
+  addLibraryLabel: (domainId: string, property: QualityDomainProperty) => void
+  updateLibraryLabel: (domainId: string, property: QualityDomainProperty) => void
+  deleteLibraryLabel: (domainId: string, propertyId: string) => void
   
   // Library selection methods
   selectLibraryItem: (id: string, itemType: LibrarySelectionType) => void
@@ -91,7 +91,7 @@ interface AppStoreContextType {
   
   // Selector methods (operate on scene state)
   getSelectedDomain: () => QualityDomain | null
-  getConceptLabels: (conceptId: string) => QualityDomainLabel[]
+  getConceptProperties: (conceptId: string) => QualityDomainLabel[]
   getInstancePoints: (instanceId: string) => QualityDomainPoint[]
   getConceptInstances: (conceptId: string) => ConceptInstance[]
 }
@@ -130,8 +130,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SELECT_DOMAIN', payload: id })
   }, [])
 
-  const selectLabelMethod = useCallback((domainId: string, labelId: string) => {
-    dispatch({ type: 'SELECT_LABEL', payload: { domainId, labelId } })
+  const selectLabelMethod = useCallback((domainId: string, propertyId: string) => {
+    dispatch({ type: 'SELECT_PROPERTY', payload: { domainId, propertyId } })
   }, [])
 
   const selectConceptMethod = useCallback((conceptId: string | null) => {
@@ -146,16 +146,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'CLEAR_SELECTION' })
   }, [])
 
-  const addLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
-    dispatch({ type: 'ADD_LABEL', payload: { domainId, label } })
+  const addLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+    dispatch({ type: 'ADD_PROPERTY', payload: { domainId, property } })
   }, [])
 
-  const updateLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
-    dispatch({ type: 'UPDATE_LABEL', payload: { domainId, label } })
+  const updateLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+    dispatch({ type: 'UPDATE_PROPERTY', payload: { domainId, property } })
   }, [])
 
-  const deleteLabelMethod = useCallback((domainId: string, labelId: string) => {
-    dispatch({ type: 'DELETE_LABEL', payload: { domainId, labelId } })
+  const deleteLabelMethod = useCallback((domainId: string, propertyId: string) => {
+    dispatch({ type: 'DELETE_PROPERTY', payload: { domainId, propertyId } })
   }, [])
 
   const addConceptMethod = useCallback((concept: Concept) => {
@@ -230,16 +230,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_LIBRARY_ACTION', payload: id })
   }, [])
 
-  const addLibraryLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
-    dispatch({ type: 'ADD_LIBRARY_LABEL', payload: { domainId, label } })
+  const addLibraryLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+    dispatch({ type: 'ADD_LIBRARY_LABEL', payload: { domainId, property } })
   }, [])
 
-  const updateLibraryLabelMethod = useCallback((domainId: string, label: QualityDomainLabel) => {
-    dispatch({ type: 'UPDATE_LIBRARY_LABEL', payload: { domainId, label } })
+  const updateLibraryLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+    dispatch({ type: 'UPDATE_LIBRARY_LABEL', payload: { domainId, property } })
   }, [])
 
-  const deleteLibraryLabelMethod = useCallback((domainId: string, labelId: string) => {
-    dispatch({ type: 'DELETE_LIBRARY_LABEL', payload: { domainId, labelId } })
+  const deleteLibraryLabelMethod = useCallback((domainId: string, propertyId: string) => {
+    dispatch({ type: 'DELETE_LIBRARY_LABEL', payload: { domainId, propertyId } })
   }, [])
 
   const selectLibraryItemMethod = useCallback((id: string, itemType: LibrarySelectionType) => {
@@ -255,8 +255,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     return getSelectedDomain(state.scene)
   }, [state.scene])
 
-  const getConceptLabelsMethod = useCallback((conceptId: string) => {
-    return getConceptLabels(state.scene, conceptId)
+  const getConceptPropertiesMethod = useCallback((conceptId: string) => {
+    return getConceptProperties(state.scene, conceptId)
   }, [state.scene])
 
   const getInstancePointsMethod = useCallback((instanceId: string) => {
@@ -313,7 +313,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     selectLibraryItem: selectLibraryItemMethod,
     clearLibrarySelection: clearLibrarySelectionMethod,
     getSelectedDomain: getSelectedDomainMethod,
-    getConceptLabels: getConceptLabelsMethod,
+    getConceptProperties: getConceptPropertiesMethod,
     getInstancePoints: getInstancePointsMethod,
     getConceptInstances: getConceptInstancesMethod,
   }), [
@@ -353,7 +353,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     selectLibraryItemMethod,
     clearLibrarySelectionMethod,
     getSelectedDomainMethod,
-    getConceptLabelsMethod,
+    getConceptPropertiesMethod,
     getInstancePointsMethod,
     getConceptInstancesMethod,
   ])

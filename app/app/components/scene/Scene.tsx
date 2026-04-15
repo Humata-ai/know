@@ -26,7 +26,7 @@ function getVisualizationMode(activeTab: SidebarView | null): VisualizationMode 
  * Animates camera target based on selection state.
  */
 function InspectCameraControls() {
-  const { state, getConceptLabels, getInstancePoints } = useQualityDomain()
+  const { state, getConceptProperties, getInstancePoints } = useQualityDomain()
   const controlsRef = useRef<any>(null)
   const animatingRef = useRef(false)
   const startTargetRef = useRef(new Vector3(0, 0, 0))
@@ -55,10 +55,10 @@ function InspectCameraControls() {
     }
 
     // If label is selected
-    if (state.scene.selectedLabelId && state.scene.selectedLabelDomainId) {
-      const domain = state.scene.domains.find(d => d.id === state.scene.selectedLabelDomainId)
-      const label = domain?.labels.find(p => p.id === state.scene.selectedLabelId)
-      const domainPos = domainPositions.get(state.scene.selectedLabelDomainId)
+    if (state.scene.selectedPropertyId && state.scene.selectedPropertyDomainId) {
+      const domain = state.scene.domains.find(d => d.id === state.scene.selectedPropertyDomainId)
+      const property = domain?.properties.find(p => p.id === state.scene.selectedPropertyId)
+      const domainPos = domainPositions.get(state.scene.selectedPropertyDomainId)
 
       if (domain && label && domainPos) {
         const scale = 0.5
@@ -202,7 +202,7 @@ function InspectCameraControls() {
     if (state.scene.selectedConceptId) {
       const concept = state.scene.concepts.find(c => c.id === state.scene.selectedConceptId)
       if (concept) {
-        const labels = getConceptLabels(concept.id)
+        const labels = getConceptProperties(concept.id)
         const scale = 0.5
 
         // Calculate positions for all labels and find centroid
@@ -223,7 +223,7 @@ function InspectCameraControls() {
 
     // Default position
     return new Vector3(0, 0, 0)
-  }, [state.scene.selectedDomainId, state.scene.selectedLabelId, state.scene.selectedLabelDomainId, state.scene.selectedInstanceId, state.scene.selectedConceptId, state.scene.domains, state.scene.concepts, state.scene.instances, getConceptLabels, getInstancePoints])
+  }, [state.scene.selectedDomainId, state.scene.selectedPropertyId, state.scene.selectedPropertyDomainId, state.scene.selectedInstanceId, state.scene.selectedConceptId, state.scene.domains, state.scene.concepts, state.scene.instances, getConceptProperties, getInstancePoints])
 
   // Update controls target when selection changes with smooth animation
   useEffect(() => {
@@ -284,7 +284,7 @@ function InspectCameraControls() {
  * Centers on the origin (placeholder until library has spatial data).
  */
 function LibraryCameraControls() {
-  const { state, getConceptLabels } = useQualityDomain()
+  const { state, getConceptProperties } = useQualityDomain()
   const controlsRef = useRef<any>(null)
   const animatingRef = useRef(false)
   const startTargetRef = useRef(new Vector3(0, 0, 0))
@@ -308,12 +308,12 @@ function LibraryCameraControls() {
     if (selectedItemType === 'concept') {
       const concept = state.library.concepts.find(c => c.id === selectedItemId)
       if (concept) {
-        const labels = getConceptLabels(concept.id)
+        const labels = getConceptProperties(concept.id)
         
         // Calculate domain positions (same as ConceptualSpaceVisualizer)
         const radius = 15
         const domains = state.library.domains.filter(d => 
-          concept.labelRefs.some(ref => ref.domainId === d.id)
+          concept.propertyRefs.some(ref => ref.domainId === d.id)
         )
         const total = domains.length
         const angleStep = (2 * Math.PI) / total
@@ -345,7 +345,7 @@ function LibraryCameraControls() {
     }
 
     return new Vector3(0, 0, 0)
-  }, [state.library.selectedItemId, state.library.selectedItemType, state.library.concepts, state.library.domains, getConceptLabels])
+  }, [state.library.selectedItemId, state.library.selectedItemType, state.library.concepts, state.library.domains, getConceptProperties])
 
   // Update controls target when selection changes with smooth animation
   useEffect(() => {
@@ -452,7 +452,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
         if (!concept) return EMPTY_CONCEPTUAL_SPACE
 
         // Collect all domains referenced by this concept's labels
-        const referencedDomainIds = new Set(concept.labelRefs.map(ref => ref.domainId))
+        const referencedDomainIds = new Set(concept.propertyRefs.map(ref => ref.domainId))
         const domains = state.library.domains.filter(d => referencedDomainIds.has(d.id))
 
         return {

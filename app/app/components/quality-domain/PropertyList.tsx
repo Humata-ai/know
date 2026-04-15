@@ -28,21 +28,21 @@ export default function PropertyList() {
           Domain: <span className="font-medium">{selectedDomain.name}</span>
         </div>
 
-        {selectedDomain.labels.length === 0 ? (
+        {selectedDomain.properties.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <p className="text-sm">No properties yet.</p>
             <p className="text-xs mt-1">Click "Define property" to create one.</p>
           </div>
         ) : (
           <div className="space-y-2">
-            {selectedDomain.labels.map((property) => (
+            {selectedDomain.properties.map((property) => (
               <PropertyCard
                 key={property.id}
                 property={property}
                 domain={selectedDomain}
                 isSelected={
-                  state.scene.selectedLabelId === property.id &&
-                  state.scene.selectedLabelDomainId === selectedDomain.id
+                  state.scene.selectedPropertyId === property.id &&
+                  state.scene.selectedPropertyDomainId === selectedDomain.id
                 }
                 onEdit={(id) => {
                   setEditingPropertyId(id)

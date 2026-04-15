@@ -17,7 +17,7 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
   // Find the property (label) across all domains
   let foundProperty: { label: any; domain: any } | null = null
   for (const domain of state.library.domains) {
-    const label = domain.labels.find((l) => l.id === propertyId)
+    const property = domain.properties.find((l) => l.id === propertyId)
     if (label) {
       foundProperty = { label, domain }
       break

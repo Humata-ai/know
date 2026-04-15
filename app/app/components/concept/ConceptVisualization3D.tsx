@@ -36,14 +36,14 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
     selectedDomainId,
     selectedInstanceId,
     domainScale,
-    getConceptLabels,
+    getConceptProperties,
     getConceptInstances,
     getInstancePoints,
   } = useConceptualSpace()
 
   const { selectConcept, selectInstance } = useQualityDomain()
 
-  const labels = getConceptLabels(concept.id)
+  const labels = getConceptProperties(concept.id)
   const instances = getConceptInstances(concept.id)
 
   const cursorHandlers = useCursorOnHover()
@@ -99,7 +99,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
         
         if (worldPosition) {
           // Find the domain label that matches this point to check if it already has a name
-          const domainLabel = domain.labels.find(l => l.id === point.id)
+          const domainLabel = domain.properties.find(l => l.id === point.id)
           const domainLabelName = domainLabel?.name
           
           // Only include point name if it's different from the domain label name
@@ -237,10 +237,10 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
 
   // Calculate label world positions and centroid
   const { labelPositions, conceptPosition } = useMemo(() => {
-    const positions: Array<{ labelId: string; position: Vector3 }> = []
+    const positions: Array<{ propertyId: string; position: Vector3 }> = []
 
     // Calculate positions for each label using shared utility
-    labels.forEach((label) => {
+    labels.forEach((property) => {
       const domain = domains.find((d) => d.id === label.domainId)
       if (!domain) return
 
@@ -254,7 +254,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
 
       const worldPosition = calculateLabelPosition(label, domain, domainPos, scale)
       if (worldPosition) {
-        positions.push({ labelId: label.id, position: worldPosition })
+        positions.push({ propertyId: label.id, position: worldPosition })
       }
     })
 
@@ -296,9 +296,9 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       />
 
       {/* Connection lines from concept to each label */}
-      {labelPositions.map(({ labelId, position }) => (
+      {labelPositions.map(({ propertyId, position }) => (
         <Line
-          key={labelId}
+          key={propertyId}
           points={[
             [conceptPosition.x, conceptPosition.y, conceptPosition.z],
             [position.x, position.y, position.z],
@@ -396,7 +396,7 @@ const areEqual = (prevProps: ConceptVisualization3DProps, nextProps: ConceptVisu
   return (
     prevProps.concept.id === nextProps.concept.id &&
     prevProps.concept.name === nextProps.concept.name &&
-    areLabelRefsEqual(prevProps.concept.labelRefs, nextProps.concept.labelRefs)
+    areLabelRefsEqual(prevProps.concept.propertyRefs, nextProps.concept.propertyRefs)
   )
 }
 

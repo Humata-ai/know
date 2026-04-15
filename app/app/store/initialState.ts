@@ -1,5 +1,5 @@
 import type { AppState } from './types'
-import type { QualityDomain, Concept, ConceptInstance, QualityDomainLabel, ConceptualStructure, RegionDimensionRange, PointDimensionValue } from '../components/shared/types'
+import type { QualityDomain, Concept, ConceptInstance, QualityDomainProperty, ConceptualStructure, RegionDimensionRange, PointDimensionValue } from '../components/shared/types'
 import defaultDataJson from '../components/shared/defaultData.json'
 
 /**
@@ -25,7 +25,7 @@ interface JsonPointDimensionValue {
   value: number
 }
 
-interface JsonLabel {
+interface JsonProperty {
   type: 'region' | 'point'
   id: string
   name: string
@@ -38,14 +38,16 @@ interface JsonDomain {
   id: string
   name: string
   dimensions: JsonDimension[]
-  labels: JsonLabel[]
+  properties: JsonProperty[]
+  labels?: JsonProperty[] // backward compatibility
   createdAt: string
 }
 
 interface JsonConcept {
   id: string
   name: string
-  labelRefs: { domainId: string; labelId: string }[]
+  propertyRefs: { domainId: string; propertyId: string }[]
+  propertyRefs?: { domainId: string; propertyId: string }[] // backward compatibility
   createdAt: string
 }
 
@@ -101,54 +103,65 @@ function parseRangeValue(val: number | string): number {
  * Parse JSON domains into runtime QualityDomain objects
  */
 function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
-  return jsonDomains.map(domain => ({
-    ...domain,
-    dimensions: domain.dimensions.map(dim => ({
-      ...dim,
-      range: toRangeTuple(dim.range.map(parseRangeValue)),
-    })),
-    labels: domain.labels.map(label => {
-      if (label.type === 'region') {
-        return {
-          type: 'region' as const,
-          id: label.id,
-          name: label.name,
-          domainId: label.domainId,
-          dimensions: label.dimensions.map(d => {
-            if ('range' in d) {
-              return {
-                dimensionId: d.dimensionId,
-                range: toRangeTuple((d.range as (number | string)[]).map(parseRangeValue)),
+  return jsonDomains.map(domain => {
+    const propertyList = domain.properties || domain.properties || []
+    return {
+      ...domain,
+      dimensions: domain.dimensions.map(dim => ({
+        ...dim,
+        range: toRangeTuple(dim.range.map(parseRangeValue)),
+      })),
+      properties: propertyList.map(property => {
+        if (property.type === 'region') {
+          return {
+            type: 'region' as const,
+            id: property.id,
+            name: property.name,
+            domainId: property.domainId,
+            dimensions: property.dimensions.map(d => {
+              if ('range' in d) {
+                return {
+                  dimensionId: d.dimensionId,
+                  range: toRangeTuple((d.range as (number | string)[]).map(parseRangeValue)),
+                }
               }
-            }
-            return d as unknown as RegionDimensionRange
-          }),
-          createdAt: new Date(label.createdAt),
+              return d as unknown as RegionDimensionRange
+            }),
+            createdAt: new Date(property.createdAt),
+          }
+        } else {
+          return {
+            type: 'point' as const,
+            id: property.id,
+            name: property.name,
+            domainId: property.domainId,
+            dimensions: property.dimensions as PointDimensionValue[],
+            createdAt: new Date(property.createdAt),
+          }
         }
-      } else {
-        return {
-          type: 'point' as const,
-          id: label.id,
-          name: label.name,
-          domainId: label.domainId,
-          dimensions: label.dimensions as PointDimensionValue[],
-          createdAt: new Date(label.createdAt),
-        }
-      }
-    }),
-    createdAt: new Date(domain.createdAt),
-  }))
+      }),
+      createdAt: new Date(domain.createdAt),
+    }
+  })
 }
 
 /**
  * Parse JSON concepts into runtime Concept objects
  */
 function parseConcepts(jsonConcepts: JsonConcept[]): Concept[] {
-  return jsonConcepts.map(concept => ({
-    ...concept,
-    labelRefs: concept.labelRefs,
-    createdAt: new Date(concept.createdAt),
-  }))
+  return jsonConcepts.map(concept => {
+    // Handle backward compatibility: convert propertyRefs to propertyRefs
+    const propertyRefs = concept.propertyRefs || (concept.propertyRefs?.map(ref => ({
+      domainId: ref.domainId,
+      propertyId: ref.propertyId
+    })) || [])
+    
+    return {
+      ...concept,
+      propertyRefs,
+      createdAt: new Date(concept.createdAt),
+    }
+  })
 }
 
 /**
@@ -187,8 +200,8 @@ export const initialState: AppState = {
   scene: {
     domains: parseDomains(jsonData.domains),
     selectedDomainId: null,
-    selectedLabelId: null,
-    selectedLabelDomainId: null,
+    selectedPropertyId: null,
+    selectedPropertyDomainId: null,
     selectedConceptId: null,
     selectedInstanceId: null,
     concepts: parseConcepts(jsonData.concepts),

@@ -13,10 +13,8 @@ import type {
   Concept,
   ConceptInstance,
   ConceptualStructure,
-  QualityDomainLabel,
-  Property,
+  QualityDomainProperty,
   PropertyReference,
-  LabelReference,
   DictionaryWord
 } from '@/app/components/shared/types'
 
@@ -27,8 +25,7 @@ import type {
   JsonConceptualStructure,
   JsonDictionaryWord,
   JsonQualityDimension,
-  JsonLabelDimension,
-  JsonProperty
+  JsonPropertyDimension
 } from '@/app/types/json'
 
 /**
@@ -41,28 +38,28 @@ export function convertInfinity(val: unknown): number {
 }
 
 /**
- * Migration: Convert old Property to QualityDomainLabel (Region)
- * Used when migrating from version 1 format
+ * Migration: Convert old label format to property format
+ * Used when migrating from older versions that used "labels" terminology
  */
-export function migratePropertyToLabel(oldProperty: Property): QualityDomainLabel {
+export function migrateLabelToProperty(oldLabel: any): QualityDomainProperty {
   return {
-    type: 'region',
-    id: oldProperty.id,
-    name: oldProperty.name,
-    domainId: oldProperty.domainId,
-    dimensions: oldProperty.dimensions,
-    createdAt: oldProperty.createdAt
+    type: oldLabel.type || 'region',
+    id: oldLabel.id,
+    name: oldLabel.name,
+    domainId: oldLabel.domainId,
+    dimensions: oldLabel.dimensions,
+    createdAt: oldLabel.createdAt
   }
 }
 
 /**
- * Migration: Convert old PropertyReference to LabelReference
- * Used when migrating from version 1 format
+ * Migration: Convert old LabelReference to PropertyReference
+ * Used when migrating from older versions
  */
-export function migratePropertyRefToLabelRef(oldRef: PropertyReference): LabelReference {
+export function migrateLabelRefToPropertyRef(oldRef: any): PropertyReference {
   return {
     domainId: oldRef.domainId,
-    labelId: oldRef.propertyId
+    propertyId: oldRef.propertyId || oldRef.propertyId
   }
 }
 
@@ -72,8 +69,8 @@ export function migratePropertyRefToLabelRef(oldRef: PropertyReference): LabelRe
  * Handles:
  * - Date deserialization
  * - Infinity value conversion
- * - Migration from old "properties" format to new "labels" format
- * - Both region and point label dimensions
+ * - Migration from old "labels" format to new "properties" format
+ * - Both region and point property dimensions
  * 
  * @param rawDomains - Raw domain objects from JSON
  * @param version - Schema version number (for migrations)
@@ -93,32 +90,39 @@ export function parseDomains(rawDomains: JsonQualityDomain[], version: number = 
       }))
     }
 
-    // Handle old format (version 1) with properties field
-    if (version === 1 || domain.properties) {
-      const oldProperties = (domain.properties || []).map((prop: JsonProperty) => ({
-        ...prop,
-        createdAt: new Date(prop.createdAt),
-        dimensions: prop.dimensions.map((d) => ({
-          ...d,
-          range: [
-            convertInfinity(d.range[0]),
-            convertInfinity(d.range[1])
-          ] as const
-        }))
+    // Handle old format with "labels" field (backward compatibility)
+    if ((domain as any).properties) {
+      const oldLabels = ((domain as any).properties || []).map((label: any) => ({
+        ...label,
+        createdAt: new Date(label.createdAt),
+        dimensions: label.dimensions.map((d: JsonPropertyDimension) => {
+          // Handle region dimensions (with range)
+          if ('range' in d) {
+            return {
+              ...d,
+              range: [
+                convertInfinity(d.range[0]),
+                convertInfinity(d.range[1])
+              ] as const
+            }
+          }
+          // Handle point dimensions (with value)
+          return d
+        })
       }))
 
-      // Migrate old properties to labels
+      // Migrate old labels to properties
       return {
         ...baseDomain,
-        labels: oldProperties.map(migratePropertyToLabel)
+        properties: oldLabels.map(migrateLabelToProperty)
       } as QualityDomain
     }
 
-    // Handle new format (version 2+) with labels field
-    const labels = (domain.labels || []).map((label) => ({
-      ...label,
-      createdAt: new Date(label.createdAt),
-      dimensions: label.dimensions.map((d: JsonLabelDimension) => {
+    // Handle new format with "properties" field
+    const properties = (domain.properties || []).map((property) => ({
+      ...property,
+      createdAt: new Date(property.createdAt),
+      dimensions: property.dimensions.map((d: JsonPropertyDimension) => {
         // Handle region dimensions (with range)
         if ('range' in d) {
           return {
@@ -136,7 +140,7 @@ export function parseDomains(rawDomains: JsonQualityDomain[], version: number = 
 
     return {
       ...baseDomain,
-      labels
+      properties
     } as QualityDomain
   })
 }
@@ -146,7 +150,7 @@ export function parseDomains(rawDomains: JsonQualityDomain[], version: number = 
  * 
  * Handles:
  * - Date deserialization
- * - Migration from old "propertyRefs" to new "labelRefs"
+ * - Migration from old "propertyRefs" to new "propertyRefs"
  * 
  * @param rawConcepts - Raw concept objects from JSON
  * @param version - Schema version number (for migrations)
@@ -159,15 +163,15 @@ export function parseConcepts(rawConcepts: JsonConcept[], version: number = 4): 
       createdAt: new Date(concept.createdAt)
     }
 
-    // Handle old format with propertyRefs
-    if (version === 1 || concept.propertyRefs) {
+    // Handle old format with propertyRefs (backward compatibility)
+    if ((concept as any).propertyRefs) {
       return {
         ...baseConcept,
-        labelRefs: (concept.propertyRefs || []).map(migratePropertyRefToLabelRef)
+        propertyRefs: ((concept as any).propertyRefs || []).map(migrateLabelRefToPropertyRef)
       } as Concept
     }
 
-    // New format already has labelRefs
+    // New format already has propertyRefs
     return baseConcept as Concept
   })
 }
@@ -242,6 +246,6 @@ export const DataParser = {
   parseConceptualStructure,
   parseDictionaryWords,
   // Migration utilities (exported for backward compatibility)
-  migratePropertyToLabel,
-  migratePropertyRefToLabelRef,
+  migrateLabelToProperty,
+  migrateLabelRefToPropertyRef,
 } as const

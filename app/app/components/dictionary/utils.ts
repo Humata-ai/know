@@ -8,10 +8,10 @@ export function getDictionaryWordName(
   domains: QualityDomain[],
   concepts: Concept[],
 ): string {
-  if (word.labelRef) {
-    const domain = domains.find((d) => d.id === word.labelRef!.domainId)
+  if (word.propertyRef) {
+    const domain = domains.find((d) => d.id === word.propertyRef!.domainId)
     if (domain) {
-      const label = domain.labels.find((l) => l.id === word.labelRef!.labelId)
+      const property = domain.properties.find((l) => l.id === word.propertyRef!.propertyId)
       if (label) return label.name ?? '(unknown label)'
     }
     return '(unknown label)'
@@ -31,8 +31,8 @@ export function getDictionaryWordType(
   word: DictionaryWord,
   domains: QualityDomain[],
 ): string {
-  if (word.labelRef) {
-    const domain = domains.find((d) => d.id === word.labelRef!.domainId)
+  if (word.propertyRef) {
+    const domain = domains.find((d) => d.id === word.propertyRef!.domainId)
     return domain ? `Label in ${domain.name}` : 'Label'
   }
   if (word.conceptId) {

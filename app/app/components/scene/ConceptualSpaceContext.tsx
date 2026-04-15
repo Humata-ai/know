@@ -46,8 +46,8 @@ export interface ConceptualSpaceData {
 }
 
 export interface ConceptualSpaceContextType extends ConceptualSpaceData {
-  /** Get all labels for a given concept (resolved from labelRefs) */
-  getConceptLabels: (conceptId: string) => QualityDomainLabel[]
+  /** Get all labels for a given concept (resolved from propertyRefs) */
+  getConceptProperties: (conceptId: string) => QualityDomainLabel[]
   /** Get all instances for a given concept */
   getConceptInstances: (conceptId: string) => ConceptInstance[]
   /** Get all points for a given instance (resolved from pointRefs) */
@@ -81,7 +81,7 @@ interface ConceptualSpaceProviderProps extends ConceptualSpaceData {
  * Provider component that makes conceptual space data available to all
  * visualization children via React context.
  *
- * The selector functions (getConceptLabels, etc.) operate on the provided
+ * The selector functions (getConceptProperties, etc.) operate on the provided
  * data rather than the global store, ensuring correct behavior regardless
  * of whether the data comes from scene state or a library word.
  */
@@ -96,15 +96,15 @@ export function ConceptualSpaceProvider({
   children,
 }: ConceptualSpaceProviderProps) {
   const value = useMemo<ConceptualSpaceContextType>(() => {
-    const getConceptLabels = (conceptId: string): QualityDomainLabel[] => {
+    const getConceptProperties = (conceptId: string): QualityDomainLabel[] => {
       const concept = concepts.find((c) => c.id === conceptId)
       if (!concept) return []
 
       const labels: QualityDomainLabel[] = []
-      for (const ref of concept.labelRefs) {
+      for (const ref of concept.propertyRefs) {
         const domain = domains.find((d) => d.id === ref.domainId)
         if (domain) {
-          const label = domain.labels.find((l) => l.id === ref.labelId)
+          const property = domain.properties.find((l) => l.id === ref.propertyId)
           if (label) {
             labels.push(label)
           }
@@ -125,7 +125,7 @@ export function ConceptualSpaceProvider({
         .map((ref) => {
           const domain = domains.find((d) => d.id === ref.domainId)
           if (!domain) return null
-          const label = domain.labels.find((l) => l.id === ref.pointId)
+          const property = domain.properties.find((l) => l.id === ref.pointId)
           return label && isPoint(label) ? label : null
         })
         .filter((p): p is QualityDomainPoint => p !== null)
@@ -139,7 +139,7 @@ export function ConceptualSpaceProvider({
       selectedConceptId,
       selectedInstanceId,
       domainScale,
-      getConceptLabels,
+      getConceptProperties,
       getConceptInstances,
       getInstancePoints,
     }

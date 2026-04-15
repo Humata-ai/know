@@ -21,7 +21,7 @@ export default function InstanceModal({
   editingInstanceId,
   onClose,
 }: InstanceModalProps) {
-  const { state, addInstance, updateInstance, getConceptLabels } = useQualityDomain()
+  const { state, addInstance, updateInstance, getConceptProperties } = useQualityDomain()
   const [name, setName] = useState('')
   const [selectedPoints, setSelectedPoints] = useState<Record<string, string>>({})
   const [errors, setErrors] = useState<string[]>([])
@@ -33,7 +33,7 @@ export default function InstanceModal({
 
   // Get unique domains referenced by the concept
   const referencedDomains: QualityDomain[] = concept
-    ? Array.from(new Set(concept.labelRefs.map(ref => ref.domainId)))
+    ? Array.from(new Set(concept.propertyRefs.map(ref => ref.domainId)))
         .map(domainId => state.scene.domains.find(d => d.id === domainId))
         .filter((d): d is QualityDomain => d !== undefined)
     : []
@@ -150,7 +150,7 @@ export default function InstanceModal({
               <div className="space-y-3">
                 {referencedDomains.map((domain) => {
                   // Get only point labels from this domain
-                  const availablePoints = domain.labels.filter(isPoint)
+                  const availablePoints = domain.properties.filter(isPoint)
 
                   return (
                     <div key={domain.id} className="border border-gray-200 rounded p-3">

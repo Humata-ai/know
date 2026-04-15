@@ -18,14 +18,14 @@ interface ConceptCardProps {
 }
 
 export default function ConceptCard({ concept, onEdit, isSelected }: ConceptCardProps) {
-  const { state, deleteConcept, getConceptLabels, getConceptInstances, selectConcept } = useQualityDomain()
+  const { state, deleteConcept, getConceptProperties, getConceptInstances, selectConcept } = useQualityDomain()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [isInstanceModalOpen, setIsInstanceModalOpen] = useState(false)
   const [editingInstanceId, setEditingInstanceId] = useState<string | null>(null)
   const open = Boolean(anchorEl)
 
-  const labels = getConceptLabels(concept.id)
+  const labels = getConceptProperties(concept.id)
   const instances = getConceptInstances(concept.id)
 
   // Concept is expanded if it's selected (either directly or via an instance)

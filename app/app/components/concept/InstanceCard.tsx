@@ -63,7 +63,7 @@ export default function InstanceCard({ instance, onEdit, isSelected }: InstanceC
       const domain = state.scene.domains.find(d => d.id === ref.domainId)
       if (!domain) return null
 
-      const point = domain.labels.find(l => l.id === ref.pointId)
+      const point = domain.properties.find(l => l.id === ref.pointId)
       if (!point) return null
 
       return {
