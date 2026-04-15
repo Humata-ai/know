@@ -2,7 +2,7 @@
 The framework we are applying to model concepts as geometry is built upon the work Peter Gardenfors has done in his two books Conceptual Spaces: The Geometry of Thought and the Geometry of Meaning: Semantics Based on Conceptual Spaces. 
 
 ### Quality Domain
-[Quality Domain](./Glossary.md#Quality Domain)
+[Quality Domain](./Glossary.md#quality-domain)
 
 A quality domain is a collection of related quality dimensions that together characterize a particular aspect of experience or perception. Domains provide a natural grouping of dimensions that tend to co-vary or be processed together cognitively.
 
