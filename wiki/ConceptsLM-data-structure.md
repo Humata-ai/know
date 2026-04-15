@@ -14,7 +14,7 @@ export const QualityDomainSchema = z.object({
   createdAt: z.date(),
 })
 ```
-- [schemas.ts:66](./app/app/components/shared/schemas.ts#L66)
+- [schemas.ts:66](/app/app/components/shared/schemas.ts#L66)
 
 ### Quality Dimensions
 
