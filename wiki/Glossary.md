@@ -181,11 +181,11 @@ Grounded in perceptual domains.
 
 Domain without ordered metric structure (e.g., hue, circle).
 
-### Object Category (Noun)
+### Concept
 
-An object category is a structured region across multiple domains that corresponds to nouns in natural language. When we use a common noun like "apple," "bird," or "chair," we are referring to a concept represented as an object category in conceptual space.
+A concept is a structured region across multiple domains that corresponds to nouns in natural language. When we use a common noun like "apple," "bird," or "chair," we are referring to a concept represented as an object category in conceptual space.
 
-An object category is determined by:
+A concept is determined by:
 
 1. A set of relevant domains (may be expanded over time)
 2. A set of convex regions in these domains (in some cases, the region may be the entire domain)
