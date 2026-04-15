@@ -47,7 +47,24 @@ Require an ordered metric structure.
 
 ### Concept
 
-A concept is a classification of a category of objects, defined by set of properties (convex regions in domains) delineating possible instances that share those characteristics.
+A concept is a structured region across multiple domains that corresponds to nouns in natural language. When we use a common noun like "apple," "bird," or "chair," we are referring to a concept represented as an object category in conceptual space.
+
+A concept is determined by:
+
+1. A set of relevant domains (may be expanded over time)
+2. A set of convex regions in these domains (in some cases, the region may be the entire domain)
+3. Prominence weights of the domains (dependent on context)
+4. Information about how the regions in different domains are correlated
+5. Information about meronomic (part-whole) relations
+
+Examples of object categories might include:
+
+- Apple: regions in color domain (red, green, yellow), shape domain (roundness, size), taste domain (sweetness, tartness), texture domain (crispness, smoothness)
+- Bird: regions in shape domain, size domain, color domain, with meronomic relations (has wings, has beak, has feathers)
+- Chair: regions in shape domain (back, seat, legs), size domain, material domain, with specific part-whole structure
+
+The prominence weights allow context-dependent emphasis. For example, when identifying fruit, the color and taste domains might be more prominent than texture, while when packing fruit for shipping, size and firmness become more prominent.
+
 
 ### Concept Formation
 
@@ -180,26 +197,6 @@ Grounded in perceptual domains.
 ### Nonscalable Domain
 
 Domain without ordered metric structure (e.g., hue, circle).
-
-### Concept
-
-A concept is a structured region across multiple domains that corresponds to nouns in natural language. When we use a common noun like "apple," "bird," or "chair," we are referring to a concept represented as an object category in conceptual space.
-
-A concept is determined by:
-
-1. A set of relevant domains (may be expanded over time)
-2. A set of convex regions in these domains (in some cases, the region may be the entire domain)
-3. Prominence weights of the domains (dependent on context)
-4. Information about how the regions in different domains are correlated
-5. Information about meronomic (part-whole) relations
-
-Examples of object categories might include:
-
-- Apple: regions in color domain (red, green, yellow), shape domain (roundness, size), taste domain (sweetness, tartness), texture domain (crispness, smoothness)
-- Bird: regions in shape domain, size domain, color domain, with meronomic relations (has wings, has beak, has feathers)
-- Chair: regions in shape domain (back, seat, legs), size domain, material domain, with specific part-whole structure
-
-The prominence weights allow context-dependent emphasis. For example, when identifying fruit, the color and taste domains might be more prominent than texture, while when packing fruit for shipping, size and firmness become more prominent.
 
 ### Objects (Names)
 
