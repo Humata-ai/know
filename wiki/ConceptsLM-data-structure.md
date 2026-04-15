@@ -16,6 +16,6 @@ Please see [property](./Glossary.md#property) in the glossary.
 
 Please see [concept](./Glossary.md#concept) in the glossary.
 
-# Actions
+### Actions
 
 Please see [action](./Glossary.md#action) in the glossary.
