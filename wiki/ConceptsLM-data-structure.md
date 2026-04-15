@@ -2,20 +2,21 @@
 The framework we are applying to model concepts as geometry is built upon the work Peter Gardenfors has done in his two books Conceptual Spaces: The Geometry of Thought and the Geometry of Meaning: Semantics Based on Conceptual Spaces. 
 
 ### Quality Domain
-Please see [quality domain](./Glossary.md#quality-domain) in the glossary.
+To understand what is meant by "quality domain" please see its [glossary definition](./Glossary.md#quality-domain).
+
 
 ### Quality Dimensions
 
-Please see [quality dimensions](./Glossary.md#quality-dimensions) in the glossary.
+To understand what is meant by "quality dimensions" please see its [glossary definition](./Glossary.md#quality-dimensions).
 
 ### Property
 
-Please see [property](./Glossary.md#property) in the glossary.
+To understand what is meant by "property" please see its [glossary definition](./Glossary.md#property).
 
 ### Concept
 
-Please see [concept](./Glossary.md#concept) in the glossary.
+To understand what is meant by "concept" please see its [glossary definition](./Glossary.md#concept).
 
 ### Actions
 
-Please see [action](./Glossary.md#action) in the glossary.
+To understand what is meant by "action" please see its [glossary definition](./Glossary.md#action).
