@@ -66,9 +66,9 @@ function VisualizationSpider({ domain }: VisualizationSpiderProps) {
       
       const geometry = new THREE.BufferGeometry().setFromPoints(points)
       circles.push(
-        <line key={`circle-${i}`} geometry={geometry}>
+        <lineLoop key={`circle-${i}`} geometry={geometry}>
           <lineBasicMaterial color="#d1d5db" opacity={0.3} transparent />
-        </line>
+        </lineLoop>
       )
     }
     

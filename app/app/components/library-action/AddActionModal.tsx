@@ -13,7 +13,7 @@ interface AddActionModalProps {
 export default function AddActionModal({ isOpen, onClose }: AddActionModalProps) {
   const { addLibraryAction } = useAppStore()
   const [actionName, setActionName] = useState('')
-  const [verbType, setVerbType] = useState<'manner' | 'result' | 'path'>('manner')
+  const [verbType, setVerbType] = useState<'manner' | 'result'>('manner')
 
   const handleAddAction = () => {
     if (!actionName.trim()) return

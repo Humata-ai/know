@@ -9,7 +9,7 @@ import { areLabelDimensionsEqual, areDimensionsEqual } from '@/app/utils/equalit
 import LabelBillboard from '../../shared/LabelBillboard'
 
 interface AxisData {
-  dimension: { id: string; name: string; range: [number, number] }
+  dimension: { id: string; name: string; range: readonly [number, number] }
   angle: number
   endX: number
   endY: number

@@ -9,7 +9,7 @@ const STATE_VERSION = 8 // Version 8 adds actions
 interface JsonAction {
   id: string
   name: string
-  verbType: 'manner' | 'result' | 'path'
+  verbType: 'manner' | 'result'
   createdAt: string
 }
 
