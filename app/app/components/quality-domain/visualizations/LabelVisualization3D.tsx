@@ -40,6 +40,18 @@ function LabelVisualization3D({
   }
 
   const { ranges, position, isPointLabel } = useMemo(() => {
+    // Safety check inside useMemo
+    if (!label || !label.name || !label.dimensions) {
+      return {
+        ranges: [
+          { min: 0, max: 0, center: 0, size: 0 },
+          { min: 0, max: 0, center: 0, size: 0 },
+          { min: 0, max: 0, center: 0, size: 0 }
+        ],
+        position: new THREE.Vector3(0, 0, 0),
+        isPointLabel: false
+      }
+    }
     const ranges = domain.dimensions.map((dim, idx) => {
       const labelDim = label.dimensions.find((d) => d.dimensionId === dim.id)
       const [dimMin, dimMax] = dim.range
@@ -126,6 +138,11 @@ function LabelVisualization3D({
       : [position.x, position.y + ranges[1].size / 2 + 1.5, position.z] as const,
     [position.x, position.y, position.z, ranges, isPointLabel]
   )
+
+  // Safety check - don't render if label data is invalid
+  if (!label || !label.name) {
+    return null
+  }
 
   return (
     <>

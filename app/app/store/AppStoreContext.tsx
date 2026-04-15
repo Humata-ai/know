@@ -34,7 +34,13 @@ interface AppStoreContextType {
   selectInstance: (instanceId: string | null) => void
   clearSelection: () => void
   
-  // Label methods
+  // Property methods (aliases for label methods)
+  addProperty: (domainId: string, property: QualityDomainLabel) => void
+  updateProperty: (domainId: string, property: QualityDomainLabel) => void
+  deleteProperty: (domainId: string, propertyId: string) => void
+  selectProperty: (domainId: string, propertyId: string) => void
+  
+  // Label methods (deprecated - use property methods)
   addLabel: (domainId: string, label: QualityDomainLabel) => void
   updateLabel: (domainId: string, label: QualityDomainLabel) => void
   deleteLabel: (domainId: string, labelId: string) => void
@@ -69,7 +75,12 @@ interface AppStoreContextType {
   updateLibraryAction: (action: Action) => void
   deleteLibraryAction: (id: string) => void
   
-  // Library label methods
+  // Library property methods (aliases for label methods)
+  addLibraryProperty: (domainId: string, property: QualityDomainLabel) => void
+  updateLibraryProperty: (domainId: string, property: QualityDomainLabel) => void
+  deleteLibraryProperty: (domainId: string, propertyId: string) => void
+  
+  // Library label methods (deprecated - use property methods)
   addLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
   updateLibraryLabel: (domainId: string, label: QualityDomainLabel) => void
   deleteLibraryLabel: (domainId: string, labelId: string) => void
@@ -265,12 +276,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     deleteDomain: deleteDomainMethod,
     selectDomain: selectDomainMethod,
     selectLabel: selectLabelMethod,
+    selectProperty: selectLabelMethod, // Alias
     selectConcept: selectConceptMethod,
     selectInstance: selectInstanceMethod,
     clearSelection: clearSelectionMethod,
     addLabel: addLabelMethod,
     updateLabel: updateLabelMethod,
     deleteLabel: deleteLabelMethod,
+    addProperty: addLabelMethod, // Alias
+    updateProperty: updateLabelMethod, // Alias
+    deleteProperty: deleteLabelMethod, // Alias
     addConcept: addConceptMethod,
     updateConcept: updateConceptMethod,
     deleteConcept: deleteConceptMethod,
@@ -292,6 +307,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     addLibraryLabel: addLibraryLabelMethod,
     updateLibraryLabel: updateLibraryLabelMethod,
     deleteLibraryLabel: deleteLibraryLabelMethod,
+    addLibraryProperty: addLibraryLabelMethod, // Alias
+    updateLibraryProperty: updateLibraryLabelMethod, // Alias
+    deleteLibraryProperty: deleteLibraryLabelMethod, // Alias
     selectLibraryItem: selectLibraryItemMethod,
     clearLibrarySelection: clearLibrarySelectionMethod,
     getSelectedDomain: getSelectedDomainMethod,

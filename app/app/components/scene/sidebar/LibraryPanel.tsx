@@ -20,7 +20,7 @@ import AddDictionaryWordModal from '../../dictionary/AddDictionaryWordModal'
 import ConceptModal from '../../concept/ConceptModal'
 import DomainModal from '../../quality-domain/DomainModal'
 import DomainPickerModal from '../../quality-domain/DomainPickerModal'
-import LabelModal from '../../quality-domain/LabelModal'
+import PropertyModal from '../../quality-domain/PropertyModal'
 import AddActionModal from '../../library-action/AddActionModal'
 
 import LibraryMenu from './library/LibraryMenu'
@@ -227,10 +227,10 @@ export default function LibraryPanel() {
         onSelect={modals.handlePropertyDomainSelect}
         domains={state.library.domains}
       />
-      <LabelModal
+      <PropertyModal
         isOpen={modals.isPropertyLabelModalOpen}
         domainId={modals.propertyDomainId}
-        editingLabelId={modals.editingPropertyLabelId}
+        editingPropertyId={modals.editingPropertyLabelId}
         onClose={modals.closePropertyLabelModal}
         useLibraryState
       />

@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { useQualityDomain } from '@/app/store'
 import DomainCard from '../../quality-domain/DomainCard'
 import DomainModal from '../../quality-domain/DomainModal'
-import LabelCard from '../../quality-domain/LabelCard'
-import LabelModal from '../../quality-domain/LabelModal'
+import PropertyCard from '../../quality-domain/PropertyCard'
+import PropertyModal from '../../quality-domain/PropertyModal'
 import Button from '@mui/material/Button'
 import CollapsibleSection from './CollapsibleSection'
 
@@ -13,8 +13,8 @@ export default function QualityDomainsSection() {
   const { state } = useQualityDomain()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingDomainId, setEditingDomainId] = useState<string | null>(null)
-  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false)
-  const [editingLabelId, setEditingLabelId] = useState<string | null>(null)
+  const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false)
+  const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null)
 
   return (
     <>
@@ -40,22 +40,22 @@ export default function QualityDomainsSection() {
                   <div className="pl-2">
                     {domain.labels.length === 0 ? (
                       <div className="text-center py-4 text-gray-500">
-                        <p className="text-xs">No labels yet.</p>
+                        <p className="text-xs">No properties yet.</p>
                       </div>
                     ) : (
                       <div className="space-y-2 mb-2">
-                        {domain.labels.map((label) => (
-                          <LabelCard
-                            key={label.id}
-                            label={label}
+                        {domain.labels.map((property) => (
+                          <PropertyCard
+                            key={property.id}
+                            property={property}
                             domain={domain}
                             isSelected={
-                              state.scene.selectedLabelId === label.id &&
+                              state.scene.selectedLabelId === property.id &&
                               state.scene.selectedLabelDomainId === domain.id
                             }
                             onEdit={(id) => {
-                              setEditingLabelId(id)
-                              setIsLabelModalOpen(true)
+                              setEditingPropertyId(id)
+                              setIsPropertyModalOpen(true)
                             }}
                           />
                         ))}
@@ -64,15 +64,15 @@ export default function QualityDomainsSection() {
 
                     <Button
                       onClick={() => {
-                        setEditingLabelId(null)
-                        setIsLabelModalOpen(true)
+                        setEditingPropertyId(null)
+                        setIsPropertyModalOpen(true)
                       }}
                       variant="outlined"
                       color="primary"
                       fullWidth
                       sx={{ textTransform: 'none' }}
                     >
-                      Add label
+                      Define property
                     </Button>
                   </div>
                 )}
@@ -102,11 +102,11 @@ export default function QualityDomainsSection() {
       />
 
       {(state.scene.selectedDomainId || state.scene.selectedLabelDomainId) && (
-        <LabelModal
-          isOpen={isLabelModalOpen}
+        <PropertyModal
+          isOpen={isPropertyModalOpen}
           domainId={state.scene.selectedDomainId || state.scene.selectedLabelDomainId}
-          editingLabelId={editingLabelId}
-          onClose={() => setIsLabelModalOpen(false)}
+          editingPropertyId={editingPropertyId}
+          onClose={() => setIsPropertyModalOpen(false)}
         />
       )}
     </>

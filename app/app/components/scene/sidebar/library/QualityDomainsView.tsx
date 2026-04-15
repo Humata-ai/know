@@ -19,8 +19,8 @@ export default function QualityDomainsView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.domains.map((domain) => {
-        const labelCount = domain.labels.length
-        const subtitle = `${domain.dimensions.length}D • ${labelCount} ${labelCount === 1 ? 'label' : 'labels'}`
+        const propertyCount = domain.labels.length
+        const subtitle = `${domain.dimensions.length}D • ${propertyCount} ${propertyCount === 1 ? 'property' : 'properties'}`
         return (
           <LibraryListItem
             key={domain.id}

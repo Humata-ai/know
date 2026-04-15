@@ -9,22 +9,22 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
-interface LabelCardProps {
-  label: QualityDomainLabel
+interface PropertyCardProps {
+  property: QualityDomainLabel
   domain: QualityDomain
-  onEdit: (labelId: string) => void
+  onEdit: (propertyId: string) => void
   isSelected: boolean
 }
 
-export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCardProps) {
-  const { deleteLabel, selectLabel } = useQualityDomain()
+export default function PropertyCard({ property, domain, onEdit, isSelected }: PropertyCardProps) {
+  const { deleteProperty, selectProperty } = useQualityDomain()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    selectLabel(domain.id, label.id)
+    selectProperty(domain.id, property.id)
   }
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
@@ -39,7 +39,7 @@ export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCa
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation()
     handleMenuClose()
-    onEdit(label.id)
+    onEdit(property.id)
   }
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -50,7 +50,7 @@ export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCa
 
   const confirmDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
-    deleteLabel(domain.id, label.id)
+    deleteProperty(domain.id, property.id)
     setShowDeleteConfirm(false)
   }
 
@@ -60,7 +60,7 @@ export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCa
   }
 
   const getDimensionInfo = () => {
-    return label.dimensions.map((d) => {
+    return property.dimensions.map((d) => {
       const dimension = domain.dimensions.find((dim) => dim.id === d.dimensionId)
       if (!dimension) return null
 
@@ -93,7 +93,7 @@ export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCa
     >
       {showDeleteConfirm ? (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-red-600">Delete this label?</p>
+          <p className="text-sm font-medium text-red-600">Delete this property?</p>
           <div className="flex gap-2">
             <button
               onClick={confirmDelete}
@@ -113,9 +113,9 @@ export default function LabelCard({ label, domain, onEdit, isSelected }: LabelCa
         <>
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
-              {label.name && <h3 className="font-medium text-sm">{label.name}</h3>}
+              {property.name && <h3 className="font-medium text-sm">{property.name}</h3>}
               <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-700">
-                {isRegion(label) ? 'Region' : 'Point'}
+                {isRegion(property) ? 'Region' : 'Point'}
               </span>
             </div>
             <IconButton

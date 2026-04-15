@@ -7,10 +7,10 @@ import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import EditIcon from '@mui/icons-material/Edit'
 import { useState } from 'react'
-import LabelModal from '../../../quality-domain/LabelModal'
+import PropertyModal from '../../../quality-domain/PropertyModal'
 
 export default function PropertyDetailView({ propertyId }: { propertyId: string }) {
-  const { state, deleteLibraryLabel } = useAppStore()
+  const { state, deleteLibraryProperty } = useAppStore()
   const router = useRouter()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
@@ -36,7 +36,7 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
   const typeLabel = isRegion(label) ? 'Region' : 'Point'
 
   const handleDelete = () => {
-    deleteLibraryLabel(domain.id, label.id)
+    deleteLibraryProperty(domain.id, label.id)
     router.push('/library/properties')
   }
 
@@ -105,10 +105,10 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
         </div>
       </div>
       
-      <LabelModal
+      <PropertyModal
         isOpen={isEditModalOpen}
         domainId={domain.id}
-        editingLabelId={label.id}
+        editingPropertyId={label.id}
         onClose={() => setIsEditModalOpen(false)}
         useLibraryState
       />

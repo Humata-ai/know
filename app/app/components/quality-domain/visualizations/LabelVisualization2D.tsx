@@ -46,6 +46,11 @@ function LabelVisualization2D({
   const labelDimY = label.dimensions.find((d) => d.dimensionId === dimY.id)
 
   const { centerX, centerY, sizeX, sizeY, isPointLabel, color } = useMemo(() => {
+    // Safety check inside useMemo
+    if (!label || !label.name || !labelDimX || !labelDimY) {
+      return { centerX: 0, centerY: 0, sizeX: 0, sizeY: 0, isPointLabel: false, color: '#000000' }
+    }
+
     const baseColor = isSelected ? '#3b82f6' : LABEL_COLORS[index % LABEL_COLORS.length]
 
     // Check if dimensions are point-type by looking for 'value' property
@@ -93,6 +98,11 @@ function LabelVisualization2D({
   const meshPosition = useMemo(() => [centerX, centerY, 0.1] as const, [centerX, centerY])
   const labelPosition = useMemo(() => [centerX, centerY, isPointLabel ? 0.5 : 0.3] as const, [centerX, centerY, isPointLabel])
   const rotation = useMemo(() => [0, 0, 0] as const, [])
+
+  // Safety check before rendering
+  if (!label || !label.name) {
+    return null
+  }
 
   return (
     <group

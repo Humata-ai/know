@@ -148,7 +148,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
               }`}
             >
-              Label
+              Property
             </button>
             <button
               type="button"
@@ -167,12 +167,12 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
           </div>
         </div>
 
-        {/* Label picker */}
+        {/* Property picker */}
         {refType === 'label' && (
           <div>
-            <label className="block text-sm font-medium mb-2">Select Label</label>
+            <label className="block text-sm font-medium mb-2">Select Property</label>
             {!hasLabels ? (
-              <p className="text-sm text-gray-500">No labels available. Add labels to quality domains first.</p>
+              <p className="text-sm text-gray-500">No properties available. Define properties in quality domains first.</p>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded p-2">
                 {state.library.domains.map((domain) => {
@@ -236,7 +236,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                     >
                       <span>{concept.name}</span>
                       <span className="ml-2 text-xs text-gray-400">
-                        {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'label' : 'labels'}
+                        {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'property' : 'properties'}
                       </span>
                     </button>
                   )

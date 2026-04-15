@@ -32,6 +32,10 @@ function LabelVisualization1D({
   )
 
   const { centerPos, width, isPointLabel, color } = useMemo(() => {
+    // Safety check inside useMemo
+    if (!label || !label.name || !labelDimension) {
+      return { centerPos: 0, width: 0, isPointLabel: false, color: '#000000' }
+    }
     if (!labelDimension) {
       return { centerPos: 0, width: 0, isPointLabel: false, color: '#000000' }
     }
@@ -58,6 +62,11 @@ function LabelVisualization1D({
 
   const meshPosition = useMemo(() => [centerPos, 0.3, 0] as const, [centerPos])
   const labelPosition = useMemo(() => [centerPos, isPointLabel ? 0.9 : 0.6, 0] as const, [centerPos, isPointLabel])
+
+  // Safety check before rendering
+  if (!label || !label.name) {
+    return null
+  }
 
   return (
     <group>

@@ -5,18 +5,18 @@ import { useQualityDomain } from '@/app/store'
 import type { QualityDomainLabel, RegionDimensionRange, PointDimensionValue, QualityDomain } from '../../shared/types'
 import { generateId } from '../../shared/utils'
 
-interface UseLabelFormProps {
+interface UsePropertyFormProps {
   isOpen: boolean
   domainId: string | null
-  editingLabelId: string | null
+  editingPropertyId: string | null
   /** When true, operates on library state instead of scene state */
   useLibraryState?: boolean
 }
 
-export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibraryState = false }: UseLabelFormProps) {
-  const { state, addLabel, updateLabel, addLibraryLabel, updateLibraryLabel } = useQualityDomain()
+export default function usePropertyForm({ isOpen, domainId, editingPropertyId, useLibraryState = false }: UsePropertyFormProps) {
+  const { state, addProperty, updateProperty, addLibraryProperty, updateLibraryProperty } = useQualityDomain()
   const [name, setName] = useState('')
-  const [labelType, setLabelType] = useState<'region' | 'point' | null>(null)
+  const [propertyType, setPropertyType] = useState<'region' | 'point' | null>(null)
   const [regionDimensions, setRegionDimensions] = useState<RegionDimensionRange[]>([])
   const [pointDimensions, setPointDimensions] = useState<PointDimensionValue[]>([])
   const [errors, setErrors] = useState<string[]>([])
@@ -24,26 +24,26 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
 
   const domains = useLibraryState ? state.library.domains : state.scene.domains
   const domain = domainId ? domains.find((d) => d.id === domainId) : null
-  const editingLabel = editingLabelId && domain
-    ? domain.labels.find((l) => l.id === editingLabelId)
+  const editingProperty = editingPropertyId && domain
+    ? domain.labels.find((l) => l.id === editingPropertyId)
     : null
 
   useEffect(() => {
     if (isOpen && domain) {
-      if (editingLabel) {
-        setName(editingLabel.name || '')
-        setLabelType(editingLabel.type)
+      if (editingProperty) {
+        setName(editingProperty.name || '')
+        setPropertyType(editingProperty.type)
 
-        if (editingLabel.type === 'region') {
-          setRegionDimensions(editingLabel.dimensions)
+        if (editingProperty.type === 'region') {
+          setRegionDimensions(editingProperty.dimensions)
           setPointDimensions([])
         } else {
-          setPointDimensions(editingLabel.dimensions)
+          setPointDimensions(editingProperty.dimensions)
           setRegionDimensions([])
         }
       } else {
         setName('')
-        setLabelType(null)
+        setPropertyType(null)
         setRegionDimensions(
           domain.dimensions.map((dim) => ({
             dimensionId: dim.id,
@@ -62,7 +62,7 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
       }
       setErrors([])
     }
-  }, [isOpen, domain, editingLabel])
+  }, [isOpen, domain, editingProperty])
 
   const handleRegionRangeChange = (
     dimensionId: string,
@@ -92,8 +92,8 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   const validate = (): boolean => {
     const newErrors: string[] = []
 
-    if (!labelType) {
-      newErrors.push('Please select a label type')
+    if (!propertyType) {
+      newErrors.push('Please select a property type')
     }
 
     if (!domain) {
@@ -102,7 +102,7 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
       return false
     }
 
-    if (labelType === 'region') {
+    if (propertyType === 'region') {
       regionDimensions.forEach((dr) => {
         const dimension = domain.dimensions.find((d) => d.id === dr.dimensionId)
         if (!dimension) return
@@ -117,7 +117,7 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
           )
         }
       })
-    } else if (labelType === 'point') {
+    } else if (propertyType === 'point') {
       pointDimensions.forEach((pd) => {
         const dimension = domain.dimensions.find((d) => d.id === pd.dimensionId)
         if (!dimension) return
@@ -135,18 +135,18 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   }
 
   const handleGenerate = async () => {
-    if (!labelType || !domain) return
+    if (!propertyType || !domain) return
 
     setIsGenerating(true)
     setErrors([])
 
     try {
-      const response = await fetch('/api/generate-label', {
+      const response = await fetch('/api/generate-property', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          labelName: name,
-          labelType,
+          propertyName: name,
+          propertyType,
           domainName: domain.name,
           dimensions: domain.dimensions.map((d) => ({
             id: d.id,
@@ -163,13 +163,13 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
 
       const data = await response.json()
 
-      if (labelType === 'region' && data.type === 'region') {
+      if (propertyType === 'region' && data.type === 'region') {
         setRegionDimensions(data.dimensions)
-      } else if (labelType === 'point' && data.type === 'point') {
+      } else if (propertyType === 'point' && data.type === 'point') {
         setPointDimensions(data.dimensions)
       }
     } catch (err) {
-      setErrors([err instanceof Error ? err.message : 'Failed to generate label dimensions'])
+      setErrors([err instanceof Error ? err.message : 'Failed to generate property dimensions'])
     } finally {
       setIsGenerating(false)
     }
@@ -178,39 +178,39 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   const handleSubmit = (onClose: () => void) => (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validate() || !domain || !labelType) {
+    if (!validate() || !domain || !propertyType) {
       return
     }
 
-    const label: QualityDomainLabel = labelType === 'region'
+    const property: QualityDomainLabel = propertyType === 'region'
       ? {
           type: 'region',
-          id: editingLabel?.id || generateId(),
+          id: editingProperty?.id || generateId(),
           name: name.trim() || undefined,
           domainId: domain.id,
           dimensions: regionDimensions,
-          createdAt: editingLabel?.createdAt || new Date(),
+          createdAt: editingProperty?.createdAt || new Date(),
         }
       : {
           type: 'point',
-          id: editingLabel?.id || generateId(),
+          id: editingProperty?.id || generateId(),
           name: name.trim() || undefined,
           domainId: domain.id,
           dimensions: pointDimensions,
-          createdAt: editingLabel?.createdAt || new Date(),
+          createdAt: editingProperty?.createdAt || new Date(),
         }
 
     if (useLibraryState) {
-      if (editingLabel) {
-        updateLibraryLabel(domain.id, label)
+      if (editingProperty) {
+        updateLibraryProperty(domain.id, property)
       } else {
-        addLibraryLabel(domain.id, label)
+        addLibraryProperty(domain.id, property)
       }
     } else {
-      if (editingLabel) {
-        updateLabel(domain.id, label)
+      if (editingProperty) {
+        updateProperty(domain.id, property)
       } else {
-        addLabel(domain.id, label)
+        addProperty(domain.id, property)
       }
     }
 
@@ -220,14 +220,14 @@ export default function useLabelForm({ isOpen, domainId, editingLabelId, useLibr
   return {
     name,
     setName,
-    labelType,
-    setLabelType,
+    propertyType,
+    setPropertyType,
     regionDimensions,
     pointDimensions,
     errors,
     isGenerating,
     domain,
-    editingLabel,
+    editingProperty,
     handleRegionRangeChange,
     handlePointValueChange,
     handleGenerate,

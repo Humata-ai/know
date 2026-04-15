@@ -24,22 +24,22 @@ export default function ConceptDetailView({ conceptId, onDelete }: ConceptDetail
     <div className="px-4 py-4 space-y-4">
       <div className="flex items-center gap-2">
         <span className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
-          {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'label' : 'labels'}
+          {concept.labelRefs.length} {concept.labelRefs.length === 1 ? 'property' : 'properties'}
         </span>
       </div>
 
       {concept.labelRefs.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Labels</h4>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Properties</h4>
           <div className="space-y-2">
             {concept.labelRefs.map((labelRef, index) => {
               const domain = state.library.domains.find(d => d.id === labelRef.domainId)
-              const label = domain?.labels.find(l => l.id === labelRef.labelId)
-              if (!domain || !label) return null
+              const property = domain?.labels.find(l => l.id === labelRef.labelId)
+              if (!domain || !property) return null
               
               return (
                 <div key={index} className="text-sm text-gray-700 bg-gray-50 p-2 rounded border border-gray-200">
-                  <div className="font-medium">{label.name || '(unnamed)'}</div>
+                  <div className="font-medium">{property.name || '(unnamed)'}</div>
                   <div className="text-xs text-gray-500 mt-0.5">in {domain.name}</div>
                 </div>
               )

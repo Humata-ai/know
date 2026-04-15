@@ -24,12 +24,12 @@ export default function DictionaryWordDetailView({ wordId }: { wordId: string })
     ? state.library.concepts.find((c) => c.id === word.conceptId)
     : null
 
-  const linkedLabel = word.labelRef
+  const linkedProperty = word.labelRef
     ? (() => {
         const domain = state.library.domains.find((d) => d.id === word.labelRef!.domainId)
         if (!domain) return null
-        const label = domain.labels.find((l) => l.id === word.labelRef!.labelId)
-        return label ? { label, domain } : null
+        const property = domain.labels.find((l) => l.id === word.labelRef!.labelId)
+        return property ? { property, domain } : null
       })()
     : null
 
@@ -46,12 +46,12 @@ export default function DictionaryWordDetailView({ wordId }: { wordId: string })
         </span>
       </div>
 
-      {linkedLabel && (
+      {linkedProperty && (
         <div>
-          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Label</h4>
-          <p className="text-sm text-gray-700">{linkedLabel.label.name || '(unnamed)'}</p>
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Property</h4>
+          <p className="text-sm text-gray-700">{linkedProperty.property.name || '(unnamed)'}</p>
           <p className="text-xs text-gray-400 mt-0.5">
-            in {linkedLabel.domain.name}
+            in {linkedProperty.domain.name}
           </p>
         </div>
       )}
@@ -61,7 +61,7 @@ export default function DictionaryWordDetailView({ wordId }: { wordId: string })
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Concept</h4>
           <p className="text-sm text-gray-700">{linkedConcept.name}</p>
           <p className="text-xs text-gray-400 mt-0.5">
-            {linkedConcept.labelRefs.length} {linkedConcept.labelRefs.length === 1 ? 'label' : 'labels'}
+            {linkedConcept.labelRefs.length} {linkedConcept.labelRefs.length === 1 ? 'property' : 'properties'}
           </p>
         </div>
       )}

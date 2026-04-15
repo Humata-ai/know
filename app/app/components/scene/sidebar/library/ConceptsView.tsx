@@ -19,12 +19,12 @@ export default function ConceptsView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.concepts.map((concept) => {
-        const labelCount = concept.labelRefs.length
+        const propertyCount = concept.labelRefs.length
         return (
           <LibraryListItem
             key={concept.id}
             title={concept.name}
-            subtitle={`${labelCount} ${labelCount === 1 ? 'label' : 'labels'}`}
+            subtitle={`${propertyCount} ${propertyCount === 1 ? 'property' : 'properties'}`}
             onClick={() => router.push(`/library/concepts/${encodeURIComponent(concept.id)}`)}
           />
         )

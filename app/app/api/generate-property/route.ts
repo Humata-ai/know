@@ -14,7 +14,7 @@ const openai = new OpenAI({
 export async function POST(request: NextRequest) {
   try {
     const body = GenerateLabelRequestSchema.parse(await request.json())
-    const { labelName, labelType, domainName, dimensions } = body
+    const { propertyName, propertyType, domainName, dimensions } = body
 
     if (!dimensions.length) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const responseSchema = labelType === 'region'
+    const responseSchema = propertyType === 'region'
       ? buildRegionResponseSchema(dimensions)
       : buildPointResponseSchema(dimensions)
 
@@ -31,26 +31,26 @@ export async function POST(request: NextRequest) {
       .map((d) => `  - "${d.name}" (range: [${d.range[0]}, ${d.range[1]}])`)
       .join('\n')
 
-    const typeInstruction = labelType === 'region'
-      ? 'For each dimension, provide a min and max range that defines where this label exists within that dimension. The range should be a meaningful sub-region of the domain range.'
-      : 'For each dimension, provide a single numeric value that represents where this label falls within that dimension.'
+    const typeInstruction = propertyType === 'region'
+      ? 'For each dimension, provide a min and max range that defines where this property exists within that dimension. The range should be a meaningful sub-region of the domain range.'
+      : 'For each dimension, provide a single numeric value that represents where this property falls within that dimension.'
 
-    const prompt = `You are an expert at defining quality domain labels in a conceptual space framework.
+    const prompt = `You are an expert at defining quality domain properties in a conceptual space framework.
 
 Given a quality domain called "${domainName}" with the following dimensions:
 ${dimensionDescriptions}
 
-Generate appropriate ${labelType === 'region' ? 'dimension ranges' : 'dimension values'} for a label called "${labelName}".
+Generate appropriate ${propertyType === 'region' ? 'dimension ranges' : 'dimension values'} for a property called "${propertyName}".
 
 ${typeInstruction}
 
-Think carefully about what "${labelName}" means in the context of the "${domainName}" quality domain, and choose values that make semantic sense. The values must be within each dimension's domain range.`
+Think carefully about what "${propertyName}" means in the context of the "${domainName}" quality domain, and choose values that make semantic sense. The values must be within each dimension's domain range.`
 
     const response = await openai.responses.parse({
       model: 'gpt-4o',
       input: prompt,
       text: {
-        format: zodTextFormat(responseSchema, 'label_dimensions'),
+        format: zodTextFormat(responseSchema, 'property_dimensions'),
       },
     })
 
@@ -61,7 +61,7 @@ Think carefully about what "${labelName}" means in the context of the "${domainN
     }
 
     // Transform the response into the format the frontend expects
-    if (labelType === 'region') {
+    if (propertyType === 'region') {
       const regionDimensions = dimensions.map((dim) => {
         const dimData = parsed.dimensions[dim.id] as { min: number; max: number }
         return {
@@ -78,9 +78,9 @@ Think carefully about what "${labelName}" means in the context of the "${domainN
       return NextResponse.json({ type: 'point', dimensions: pointDimensions })
     }
   } catch (error) {
-    console.error('Error generating label:', error)
+    console.error('Error generating property:', error)
     return NextResponse.json(
-      { error: 'Failed to generate label dimensions' },
+      { error: 'Failed to generate property dimensions' },
       { status: 500 }
     )
   }

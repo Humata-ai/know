@@ -1,79 +1,79 @@
 'use client'
 
 import Modal from '@/app/components/common/Modal'
-import LabelTypeSelector from './LabelTypeSelector'
+import PropertyTypeSelector from './PropertyTypeSelector'
 import RegionDimensionForm from './RegionDimensionForm'
 import PointDimensionForm from './PointDimensionForm'
-import useLabelForm from './useLabelForm'
+import usePropertyForm from './usePropertyForm'
 
-interface LabelModalProps {
+interface PropertyModalProps {
   isOpen: boolean
   domainId: string | null
-  editingLabelId: string | null
+  editingPropertyId: string | null
   onClose: () => void
   /** When true, operates on library state instead of scene state */
   useLibraryState?: boolean
 }
 
-export default function LabelModal({
+export default function PropertyModal({
   isOpen,
   domainId,
-  editingLabelId,
+  editingPropertyId,
   onClose,
   useLibraryState = false,
-}: LabelModalProps) {
+}: PropertyModalProps) {
   const {
     name,
     setName,
-    labelType,
-    setLabelType,
+    propertyType,
+    setPropertyType,
     regionDimensions,
     pointDimensions,
     errors,
     isGenerating,
     domain,
-    editingLabel,
+    editingProperty,
     handleRegionRangeChange,
     handlePointValueChange,
     handleGenerate,
     handleSubmit,
-  } = useLabelForm({ isOpen, domainId, editingLabelId, useLibraryState })
+  } = usePropertyForm({ isOpen, domainId, editingPropertyId, useLibraryState })
 
   if (!isOpen || !domain) return null
 
-  const showTypeSelection = !editingLabel && !labelType
-  const showForm = editingLabel || labelType
+  const showTypeSelection = !editingProperty && !propertyType
+  const showForm = editingProperty || propertyType
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editingLabel ? 'Edit label' : 'Create label'}
+      title={editingProperty ? 'Edit property' : 'Create property'}
       loading={isGenerating}
     >
       {showTypeSelection && (
-        <LabelTypeSelector
-          onSelect={setLabelType}
+        <PropertyTypeSelector
+          onSelect={setPropertyType}
           onClose={onClose}
         />
       )}
 
       {showForm && (
         <form onSubmit={handleSubmit(onClose)} className="space-y-4">
-          {editingLabel && (
+          {editingProperty && (
             <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-4">
               <div className="text-sm font-medium text-blue-900">
-                Type: {editingLabel.type === 'region' ? 'Region' : 'Point'}
+                Type: {editingProperty.type === 'region' ? 'Region' : 'Point'}
               </div>
             </div>
           )}
 
           <div>
-            <label htmlFor="label-name" className="block text-sm font-medium mb-1">
-              Label name <span className="text-gray-500 text-xs">(optional)</span>
+            <label htmlFor="property-name" className="block text-sm font-medium mb-1">
+              Property name <span className="text-gray-500 text-xs">(optional)</span>
             </label>
             <input
-              id="label-name"
+              id="property-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -82,7 +82,7 @@ export default function LabelModal({
             />
           </div>
 
-          {labelType === 'region' && (
+          {propertyType === 'region' && (
             <RegionDimensionForm
               domainName={domain.name}
               dimensions={domain.dimensions}
@@ -90,11 +90,11 @@ export default function LabelModal({
               onRangeChange={handleRegionRangeChange}
               onGenerate={handleGenerate}
               isGenerating={isGenerating}
-              labelName={name}
+              propertyName={name}
             />
           )}
 
-          {labelType === 'point' && (
+          {propertyType === 'point' && (
             <PointDimensionForm
               domainName={domain.name}
               dimensions={domain.dimensions}
@@ -102,7 +102,7 @@ export default function LabelModal({
               onValueChange={handlePointValueChange}
               onGenerate={handleGenerate}
               isGenerating={isGenerating}
-              labelName={name}
+              propertyName={name}
             />
           )}
 
@@ -128,7 +128,7 @@ export default function LabelModal({
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              {editingLabel ? 'Update label' : 'Save label'}
+              {editingProperty ? 'Update property' : 'Save property'}
             </button>
           </div>
         </form>

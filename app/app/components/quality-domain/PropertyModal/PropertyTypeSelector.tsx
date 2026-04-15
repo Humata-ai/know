@@ -1,15 +1,15 @@
 'use client'
 
-interface LabelTypeSelectorProps {
+interface PropertyTypeSelectorProps {
   onSelect: (type: 'region' | 'point') => void
   onClose: () => void
 }
 
-export default function LabelTypeSelector({ onSelect, onClose }: LabelTypeSelectorProps) {
+export default function PropertyTypeSelector({ onSelect, onClose }: PropertyTypeSelectorProps) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-gray-600 mb-4">
-        Choose the type of label to create:
+        Choose the type of property to create:
       </p>
       <div className="grid grid-cols-2 gap-4">
         <button

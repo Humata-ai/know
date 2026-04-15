@@ -28,6 +28,10 @@ function LabelVisualization3DDebug({
 
   // Count renders and flash on re-render
   useEffect(() => {
+    // Safety check inside useEffect
+    if (!label || !label.name) {
+      return
+    }
     renderCount.current += 1
     console.log(`[LabelViz3D] RENDER #${renderCount.current}`, {
       labelId: label.id,
@@ -45,6 +49,15 @@ function LabelVisualization3DDebug({
 
   // Map each domain dimension to label range (or full range if not specified)
   const ranges = useMemo(() => {
+    // Safety check inside useMemo
+    if (!label || !label.name || !label.dimensions) {
+      return [
+        { min: 0, max: 0, center: 0, size: 0 },
+        { min: 0, max: 0, center: 0, size: 0 },
+        { min: 0, max: 0, center: 0, size: 0 }
+      ]
+    }
+
     console.log(`[LabelViz3D] Computing ranges for ${label.name}`)
     return domain.dimensions.map((dim) => {
       const labelDim = label.dimensions.find((d) => d.dimensionId === dim.id)
@@ -81,6 +94,11 @@ function LabelVisualization3DDebug({
     () => [ranges[0].size, ranges[1].size, ranges[2].size] as const,
     [ranges[0].size, ranges[1].size, ranges[2].size]
   )
+
+  // Safety check before rendering
+  if (!label || !label.name) {
+    return null
+  }
 
   return (
     <group>

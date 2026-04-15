@@ -10,7 +10,7 @@ interface PointDimensionFormProps {
   onValueChange: (dimensionId: string, value: number) => void
   onGenerate: () => void
   isGenerating: boolean
-  labelName: string
+  propertyName: string
 }
 
 export default function PointDimensionForm({
@@ -20,7 +20,7 @@ export default function PointDimensionForm({
   onValueChange,
   onGenerate,
   isGenerating,
-  labelName,
+  propertyName,
 }: PointDimensionFormProps) {
   return (
     <div>
@@ -30,7 +30,7 @@ export default function PointDimensionForm({
         </label>
         <AiFillButton
           onClick={onGenerate}
-          disabled={isGenerating || !labelName.trim()}
+          disabled={isGenerating || !propertyName.trim()}
         />
       </div>
       <div className="space-y-3">

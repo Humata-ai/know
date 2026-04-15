@@ -162,11 +162,21 @@ export const DimensionInputSchema = z.object({
 })
 
 export const GenerateLabelRequestSchema = z.object({
-  labelName: z.string(),
-  labelType: z.enum(['region', 'point']),
+  propertyName: z.string().optional(),
+  propertyType: z.enum(['region', 'point']).optional(),
+  labelName: z.string().optional(),
+  labelType: z.enum(['region', 'point']).optional(),
   domainName: z.string(),
   dimensions: z.array(DimensionInputSchema),
-})
+}).transform((data) => ({
+  // Support both old (labelName/labelType) and new (propertyName/propertyType) parameters
+  propertyName: data.propertyName || data.labelName || '',
+  propertyType: data.propertyType || data.labelType || 'region',
+  labelName: data.propertyName || data.labelName || '',
+  labelType: data.propertyType || data.labelType || 'region',
+  domainName: data.domainName,
+  dimensions: data.dimensions,
+}))
 
 /**
  * Build a zod schema for the AI-generated region label response.

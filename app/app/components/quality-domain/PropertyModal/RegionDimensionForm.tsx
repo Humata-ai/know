@@ -11,7 +11,7 @@ interface RegionDimensionFormProps {
   onRangeChange: (dimensionId: string, field: 'min' | 'max', value: number) => void
   onGenerate: () => void
   isGenerating: boolean
-  labelName: string
+  propertyName: string
 }
 
 export default function RegionDimensionForm({
@@ -21,7 +21,7 @@ export default function RegionDimensionForm({
   onRangeChange,
   onGenerate,
   isGenerating,
-  labelName,
+  propertyName,
 }: RegionDimensionFormProps) {
   return (
     <div>
@@ -31,7 +31,7 @@ export default function RegionDimensionForm({
         </label>
         <AiFillButton
           onClick={onGenerate}
-          disabled={isGenerating || !labelName.trim()}
+          disabled={isGenerating || !propertyName.trim()}
         />
       </div>
       <div className="space-y-3">
