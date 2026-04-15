@@ -6,7 +6,7 @@ Please see [quality domain](./Glossary.md#quality-domain) in the glossary.
 
 ### Quality Dimensions
 
-Please see [quality dimensions](./Glossary.md#quality-domain) in the glossary.
+Please see [quality dimensions](./Glossary.md#quality-dimensions) in the glossary.
 
 ### Property
 
