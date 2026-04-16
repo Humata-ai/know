@@ -28,13 +28,13 @@ export function getLabelRange(
   defaultRange: readonly [number, number]
 ): readonly [number, number] {
   if (isRegion(property)) {
-    const labelDim = label.dimensions.find(d => d.dimensionId === dimensionId)
-    return labelDim?.range || defaultRange
+    const propertyDim = property.dimensions.find(d => d.dimensionId === dimensionId)
+    return propertyDim?.range || defaultRange
   } else {
     // For points, use the value as both min and max
-    const labelDim = label.dimensions.find(d => d.dimensionId === dimensionId)
-    if (labelDim) {
-      return [labelDim.value, labelDim.value] as const
+    const propertyDim = property.dimensions.find(d => d.dimensionId === dimensionId)
+    if (propertyDim) {
+      return [propertyDim.value, propertyDim.value] as const
     }
     // Fallback to default range
     return defaultRange
@@ -69,7 +69,7 @@ export function calculateLabelPosition(
     // 1D property: positioned on X-axis at Y=0.3, Z=0
     // Maps to -5 to +5 space
     const dim = domain.dimensions[0]
-    const labelRange = getLabelRange(label, dim.id, dim.range)
+    const labelRange = getLabelRange(property, dim.id, dim.range)
     const minPos = normalizeToRange(labelRange[0], dim.range, [-5, 5])
     const maxPos = normalizeToRange(labelRange[1], dim.range, [-5, 5])
     const centerPos = (minPos + maxPos) / 2
@@ -84,8 +84,8 @@ export function calculateLabelPosition(
     // Maps to -5 to +5 space
     const dimX = domain.dimensions[0]
     const dimY = domain.dimensions[1]
-    const labelRangeX = getLabelRange(label, dimX.id, dimX.range)
-    const labelRangeY = getLabelRange(label, dimY.id, dimY.range)
+    const labelRangeX = getLabelRange(property, dimX.id, dimX.range)
+    const labelRangeY = getLabelRange(property, dimY.id, dimY.range)
 
     const minX = normalizeToRange(labelRangeX[0], dimX.range, [-5, 5])
     const maxX = normalizeToRange(labelRangeX[1], dimX.range, [-5, 5])
@@ -104,7 +104,7 @@ export function calculateLabelPosition(
     // 3D property: positioned in 3D space
     // Maps to -4 to +4 space
     const ranges = domain.dimensions.map(dim => {
-      const labelRange = getLabelRange(label, dim.id, dim.range)
+      const labelRange = getLabelRange(property, dim.id, dim.range)
       const min = normalizeToRange(labelRange[0], dim.range, [-4, 4])
       const max = normalizeToRange(labelRange[1], dim.range, [-4, 4])
       return { center: (min + max) / 2 }
@@ -124,7 +124,7 @@ export function calculateLabelPosition(
     let validDimensions = 0
 
     domain.dimensions.forEach((dim, index) => {
-      const labelRange = getLabelRange(label, dim.id, dim.range)
+      const labelRange = getLabelRange(property, dim.id, dim.range)
       
       // Use center of label's range
       const centerValue = (labelRange[0] + labelRange[1]) / 2
