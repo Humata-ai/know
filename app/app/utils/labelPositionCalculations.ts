@@ -7,7 +7,7 @@
  */
 
 import { Vector3 } from 'three'
-import type { QualityDomainLabel, QualityDomain } from '@/app/components/shared/types'
+import type { QualityDomainProperty, QualityDomain } from '@/app/components/shared/types'
 import { isRegion } from '@/app/components/shared/types'
 import { normalizeToRange } from './positionCalculations'
 
@@ -23,11 +23,11 @@ import { normalizeToRange } from './positionCalculations'
  * @returns The range as [min, max]
  */
 export function getLabelRange(
-  label: QualityDomainLabel,
+  property: QualityDomainProperty,
   dimensionId: string,
   defaultRange: readonly [number, number]
 ): readonly [number, number] {
-  if (isRegion(label)) {
+  if (isRegion(property)) {
     const labelDim = label.dimensions.find(d => d.dimensionId === dimensionId)
     return labelDim?.range || defaultRange
   } else {
@@ -54,7 +54,7 @@ export function getLabelRange(
  * @returns Vector3 position in world space, or null if unable to calculate
  */
 export function calculateLabelPosition(
-  label: QualityDomainLabel,
+  property: QualityDomainProperty,
   domain: QualityDomain,
   domainPos: readonly [number, number, number],
   scale: number
@@ -66,7 +66,7 @@ export function calculateLabelPosition(
   }
 
   if (domain.dimensions.length === 1) {
-    // 1D label: positioned on X-axis at Y=0.3, Z=0
+    // 1D property: positioned on X-axis at Y=0.3, Z=0
     // Maps to -5 to +5 space
     const dim = domain.dimensions[0]
     const labelRange = getLabelRange(label, dim.id, dim.range)
@@ -80,7 +80,7 @@ export function calculateLabelPosition(
       domainPos[2]
     )
   } else if (domain.dimensions.length === 2) {
-    // 2D label: positioned on XY plane (vertical)
+    // 2D property: positioned on XY plane (vertical)
     // Maps to -5 to +5 space
     const dimX = domain.dimensions[0]
     const dimY = domain.dimensions[1]
@@ -101,7 +101,7 @@ export function calculateLabelPosition(
       domainPos[2]
     )
   } else if (domain.dimensions.length === 3) {
-    // 3D label: positioned in 3D space
+    // 3D property: positioned in 3D space
     // Maps to -4 to +4 space
     const ranges = domain.dimensions.map(dim => {
       const labelRange = getLabelRange(label, dim.id, dim.range)
@@ -116,7 +116,7 @@ export function calculateLabelPosition(
       domainPos[2] + ranges[2].center * scale
     )
   } else {
-    // 4D+ label: positioned on spider graph (in XY plane)
+    // 4D+ property: positioned on spider graph (in XY plane)
     const spiderRadius = 5
     const dimensionCount = domain.dimensions.length
     let sumX = 0
@@ -165,14 +165,14 @@ export function calculateLabelPosition(
  * @returns Array of Vector3 positions (excludes labels that can't be positioned)
  */
 export function calculateConceptLabelPositions(
-  labels: QualityDomainLabel[],
+  labels: QualityDomainProperty[],
   domains: QualityDomain[],
   domainPositions: Map<string, readonly [number, number, number]>,
   scale: number
 ): Vector3[] {
   const positions: Vector3[] = []
 
-  labels.forEach(label => {
+  properties.forEach(label => {
     const domain = domains.find(d => d.id === label.domainId)
     if (!domain) return
 

@@ -36,8 +36,8 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
     domain.properties.map((property) => ({
       domainId: domain.id,
       domainName: domain.name,
-      propertyId: label.id,
-      labelName: label.name || '(unnamed)',
+      propertyId: property.id,
+      propertyName: property.name || '(unnamed)',
     }))
   )
 
@@ -186,19 +186,19 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                         {domain.properties.map((property) => {
                           const isSelected =
                             selectedLabelRef?.domainId === domain.id &&
-                            selectedLabelRef?.propertyId === label.id
+                            selectedLabelRef?.propertyId === property.id
                           return (
                             <button
-                              key={label.id}
+                              key={property.id}
                               type="button"
-                              onClick={() => handleLabelSelect(domain.id, label.id)}
+                              onClick={() => handleLabelSelect(domain.id, property.id)}
                               className={`w-full text-left px-3 py-2 rounded text-sm transition-colors ${
                                 isSelected
                                   ? 'bg-purple-100 border border-purple-300 text-purple-800'
                                   : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
                               }`}
                             >
-                              {label.name || '(unnamed)'}
+                              {property.name || '(unnamed)'}
                             </button>
                           )
                         })}
