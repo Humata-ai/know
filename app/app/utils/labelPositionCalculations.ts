@@ -165,7 +165,7 @@ export function calculateLabelPosition(
  * @returns Array of Vector3 positions (excludes labels that can't be positioned)
  */
 export function calculateConceptLabelPositions(
-  labels: QualityDomainProperty[],
+  properties: QualityDomainProperty[],
   domains: QualityDomain[],
   domainPositions: Map<string, readonly [number, number, number]>,
   scale: number
