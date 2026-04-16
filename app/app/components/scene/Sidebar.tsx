@@ -20,7 +20,7 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
   const activeView = getTabFromPathname(pathname)
   const [collapsed, setCollapsed] = useState(false)
   const { state } = useQualityDomain()
-  
+
   // Hide inspect panel when on input page, otherwise use collapsed state
   const visibleView = collapsed ? null : (hideInspectPanel && activeView === 'inspect' ? null : activeView)
 
@@ -38,10 +38,9 @@ export default function Sidebar({ hideInspectPanel = false }: SidebarProps) {
       return
     }
     setCollapsed(false)
-    
+
     // If navigating to inspect tab and we have saved text, go directly to the visualization
     if (tab === 'inspect' && state.scene.inspectText) {
-      alert('hi')
       const encodedText = encodeURIComponent(state.scene.inspectText)
       router.push(`/inspect?txt=${encodedText}`)
     } else {
