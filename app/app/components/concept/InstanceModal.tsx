@@ -33,7 +33,7 @@ export default function InstanceModal({
 
   // Get unique domains referenced by the concept
   const referencedDomains: QualityDomain[] = concept
-    ? Array.from(new Set(concept.propertyRefs.map(ref => ref.domainId)))
+    ? Array.from(new Set((concept.propertyRefs || []).map(ref => ref.domainId)))
         .map(domainId => state.scene.domains.find(d => d.id === domainId))
         .filter((d): d is QualityDomain => d !== undefined)
     : []

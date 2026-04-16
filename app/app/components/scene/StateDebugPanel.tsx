@@ -293,7 +293,7 @@ export default function StateDebugPanel() {
                       key={concept.id}
                       className="px-2 py-1 bg-purple-100 text-purple-900 rounded text-xs"
                     >
-                      {concept.name} ({concept.propertyRefs.length} labels)
+                      {concept.name} ({(concept.propertyRefs || []).length} labels)
                     </div>
                   ))}
                 </div>

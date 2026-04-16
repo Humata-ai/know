@@ -236,7 +236,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                     >
                       <span>{concept.name}</span>
                       <span className="ml-2 text-xs text-gray-400">
-                        {concept.propertyRefs.length} {concept.propertyRefs.length === 1 ? 'property' : 'properties'}
+                        {(concept.propertyRefs || []).length} {(concept.propertyRefs || []).length === 1 ? 'property' : 'properties'}
                       </span>
                     </button>
                   )

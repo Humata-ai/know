@@ -313,7 +313,7 @@ function LibraryCameraControls() {
         // Calculate domain positions (same as ConceptualSpaceVisualizer)
         const radius = 15
         const domains = state.library.domains.filter(d => 
-          concept.propertyRefs.some(ref => ref.domainId === d.id)
+          (concept.propertyRefs || []).some(ref => ref.domainId === d.id)
         )
         const total = domains.length
         const angleStep = (2 * Math.PI) / total
@@ -452,7 +452,7 @@ export default function Scene({ activeTab = null }: SceneProps) {
         if (!concept) return EMPTY_CONCEPTUAL_SPACE
 
         // Collect all domains referenced by this concept's labels
-        const referencedDomainIds = new Set(concept.propertyRefs.map(ref => ref.domainId))
+        const referencedDomainIds = new Set((concept.propertyRefs || []).map(ref => ref.domainId))
         const domains = state.library.domains.filter(d => referencedDomainIds.has(d.id))
 
         return {
