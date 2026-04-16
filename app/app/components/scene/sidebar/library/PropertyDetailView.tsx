@@ -14,12 +14,12 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
   const router = useRouter()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  // Find the property (label) across all domains
-  let foundProperty: { label: any; domain: any } | null = null
+  // Find the property across all domains
+  let foundProperty: { property: any; domain: any } | null = null
   for (const domain of state.library.domains) {
     const property = domain.properties.find((l) => l.id === propertyId)
-    if (label) {
-      foundProperty = { label, domain }
+    if (property) {
+      foundProperty = { property, domain }
       break
     }
   }
@@ -32,11 +32,11 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
     )
   }
 
-  const { label, domain } = foundProperty
-  const typeLabel = isRegion(label) ? 'Region' : 'Point'
+  const { property, domain } = foundProperty
+  const typeLabel = isRegion(property) ? 'Region' : 'Point'
 
   const handleDelete = () => {
-    deleteLibraryProperty(domain.id, label.id)
+    deleteLibraryProperty(domain.id, property.id)
     router.push('/library/properties')
   }
 
@@ -72,7 +72,7 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
         <div>
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Dimensions</h4>
           <div className="space-y-2">
-            {label.dimensions.map((d: any) => {
+            {property.dimensions.map((d: any) => {
               const dimension = domain.dimensions.find((dim: any) => dim.id === d.dimensionId)
               if (!dimension) return null
               return (
@@ -92,7 +92,7 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
 
         <div>
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Added</h4>
-          <p className="text-sm text-gray-700">{label.createdAt.toLocaleDateString()}</p>
+          <p className="text-sm text-gray-700">{property.createdAt.toLocaleDateString()}</p>
         </div>
 
         <div className="pt-2">
@@ -108,7 +108,7 @@ export default function PropertyDetailView({ propertyId }: { propertyId: string 
       <PropertyModal
         isOpen={isEditModalOpen}
         domainId={domain.id}
-        editingPropertyId={label.id}
+        editingPropertyId={property.id}
         onClose={() => setIsEditModalOpen(false)}
         useLibraryState
       />
