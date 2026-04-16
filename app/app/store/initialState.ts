@@ -46,8 +46,8 @@ interface JsonDomain {
 interface JsonConcept {
   id: string
   name: string
-  propertyRefs: { domainId: string; propertyId: string }[]
-  propertyRefs?: { domainId: string; propertyId: string }[] // backward compatibility
+  propertyRefs?: { domainId: string; propertyId: string }[]
+  labelRefs?: { domainId: string; labelId: string }[] // backward compatibility
   createdAt: string
 }
 
@@ -104,7 +104,7 @@ function parseRangeValue(val: number | string): number {
  */
 function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
   return jsonDomains.map(domain => {
-    const propertyList = domain.properties || domain.properties || []
+    const propertyList = domain.properties || domain.labels || []
     return {
       ...domain,
       dimensions: domain.dimensions.map(dim => ({
@@ -150,10 +150,10 @@ function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
  */
 function parseConcepts(jsonConcepts: JsonConcept[]): Concept[] {
   return jsonConcepts.map(concept => {
-    // Handle backward compatibility: convert propertyRefs to propertyRefs
-    const propertyRefs = concept.propertyRefs || (concept.propertyRefs?.map(ref => ({
+    // Handle backward compatibility: convert old labelRefs to new propertyRefs
+    const propertyRefs = concept.propertyRefs || (concept.labelRefs?.map(ref => ({
       domainId: ref.domainId,
-      propertyId: ref.propertyId
+      propertyId: ref.labelId // old field was labelId
     })) || [])
     
     return {
