@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { zodTextFormat } from 'openai/helpers/zod'
 import {
-  GenerateLabelRequestSchema,
+  GeneratePropertyRequestSchema,
   buildRegionResponseSchema,
   buildPointResponseSchema,
 } from '../../components/shared/schemas'
@@ -13,7 +13,7 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = GenerateLabelRequestSchema.parse(await request.json())
+    const body = GeneratePropertyRequestSchema.parse(await request.json())
     const { propertyName, propertyType, domainName, dimensions } = body
 
     if (!dimensions.length) {
