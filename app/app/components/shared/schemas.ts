@@ -14,7 +14,7 @@ export const QualityDimensionSchema = z.object({
 
 // ===== Region/Point Property Types (Discriminated Union) =====
 
-export const RegionDimensionRangeSchema = z.object({
+export const PropertyDimensionRangeSchema = z.object({
   dimensionId: z.string(),
   range: NumberRangeTuple,
 })
@@ -24,26 +24,26 @@ export const PointDimensionValueSchema = z.object({
   value: z.number(),
 })
 
-const QualityDomainPropertyBaseSchema = z.object({
+const PropertyBaseSchema = z.object({
   id: z.string(),
   name: z.string().optional(),
   domainId: z.string(),
   createdAt: z.date(),
 })
 
-export const QualityDomainRegionSchema = QualityDomainPropertyBaseSchema.extend({
+export const PropertyRegionSchema = PropertyBaseSchema.extend({
   type: z.literal('region'),
-  dimensions: z.array(RegionDimensionRangeSchema),
+  dimensions: z.array(PropertyDimensionRangeSchema),
 })
 
-export const QualityDomainPointSchema = QualityDomainPropertyBaseSchema.extend({
+export const PropertyPointSchema = PropertyBaseSchema.extend({
   type: z.literal('point'),
   dimensions: z.array(PointDimensionValueSchema),
 })
 
-export const QualityDomainPropertySchema = z.discriminatedUnion('type', [
-  QualityDomainRegionSchema,
-  QualityDomainPointSchema,
+export const PropertySchema = z.discriminatedUnion('type', [
+  PropertyRegionSchema,
+  PropertyPointSchema,
 ])
 
 // ===== Quality Domain =====
@@ -52,7 +52,7 @@ export const QualityDomainSchema = z.object({
   id: z.string(),
   name: z.string(),
   dimensions: z.array(QualityDimensionSchema),
-  properties: z.array(QualityDomainPropertySchema),
+  properties: z.array(PropertySchema),
   createdAt: z.date(),
 })
 

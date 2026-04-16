@@ -1,5 +1,5 @@
 import type { SceneState, LibraryState } from './types'
-import type { QualityDomain, QualityDomainProperty, QualityDomainPoint, ConceptInstance, Concept, DictionaryWord } from '../components/shared/types'
+import type { QualityDomain, Property, PropertyPoint, ConceptInstance, Concept, DictionaryWord } from '../components/shared/types'
 import { isPoint } from '../components/shared/types'
 
 // Re-export for convenience
@@ -21,11 +21,11 @@ export function getSelectedDomain(state: SceneState): QualityDomain | null {
 /**
  * Get all properties for a given concept
  */
-export function getConceptProperties(state: SceneState, conceptId: string): QualityDomainProperty[] {
+export function getConceptProperties(state: SceneState, conceptId: string): Property[] {
   const concept = state.concepts.find((c) => c.id === conceptId)
   if (!concept) return []
   
-  const properties: QualityDomainProperty[] = []
+  const properties: Property[] = []
   for (const ref of concept.propertyRefs) {
     const domain = state.domains.find((d) => d.id === ref.domainId)
     if (domain) {
@@ -41,7 +41,7 @@ export function getConceptProperties(state: SceneState, conceptId: string): Qual
 /**
  * Get all points for a given instance
  */
-export function getInstancePoints(state: SceneState, instanceId: string): QualityDomainPoint[] {
+export function getInstancePoints(state: SceneState, instanceId: string): PropertyPoint[] {
   const instance = state.instances.find((i) => i.id === instanceId)
   if (!instance) return []
 
@@ -52,7 +52,7 @@ export function getInstancePoints(state: SceneState, instanceId: string): Qualit
       const property = domain.properties.find((p) => p.id === ref.pointId)
       return property && isPoint(property) ? property : null
     })
-    .filter((p): p is QualityDomainPoint => p !== null)
+    .filter((p): p is PropertyPoint => p !== null)
 }
 
 /**
@@ -72,7 +72,7 @@ export function getDomainById(state: SceneState, domainId: string): QualityDomai
 /**
  * Get a property by domain ID and property ID
  */
-export function getPropertyById(state: SceneState, domainId: string, propertyId: string): QualityDomainProperty | null {
+export function getPropertyById(state: SceneState, domainId: string, propertyId: string): Property | null {
   const domain = getDomainById(state, domainId)
   if (!domain) return null
   return domain.properties.find((p) => p.id === propertyId) || null

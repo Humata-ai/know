@@ -7,7 +7,7 @@
  */
 
 import { Vector3 } from 'three'
-import type { QualityDomainProperty, QualityDomain } from '@/app/components/shared/types'
+import type { Property, QualityDomain } from '@/app/components/shared/types'
 import { isRegion } from '@/app/components/shared/types'
 import { normalizeToRange } from './positionCalculations'
 
@@ -23,7 +23,7 @@ import { normalizeToRange } from './positionCalculations'
  * @returns The range as [min, max]
  */
 export function getLabelRange(
-  property: QualityDomainProperty,
+  property: Property,
   dimensionId: string,
   defaultRange: readonly [number, number]
 ): readonly [number, number] {
@@ -54,7 +54,7 @@ export function getLabelRange(
  * @returns Vector3 position in world space, or null if unable to calculate
  */
 export function calculateLabelPosition(
-  property: QualityDomainProperty,
+  property: Property,
   domain: QualityDomain,
   domainPos: readonly [number, number, number],
   scale: number
@@ -165,7 +165,7 @@ export function calculateLabelPosition(
  * @returns Array of Vector3 positions (excludes labels that can't be positioned)
  */
 export function calculateConceptLabelPositions(
-  properties: QualityDomainProperty[],
+  properties: Property[],
   domains: QualityDomain[],
   domainPositions: Map<string, readonly [number, number, number]>,
   scale: number

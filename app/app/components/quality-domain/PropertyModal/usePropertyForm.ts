@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useQualityDomain } from '@/app/store'
-import type { QualityDomainProperty, RegionDimensionRange, PointDimensionValue, QualityDomain } from '../../shared/types'
+import type { Property, PropertyDimensionRange, PointDimensionValue, QualityDomain } from '../../shared/types'
 import { generateId } from '../../shared/utils'
 
 interface UsePropertyFormProps {
@@ -17,7 +17,7 @@ export default function usePropertyForm({ isOpen, domainId, editingPropertyId, u
   const { state, addProperty, updateProperty, addLibraryProperty, updateLibraryProperty } = useQualityDomain()
   const [name, setName] = useState('')
   const [propertyType, setPropertyType] = useState<'region' | 'point' | null>(null)
-  const [regionDimensions, setRegionDimensions] = useState<RegionDimensionRange[]>([])
+  const [regionDimensions, setRegionDimensions] = useState<PropertyDimensionRange[]>([])
   const [pointDimensions, setPointDimensions] = useState<PointDimensionValue[]>([])
   const [errors, setErrors] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
@@ -182,7 +182,7 @@ export default function usePropertyForm({ isOpen, domainId, editingPropertyId, u
       return
     }
 
-    const property: QualityDomainProperty = propertyType === 'region'
+    const property: Property = propertyType === 'region'
       ? {
           type: 'region',
           id: editingProperty?.id || generateId(),

@@ -5,7 +5,7 @@
  * Replaces expensive JSON.stringify() comparisons with targeted equality checks.
  */
 
-import type { QualityDimension, QualityDomainProperty, PropertyReference } from '@/app/components/shared/types'
+import type { QualityDimension, Property, PropertyReference } from '@/app/components/shared/types'
 
 /**
  * Compare two quality dimensions for equality
@@ -33,8 +33,8 @@ export function areDimensionsEqual(
  * Handles both region dimensions (with range) and point dimensions (with value)
  */
 export function areLabelDimensionsEqual(
-  a: QualityDomainProperty['dimensions'],
-  b: QualityDomainProperty['dimensions']
+  a: Property['dimensions'],
+  b: Property['dimensions']
 ): boolean {
   if (a.length !== b.length) return false
   
@@ -72,8 +72,8 @@ export function areLabelDimensionsEqual(
  * Checks id, name, type, domainId, and dimensions
  */
 export function areLabelsEqual(
-  a: readonly QualityDomainProperty[] | QualityDomainProperty[],
-  b: readonly QualityDomainProperty[] | QualityDomainProperty[]
+  a: readonly Property[] | Property[],
+  b: readonly Property[] | Property[]
 ): boolean {
   if (a.length !== b.length) return false
   

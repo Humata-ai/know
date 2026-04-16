@@ -3,8 +3,8 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import type {
   QualityDomain,
-  QualityDomainProperty,
-  QualityDomainPoint,
+  Property,
+  PropertyPoint,
   Concept,
   ConceptInstance,
 } from '../shared/types'
@@ -47,11 +47,11 @@ export interface ConceptualSpaceData {
 
 export interface ConceptualSpaceContextType extends ConceptualSpaceData {
   /** Get all properties for a given concept (resolved from propertyRefs) */
-  getConceptProperties: (conceptId: string) => QualityDomainProperty[]
+  getConceptProperties: (conceptId: string) => Property[]
   /** Get all instances for a given concept */
   getConceptInstances: (conceptId: string) => ConceptInstance[]
   /** Get all points for a given instance (resolved from pointRefs) */
-  getInstancePoints: (instanceId: string) => QualityDomainPoint[]
+  getInstancePoints: (instanceId: string) => PropertyPoint[]
 }
 
 const ConceptualSpaceContext = createContext<ConceptualSpaceContextType | null>(null)
@@ -96,11 +96,11 @@ export function ConceptualSpaceProvider({
   children,
 }: ConceptualSpaceProviderProps) {
   const value = useMemo<ConceptualSpaceContextType>(() => {
-    const getConceptProperties = (conceptId: string): QualityDomainProperty[] => {
+    const getConceptProperties = (conceptId: string): Property[] => {
       const concept = concepts.find((c) => c.id === conceptId)
       if (!concept) return []
 
-      const properties: QualityDomainProperty[] = []
+      const properties: Property[] = []
       for (const ref of concept.propertyRefs) {
         const domain = domains.find((d) => d.id === ref.domainId)
         if (domain) {
@@ -117,7 +117,7 @@ export function ConceptualSpaceProvider({
       return instances.filter((i) => i.conceptId === conceptId)
     }
 
-    const getInstancePoints = (instanceId: string): QualityDomainPoint[] => {
+    const getInstancePoints = (instanceId: string): PropertyPoint[] => {
       const instance = instances.find((i) => i.id === instanceId)
       if (!instance) return []
 
@@ -128,7 +128,7 @@ export function ConceptualSpaceProvider({
           const property = domain.properties.find((l) => l.id === ref.pointId)
           return property && isPoint(property) ? property : null
         })
-        .filter((p): p is QualityDomainPoint => p !== null)
+        .filter((p): p is PropertyPoint => p !== null)
     }
 
     return {

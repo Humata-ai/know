@@ -47,9 +47,9 @@ export interface JsonPointDimension {
 export type JsonPropertyDimension = JsonRegionDimension | JsonPointDimension
 
 /**
- * JSON representation of a quality domain property
+ * JSON representation of a property
  */
-export interface JsonQualityDomainProperty {
+export interface JsonProperty {
   id: string
   name: string
   domainId: string
@@ -65,7 +65,7 @@ export interface JsonQualityDomain {
   id: string
   name: string
   dimensions: JsonQualityDimension[]
-  properties: JsonQualityDomainProperty[]
+  properties: JsonProperty[]
   createdAt: string // ISO date string
 }
 

@@ -1,4 +1,4 @@
-import type { QualityDomain, QualityDomainProperty, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
+import type { QualityDomain, Property, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
 
 /**
  * Scene Action Types
@@ -22,8 +22,8 @@ export type SceneAction =
   | { type: 'SET_INSPECT_TEXT'; payload: string }
   
   // Property actions
-  | { type: 'ADD_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
-  | { type: 'UPDATE_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'ADD_PROPERTY'; payload: { domainId: string; property: Property } }
+  | { type: 'UPDATE_PROPERTY'; payload: { domainId: string; property: Property } }
   | { type: 'DELETE_PROPERTY'; payload: { domainId: string; propertyId: string } }
   
   // Concept actions
@@ -74,8 +74,8 @@ export type LibraryAction =
   | { type: 'DELETE_LIBRARY_ACTION'; payload: string }
   
   // Library property actions
-  | { type: 'ADD_LIBRARY_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
-  | { type: 'UPDATE_LIBRARY_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'ADD_LIBRARY_PROPERTY'; payload: { domainId: string; property: Property } }
+  | { type: 'UPDATE_LIBRARY_PROPERTY'; payload: { domainId: string; property: Property } }
   | { type: 'DELETE_LIBRARY_PROPERTY'; payload: { domainId: string; propertyId: string } }
   
   // Library selection actions

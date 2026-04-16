@@ -1,13 +1,13 @@
 'use client'
 
-import type { RegionDimensionRange, QualityDimension } from '../../shared/types'
+import type { PropertyDimensionRange, QualityDimension } from '../../shared/types'
 import LinearValueRange from '../LinearValueRange'
 import AiFillButton from './AiFillButton'
 
 interface RegionDimensionFormProps {
   domainName: string
   dimensions: QualityDimension[]
-  regionDimensions: RegionDimensionRange[]
+  regionDimensions: PropertyDimensionRange[]
   onRangeChange: (dimensionId: string, field: 'min' | 'max', value: number) => void
   onGenerate: () => void
   isGenerating: boolean

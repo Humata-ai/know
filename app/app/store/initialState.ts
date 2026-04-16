@@ -1,5 +1,5 @@
 import type { AppState } from './types'
-import type { QualityDomain, Concept, ConceptInstance, QualityDomainProperty, ConceptualStructure, RegionDimensionRange, PointDimensionValue } from '../components/shared/types'
+import type { QualityDomain, Concept, ConceptInstance, Property, ConceptualStructure, PropertyDimensionRange, PointDimensionValue } from '../components/shared/types'
 import defaultDataJson from '../components/shared/defaultData.json'
 
 /**
@@ -15,7 +15,7 @@ interface JsonDimension {
   type?: string
 }
 
-interface JsonRegionDimensionRange {
+interface JsonPropertyDimensionRange {
   dimensionId: string
   range: number[]
 }
@@ -30,7 +30,7 @@ interface JsonProperty {
   id: string
   name: string
   domainId: string
-  dimensions: (JsonRegionDimensionRange | JsonPointDimensionValue)[]
+  dimensions: (JsonPropertyDimensionRange | JsonPointDimensionValue)[]
   createdAt: string
 }
 
@@ -127,7 +127,7 @@ function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
                   range: toRangeTuple((d.range as (number | string)[]).map(parseRangeValue)),
                 }
               }
-              return d as unknown as RegionDimensionRange
+              return d as unknown as PropertyDimensionRange
             }),
             createdAt: new Date(property.createdAt),
           }

@@ -13,7 +13,7 @@ import type {
   Concept,
   ConceptInstance,
   ConceptualStructure,
-  QualityDomainProperty,
+  Property,
   PropertyReference,
   DictionaryWord
 } from '@/app/components/shared/types'
@@ -41,7 +41,7 @@ export function convertInfinity(val: unknown): number {
  * Migration: Convert old label format to property format
  * Used when migrating from older versions that used "labels" terminology
  */
-export function migrateLabelToProperty(oldLabel: any): QualityDomainProperty {
+export function migrateLabelToProperty(oldLabel: any): Property {
   return {
     type: oldLabel.type || 'region',
     id: oldLabel.id,

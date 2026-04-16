@@ -1,11 +1,11 @@
 import { z } from 'zod'
 import {
   QualityDimensionSchema,
-  RegionDimensionRangeSchema,
+  PropertyDimensionRangeSchema,
   PointDimensionValueSchema,
-  QualityDomainRegionSchema,
-  QualityDomainPointSchema,
-  QualityDomainPropertySchema,
+  PropertyRegionSchema,
+  PropertyPointSchema,
+  PropertySchema,
   QualityDomainSchema,
   PropertyReferenceSchema,
   PointReferenceSchema,
@@ -25,29 +25,29 @@ export type QualityDimension = z.infer<typeof QualityDimensionSchema>
 
 // ===== Region/Point Property Types (Discriminated Union) =====
 
-export type RegionDimensionRange = z.infer<typeof RegionDimensionRangeSchema>
+export type PropertyDimensionRange = z.infer<typeof PropertyDimensionRangeSchema>
 export type PointDimensionValue = z.infer<typeof PointDimensionValueSchema>
 
 // Base interface for properties (kept as manual type since it's not directly used by consumers)
-export interface QualityDomainPropertyBase {
+export interface PropertyBase {
   id: string
   name: string
   domainId: string
   createdAt: Date
 }
 
-export type QualityDomainRegion = z.infer<typeof QualityDomainRegionSchema>
-export type QualityDomainPoint = z.infer<typeof QualityDomainPointSchema>
+export type PropertyRegion = z.infer<typeof PropertyRegionSchema>
+export type PropertyPoint = z.infer<typeof PropertyPointSchema>
 
 // Union type
-export type QualityDomainProperty = z.infer<typeof QualityDomainPropertySchema>
+export type Property = z.infer<typeof PropertySchema>
 
 // Type guards
-export function isRegion(property: QualityDomainProperty): property is QualityDomainRegion {
+export function isRegion(property: Property): property is PropertyRegion {
   return property.type === 'region'
 }
 
-export function isPoint(property: QualityDomainProperty): property is QualityDomainPoint {
+export function isPoint(property: Property): property is PropertyPoint {
   return property.type === 'point'
 }
 
@@ -117,8 +117,8 @@ export type QualityDomainAction =
   | { type: 'SELECT_CONCEPT'; payload: string | null }
   | { type: 'SELECT_INSTANCE'; payload: string | null }
   | { type: 'CLEAR_SELECTION' }
-  | { type: 'ADD_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
-  | { type: 'UPDATE_PROPERTY'; payload: { domainId: string; property: QualityDomainProperty } }
+  | { type: 'ADD_PROPERTY'; payload: { domainId: string; property: Property } }
+  | { type: 'UPDATE_PROPERTY'; payload: { domainId: string; property: Property } }
   | { type: 'DELETE_PROPERTY'; payload: { domainId: string; propertyId: string } }
   | { type: 'ADD_CONCEPT'; payload: Concept }
   | { type: 'UPDATE_CONCEPT'; payload: Concept }

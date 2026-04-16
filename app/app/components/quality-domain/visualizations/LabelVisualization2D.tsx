@@ -1,6 +1,6 @@
 import { useMemo, memo } from 'react'
 import { Text } from '@react-three/drei'
-import type { QualityDomainProperty, QualityDomain } from '../../shared/types'
+import type { Property, QualityDomain } from '../../shared/types'
 import { isRegion, isPoint } from '../../shared/types'
 import { useQualityDomain } from '@/app/store'
 import type { ThreeEvent } from '@react-three/fiber'
@@ -8,7 +8,7 @@ import { useCursorOnHover } from '@/app/hooks/useCursorOnHover'
 import { areLabelDimensionsEqual, areDimensionsEqual } from '@/app/utils/equality'
 
 interface LabelVisualization2DProps {
-  label: QualityDomainProperty
+  label: Property
   domain: QualityDomain
   index: number
   isSelected?: boolean

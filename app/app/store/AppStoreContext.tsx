@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, useMemo, useCallback, useEffect, type ReactNode } from 'react'
 import type { AppState, AppAction, LibrarySelectionType } from './types'
-import type { QualityDomain, QualityDomainProperty, Concept, ConceptInstance, QualityDomainPoint, DictionaryWord, Action } from '../components/shared/types'
+import type { QualityDomain, Property, Concept, ConceptInstance, PropertyPoint, DictionaryWord, Action } from '../components/shared/types'
 import { appReducer } from './reducer'
 import { initialState } from './initialState'
 import { 
@@ -35,14 +35,14 @@ interface AppStoreContextType {
   clearSelection: () => void
   
   // Property methods (aliases for label methods)
-  addProperty: (domainId: string, property: QualityDomainProperty) => void
-  updateProperty: (domainId: string, property: QualityDomainProperty) => void
+  addProperty: (domainId: string, property: Property) => void
+  updateProperty: (domainId: string, property: Property) => void
   deleteProperty: (domainId: string, propertyId: string) => void
   selectProperty: (domainId: string, propertyId: string) => void
   
   // Label methods (deprecated - use property methods)
-  addLabel: (domainId: string, property: QualityDomainProperty) => void
-  updateLabel: (domainId: string, property: QualityDomainProperty) => void
+  addLabel: (domainId: string, property: Property) => void
+  updateLabel: (domainId: string, property: Property) => void
   deleteLabel: (domainId: string, propertyId: string) => void
   
   // Concept methods
@@ -76,13 +76,13 @@ interface AppStoreContextType {
   deleteLibraryAction: (id: string) => void
   
   // Library property methods (aliases for label methods)
-  addLibraryProperty: (domainId: string, property: QualityDomainProperty) => void
-  updateLibraryProperty: (domainId: string, property: QualityDomainProperty) => void
+  addLibraryProperty: (domainId: string, property: Property) => void
+  updateLibraryProperty: (domainId: string, property: Property) => void
   deleteLibraryProperty: (domainId: string, propertyId: string) => void
   
   // Library label methods (deprecated - use property methods)
-  addLibraryLabel: (domainId: string, property: QualityDomainProperty) => void
-  updateLibraryLabel: (domainId: string, property: QualityDomainProperty) => void
+  addLibraryLabel: (domainId: string, property: Property) => void
+  updateLibraryLabel: (domainId: string, property: Property) => void
   deleteLibraryLabel: (domainId: string, propertyId: string) => void
   
   // Library selection methods
@@ -91,8 +91,8 @@ interface AppStoreContextType {
   
   // Selector methods (operate on scene state)
   getSelectedDomain: () => QualityDomain | null
-  getConceptProperties: (conceptId: string) => QualityDomainProperty[]
-  getInstancePoints: (instanceId: string) => QualityDomainPoint[]
+  getConceptProperties: (conceptId: string) => Property[]
+  getInstancePoints: (instanceId: string) => PropertyPoint[]
   getConceptInstances: (conceptId: string) => ConceptInstance[]
 }
 
@@ -146,11 +146,11 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'CLEAR_SELECTION' })
   }, [])
 
-  const addLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+  const addLabelMethod = useCallback((domainId: string, property: Property) => {
     dispatch({ type: 'ADD_PROPERTY', payload: { domainId, property } })
   }, [])
 
-  const updateLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+  const updateLabelMethod = useCallback((domainId: string, property: Property) => {
     dispatch({ type: 'UPDATE_PROPERTY', payload: { domainId, property } })
   }, [])
 
@@ -230,11 +230,11 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'DELETE_LIBRARY_ACTION', payload: id })
   }, [])
 
-  const addLibraryLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+  const addLibraryLabelMethod = useCallback((domainId: string, property: Property) => {
     dispatch({ type: 'ADD_LIBRARY_PROPERTY', payload: { domainId, property } })
   }, [])
 
-  const updateLibraryLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
+  const updateLibraryLabelMethod = useCallback((domainId: string, property: Property) => {
     dispatch({ type: 'UPDATE_LIBRARY_PROPERTY', payload: { domainId, property } })
   }, [])
 

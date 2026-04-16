@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQualityDomain } from '@/app/store'
-import type { QualityDomainProperty, QualityDomain } from '../shared/types'
+import type { Property, QualityDomain } from '../shared/types'
 import { isRegion, isPoint } from '../shared/types'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 interface PropertyCardProps {
-  property: QualityDomainProperty
+  property: Property
   domain: QualityDomain
   onEdit: (propertyId: string) => void
   isSelected: boolean

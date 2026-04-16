@@ -1,5 +1,5 @@
 import type { SceneAction, LibraryAction, LibrarySelectionType } from './types'
-import type { QualityDomain, QualityDomainProperty, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
+import type { QualityDomain, Property, Concept, ConceptInstance, DictionaryWord, Action } from '../components/shared/types'
 
 /**
  * Scene Action Creators
@@ -60,12 +60,12 @@ export const setInspectText = (text: string): SceneAction => ({
 })
 
 // Property action creators
-export const addProperty = (domainId: string, property: QualityDomainProperty): SceneAction => ({
+export const addProperty = (domainId: string, property: Property): SceneAction => ({
   type: 'ADD_PROPERTY',
   payload: { domainId, property },
 })
 
-export const updateProperty = (domainId: string, property: QualityDomainProperty): SceneAction => ({
+export const updateProperty = (domainId: string, property: Property): SceneAction => ({
   type: 'UPDATE_PROPERTY',
   payload: { domainId, property },
 })
