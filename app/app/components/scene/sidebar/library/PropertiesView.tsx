@@ -10,11 +10,11 @@ export default function PropertiesView() {
   const router = useRouter()
   const { state } = useAppStore()
 
-  // Collect all labels across all library domains
+  // Collect all properties across all library domains
   const allProperties = useMemo(() => {
     return state.library.domains.flatMap((domain) =>
       domain.properties.map((property) => ({
-        label,
+        property,
         domain,
       }))
     )
@@ -31,16 +31,16 @@ export default function PropertiesView() {
 
   return (
     <div className="px-4 py-2 space-y-2">
-      {allProperties.map(({ label, domain }) => {
-        const typeLabel = isRegion(label) ? 'Region' : 'Point'
+      {allProperties.map(({ property, domain }) => {
+        const typeLabel = isRegion(property) ? 'Region' : 'Point'
         const subtitle = `${domain.name} • ${typeLabel}`
         
         return (
           <LibraryListItem
-            key={label.id}
-            title={label.name || '(unnamed)'}
+            key={property.id}
+            title={property.name || '(unnamed)'}
             subtitle={subtitle}
-            onClick={() => router.push(`/library/properties/${encodeURIComponent(label.id)}`)}
+            onClick={() => router.push(`/library/properties/${encodeURIComponent(property.id)}`)}
           />
         )
       })}
