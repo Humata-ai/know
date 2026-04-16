@@ -3,7 +3,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import type {
   QualityDomain,
-  QualityDomainLabel,
+  QualityDomainProperty,
   QualityDomainPoint,
   Concept,
   ConceptInstance,
@@ -46,8 +46,8 @@ export interface ConceptualSpaceData {
 }
 
 export interface ConceptualSpaceContextType extends ConceptualSpaceData {
-  /** Get all labels for a given concept (resolved from propertyRefs) */
-  getConceptProperties: (conceptId: string) => QualityDomainLabel[]
+  /** Get all properties for a given concept (resolved from propertyRefs) */
+  getConceptProperties: (conceptId: string) => QualityDomainProperty[]
   /** Get all instances for a given concept */
   getConceptInstances: (conceptId: string) => ConceptInstance[]
   /** Get all points for a given instance (resolved from pointRefs) */
@@ -96,21 +96,21 @@ export function ConceptualSpaceProvider({
   children,
 }: ConceptualSpaceProviderProps) {
   const value = useMemo<ConceptualSpaceContextType>(() => {
-    const getConceptProperties = (conceptId: string): QualityDomainLabel[] => {
+    const getConceptProperties = (conceptId: string): QualityDomainProperty[] => {
       const concept = concepts.find((c) => c.id === conceptId)
       if (!concept) return []
 
-      const labels: QualityDomainLabel[] = []
-      for (const ref of concept.propertyRefs) {
+      const properties: QualityDomainProperty[] = []
+      for (const ref of (concept.propertyRefs || [])) {
         const domain = domains.find((d) => d.id === ref.domainId)
         if (domain) {
           const property = domain.properties.find((l) => l.id === ref.propertyId)
-          if (label) {
-            labels.push(label)
+          if (property) {
+            properties.push(property)
           }
         }
       }
-      return labels
+      return properties
     }
 
     const getConceptInstances = (conceptId: string): ConceptInstance[] => {
