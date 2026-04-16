@@ -274,9 +274,9 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       labelPositions: positions,
       conceptPosition: centroid,
     }
-  }, [labels, domains, selectedDomainId, domainPositions, domainScale])
+  }, [properties, domains, selectedDomainId, domainPositions, domainScale])
 
-  // If no valid labels to visualize, don't render
+  // If no valid properties to visualize, don't render
   if (labelPositions.length === 0) {
     return null
   }
