@@ -182,16 +182,16 @@ export default function ConceptModal({
                           ) : (
                             domain.properties.map((property) => (
                               <label
-                                key={label.id}
+                                key={property.id}
                                 className="flex items-center gap-2 p-1 hover:bg-gray-50 rounded cursor-pointer"
                               >
                                 <input
                                   type="checkbox"
-                                  checked={isLabelSelected(domain.id, label.id)}
-                                  onChange={() => toggleLabel(domain.id, label.id)}
+                                  checked={isLabelSelected(domain.id, property.id)}
+                                  onChange={() => toggleLabel(domain.id, property.id)}
                                   className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                                 />
-                                <span className="text-sm">{label.name || '(unnamed)'}</span>
+                                <span className="text-sm">{property.name || '(unnamed)'}</span>
                               </label>
                             ))
                           )}
