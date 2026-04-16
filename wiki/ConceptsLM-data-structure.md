@@ -64,7 +64,10 @@ export const ConceptSchema = z.object({
   createdAt: z.date(),
 })
 ```
+- [schemas.ts:73](/app/app/components/shared/schemas.ts#L17)
 
 ### Actions
 
 To understand what is meant by "action" please see its [glossary definition](./Glossary.md#action).
+
+WIP: We are still uncovering the data structure for the actions
