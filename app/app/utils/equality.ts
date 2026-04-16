@@ -5,7 +5,7 @@
  * Replaces expensive JSON.stringify() comparisons with targeted equality checks.
  */
 
-import type { QualityDimension, QualityDomainLabel, LabelReference } from '@/app/components/shared/types'
+import type { QualityDimension, QualityDomainProperty, PropertyReference } from '@/app/components/shared/types'
 
 /**
  * Compare two quality dimensions for equality
@@ -33,8 +33,8 @@ export function areDimensionsEqual(
  * Handles both region dimensions (with range) and point dimensions (with value)
  */
 export function areLabelDimensionsEqual(
-  a: QualityDomainLabel['dimensions'],
-  b: QualityDomainLabel['dimensions']
+  a: QualityDomainProperty['dimensions'],
+  b: QualityDomainProperty['dimensions']
 ): boolean {
   if (a.length !== b.length) return false
   
@@ -72,8 +72,8 @@ export function areLabelDimensionsEqual(
  * Checks id, name, type, domainId, and dimensions
  */
 export function areLabelsEqual(
-  a: readonly QualityDomainLabel[] | QualityDomainLabel[],
-  b: readonly QualityDomainLabel[] | QualityDomainLabel[]
+  a: readonly QualityDomainProperty[] | QualityDomainProperty[],
+  b: readonly QualityDomainProperty[] | QualityDomainProperty[]
 ): boolean {
   if (a.length !== b.length) return false
   
@@ -94,8 +94,8 @@ export function areLabelsEqual(
  * Checks domainId and propertyId
  */
 export function areLabelRefsEqual(
-  a: readonly LabelReference[] | LabelReference[],
-  b: readonly LabelReference[] | LabelReference[]
+  a: readonly PropertyReference[] | PropertyReference[],
+  b: readonly PropertyReference[] | PropertyReference[]
 ): boolean {
   if (a.length !== b.length) return false
   

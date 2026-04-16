@@ -12,9 +12,9 @@ export function getDictionaryWordName(
     const domain = domains.find((d) => d.id === word.propertyRef!.domainId)
     if (domain) {
       const property = domain.properties.find((l) => l.id === word.propertyRef!.propertyId)
-      if (label) return label.name ?? '(unknown label)'
+      if (property) return property.name ?? '(unknown property)'
     }
-    return '(unknown label)'
+    return '(unknown property)'
   }
   if (word.conceptId) {
     const concept = concepts.find((c) => c.id === word.conceptId)
@@ -33,7 +33,7 @@ export function getDictionaryWordType(
 ): string {
   if (word.propertyRef) {
     const domain = domains.find((d) => d.id === word.propertyRef!.domainId)
-    return domain ? `Label in ${domain.name}` : 'Label'
+    return domain ? `Property in ${domain.name}` : 'Property'
   }
   if (word.conceptId) {
     return 'Concept'

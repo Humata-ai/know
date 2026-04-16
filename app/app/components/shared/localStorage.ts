@@ -1,4 +1,4 @@
-import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, QualityDomainLabel, Property, PropertyReference, LabelReference, DictionaryWord, Action } from './types'
+import type { QualityDomain, Concept, ConceptInstance, ConceptualStructure, DictionaryWord, Action } from './types'
 import type { AppState } from '@/app/store'
 import { DataParser } from '@/app/utils/dataParser'
 

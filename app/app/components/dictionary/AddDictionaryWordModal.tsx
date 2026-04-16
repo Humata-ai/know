@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '@/app/store'
 import { generateId } from '../shared/utils'
-import type { LabelReference } from '../shared/types'
+import type { PropertyReference } from '../shared/types'
 import Modal from '@/app/components/common/Modal'
 
 type RefType = 'label' | 'concept'
@@ -17,7 +17,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
   const { state, addDictionaryWord } = useAppStore()
   const [name, setName] = useState('')
   const [refType, setRefType] = useState<RefType>('label')
-  const [selectedLabelRef, setSelectedLabelRef] = useState<LabelReference | null>(null)
+  const [selectedLabelRef, setSelectedLabelRef] = useState<PropertyReference | null>(null)
   const [selectedConceptId, setSelectedConceptId] = useState<string>('')
   const [errors, setErrors] = useState<string[]>([])
 
@@ -236,7 +236,7 @@ export default function AddDictionaryWordModal({ isOpen, onClose }: AddDictionar
                     >
                       <span>{concept.name}</span>
                       <span className="ml-2 text-xs text-gray-400">
-                        {(concept.propertyRefs || []).length} {(concept.propertyRefs || []).length === 1 ? 'property' : 'properties'}
+                        {concept.propertyRefs.length} {concept.propertyRefs.length === 1 ? 'property' : 'properties'}
                       </span>
                     </button>
                   )

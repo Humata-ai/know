@@ -101,7 +101,7 @@ export function ConceptualSpaceProvider({
       if (!concept) return []
 
       const properties: QualityDomainProperty[] = []
-      for (const ref of (concept.propertyRefs || [])) {
+      for (const ref of concept.propertyRefs) {
         const domain = domains.find((d) => d.id === ref.domainId)
         if (domain) {
           const property = domain.properties.find((l) => l.id === ref.propertyId)

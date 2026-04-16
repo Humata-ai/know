@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, useMemo, useCallback, useEffect, type ReactNode } from 'react'
 import type { AppState, AppAction, LibrarySelectionType } from './types'
-import type { QualityDomain, QualityDomainLabel, Concept, ConceptInstance, QualityDomainPoint, DictionaryWord, Action } from '../components/shared/types'
+import type { QualityDomain, QualityDomainProperty, Concept, ConceptInstance, QualityDomainPoint, DictionaryWord, Action } from '../components/shared/types'
 import { appReducer } from './reducer'
 import { initialState } from './initialState'
 import { 
@@ -35,8 +35,8 @@ interface AppStoreContextType {
   clearSelection: () => void
   
   // Property methods (aliases for label methods)
-  addProperty: (domainId: string, property: QualityDomainLabel) => void
-  updateProperty: (domainId: string, property: QualityDomainLabel) => void
+  addProperty: (domainId: string, property: QualityDomainProperty) => void
+  updateProperty: (domainId: string, property: QualityDomainProperty) => void
   deleteProperty: (domainId: string, propertyId: string) => void
   selectProperty: (domainId: string, propertyId: string) => void
   
@@ -76,8 +76,8 @@ interface AppStoreContextType {
   deleteLibraryAction: (id: string) => void
   
   // Library property methods (aliases for label methods)
-  addLibraryProperty: (domainId: string, property: QualityDomainLabel) => void
-  updateLibraryProperty: (domainId: string, property: QualityDomainLabel) => void
+  addLibraryProperty: (domainId: string, property: QualityDomainProperty) => void
+  updateLibraryProperty: (domainId: string, property: QualityDomainProperty) => void
   deleteLibraryProperty: (domainId: string, propertyId: string) => void
   
   // Library label methods (deprecated - use property methods)
@@ -91,7 +91,7 @@ interface AppStoreContextType {
   
   // Selector methods (operate on scene state)
   getSelectedDomain: () => QualityDomain | null
-  getConceptProperties: (conceptId: string) => QualityDomainLabel[]
+  getConceptProperties: (conceptId: string) => QualityDomainProperty[]
   getInstancePoints: (instanceId: string) => QualityDomainPoint[]
   getConceptInstances: (conceptId: string) => ConceptInstance[]
 }
@@ -231,15 +231,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const addLibraryLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
-    dispatch({ type: 'ADD_LIBRARY_LABEL', payload: { domainId, property } })
+    dispatch({ type: 'ADD_LIBRARY_PROPERTY', payload: { domainId, property } })
   }, [])
 
   const updateLibraryLabelMethod = useCallback((domainId: string, property: QualityDomainProperty) => {
-    dispatch({ type: 'UPDATE_LIBRARY_LABEL', payload: { domainId, property } })
+    dispatch({ type: 'UPDATE_LIBRARY_PROPERTY', payload: { domainId, property } })
   }, [])
 
   const deleteLibraryLabelMethod = useCallback((domainId: string, propertyId: string) => {
-    dispatch({ type: 'DELETE_LIBRARY_LABEL', payload: { domainId, propertyId } })
+    dispatch({ type: 'DELETE_LIBRARY_PROPERTY', payload: { domainId, propertyId } })
   }, [])
 
   const selectLibraryItemMethod = useCallback((id: string, itemType: LibrarySelectionType) => {

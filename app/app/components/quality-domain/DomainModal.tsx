@@ -98,7 +98,7 @@ export default function DomainModal({ isOpen, editingDomainId, onClose, useLibra
       id: editingDomain?.id || generateId(),
       name,
       dimensions,
-      labels: editingDomain?.properties || [],
+      properties: editingDomain?.properties || [],
       createdAt: editingDomain?.createdAt || new Date(),
     }
 

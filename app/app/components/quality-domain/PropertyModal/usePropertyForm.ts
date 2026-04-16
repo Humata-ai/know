@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useQualityDomain } from '@/app/store'
-import type { QualityDomainLabel, RegionDimensionRange, PointDimensionValue, QualityDomain } from '../../shared/types'
+import type { QualityDomainProperty, RegionDimensionRange, PointDimensionValue, QualityDomain } from '../../shared/types'
 import { generateId } from '../../shared/utils'
 
 interface UsePropertyFormProps {
@@ -182,7 +182,7 @@ export default function usePropertyForm({ isOpen, domainId, editingPropertyId, u
       return
     }
 
-    const property: QualityDomainLabel = propertyType === 'region'
+    const property: QualityDomainProperty = propertyType === 'region'
       ? {
           type: 'region',
           id: editingProperty?.id || generateId(),

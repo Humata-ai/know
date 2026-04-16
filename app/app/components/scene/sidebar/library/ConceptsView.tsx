@@ -19,7 +19,7 @@ export default function ConceptsView() {
   return (
     <div className="px-4 py-2 space-y-2">
       {state.library.concepts.map((concept) => {
-        const propertyCount = (concept.propertyRefs || []).length
+        const propertyCount = concept.propertyRefs.length
         return (
           <LibraryListItem
             key={concept.id}

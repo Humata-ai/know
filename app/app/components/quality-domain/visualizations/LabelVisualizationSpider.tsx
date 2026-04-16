@@ -1,6 +1,6 @@
 import { useMemo, memo, useRef, useLayoutEffect } from 'react'
 import * as THREE from 'three'
-import type { QualityDomainLabel, QualityDomain } from '../../shared/types'
+import type { QualityDomainProperty, QualityDomain } from '../../shared/types'
 import { isPoint } from '../../shared/types'
 import { useQualityDomain } from '@/app/store'
 import type { ThreeEvent } from '@react-three/fiber'
@@ -18,7 +18,7 @@ interface AxisData {
 }
 
 interface LabelVisualizationSpiderProps {
-  label: QualityDomainLabel
+  label: QualityDomainProperty
   domain: QualityDomain
   index: number
   isSelected?: boolean

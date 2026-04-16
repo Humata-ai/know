@@ -65,8 +65,7 @@ export interface JsonQualityDomain {
   id: string
   name: string
   dimensions: JsonQualityDimension[]
-  properties?: JsonQualityDomainProperty[]
-  labels?: any[] // Old format for backward compatibility migration
+  properties: JsonQualityDomainProperty[]
   createdAt: string // ISO date string
 }
 
@@ -84,8 +83,7 @@ export interface JsonPropertyReference {
 export interface JsonConcept {
   id: string
   name: string
-  propertyRefs?: JsonPropertyReference[]
-  propertyRefs?: any[] // Old format for backward compatibility migration
+  propertyRefs: JsonPropertyReference[]
   createdAt: string // ISO date string
 }
 
@@ -124,7 +122,6 @@ export interface JsonDictionaryWord {
   id: string
   name: string
   propertyRef?: JsonPropertyReference
-  propertyRef?: any // Old format for backward compatibility migration
   conceptId?: string
   createdAt: string // ISO date string
 }

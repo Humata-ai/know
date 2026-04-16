@@ -1,6 +1,6 @@
 import { useMemo, memo, useRef, useLayoutEffect } from 'react'
 import * as THREE from 'three'
-import type { QualityDomainLabel, QualityDomain } from '../../shared/types'
+import type { QualityDomainProperty, QualityDomain } from '../../shared/types'
 import { isRegion, isPoint } from '../../shared/types'
 import { useQualityDomain } from '@/app/store'
 import type { ThreeEvent } from '@react-three/fiber'
@@ -9,7 +9,7 @@ import { areLabelDimensionsEqual, areDimensionsEqual } from '@/app/utils/equalit
 import LabelBillboard from '../../shared/LabelBillboard'
 
 interface LabelVisualization3DProps {
-  label: QualityDomainLabel
+  label: QualityDomainProperty
   domain: QualityDomain
   index: number
   isSelected?: boolean

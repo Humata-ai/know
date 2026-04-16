@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { Concept, LabelReference, QualityDomain } from '../shared/types'
+import type { Concept, PropertyReference, QualityDomain } from '../shared/types'
 import { generateId } from '../shared/utils'
 import Modal from '@/app/components/common/Modal'
 import { required, arrayMinLength } from '@/app/utils/validators'
@@ -30,7 +30,7 @@ export default function ConceptModal({
   onUpdateConcept,
 }: ConceptModalProps) {
   const [name, setName] = useState('')
-  const [selectedLabelRefs, setSelectedLabelRefs] = useState<LabelReference[]>([])
+  const [selectedLabelRefs, setSelectedLabelRefs] = useState<PropertyReference[]>([])
   const [expandedDomains, setExpandedDomains] = useState<Set<string>>(new Set())
   const [errors, setErrors] = useState<string[]>([])
 

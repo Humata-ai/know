@@ -24,12 +24,9 @@ export function getSelectedDomain(state: SceneState): QualityDomain | null {
 export function getConceptProperties(state: SceneState, conceptId: string): QualityDomainProperty[] {
   const concept = state.concepts.find((c) => c.id === conceptId)
   if (!concept) return []
-
-  // Handle backward compatibility: propertyRefs might be undefined in old data
-  const refs = concept.propertyRefs || []
   
   const properties: QualityDomainProperty[] = []
-  for (const ref of refs) {
+  for (const ref of concept.propertyRefs) {
     const domain = state.domains.find((d) => d.id === ref.domainId)
     if (domain) {
       const property = domain.properties.find((p) => p.id === ref.propertyId)

@@ -15,7 +15,7 @@
           ]
         }
       ],
-      "labels": [
+      "properties": [
         {
           "type": "region",
           "id": "1773703125056-3lnuqkd",
@@ -109,7 +109,7 @@
           ]
         }
       ],
-      "labels": [
+      "properties": [
         {
           "type": "region",
           "id": "1774468227388-27svk9m",
@@ -222,7 +222,7 @@
           ]
         }
       ],
-      "labels": [
+      "properties": [
         {
           "type": "region",
           "id": "1774401474701-0q65m6z",
@@ -312,18 +312,18 @@
     {
       "id": "1773702840517-tb3khl0",
       "name": "Human Being",
-      "labelRefs": [
+      "propertyRefs": [
         {
           "domainId": "1773703070507-df6oo23",
-          "labelId": "1773703125056-3lnuqkd"
+          "propertyId": "1773703125056-3lnuqkd"
         },
         {
           "domainId": "1773703070507-df6oo23",
-          "labelId": "1773703145301-oo0gcj4"
+          "propertyId": "1773703145301-oo0gcj4"
         },
         {
           "domainId": "1773703070507-df6oo23",
-          "labelId": "1773708297540-mimbwzp"
+          "propertyId": "1773708297540-mimbwzp"
         }
       ],
       "createdAt": "2026-03-16T23:14:00.517Z"
@@ -331,14 +331,14 @@
     {
       "id": "1774387642195-c4v9dmw",
       "name": "Lamb",
-      "labelRefs": [
+      "propertyRefs": [
         {
           "domainId": "1774401392880-em285ec",
-          "labelId": "1775517837527-i48ueko"
+          "propertyId": "1775517837527-i48ueko"
         },
         {
           "domainId": "1774386652846-n186tnp",
-          "labelId": "1775498221838-pe7ij6m"
+          "propertyId": "1775498221838-pe7ij6m"
         }
       ],
       "createdAt": "2026-03-24T21:27:22.196Z"
@@ -389,7 +389,7 @@
           ]
         }
       ],
-      "labels": [
+      "properties": [
         {
           "type": "region",
           "id": "1773703125056-3lnuqkd",
@@ -483,7 +483,7 @@
           ]
         }
       ],
-      "labels": [
+      "properties": [
         {
           "type": "region",
           "id": "1774387635202-gcc74qw",
@@ -627,7 +627,7 @@
           ]
         }
       ],
-      "labels": [
+      "properties": [
         {
           "type": "region",
           "id": "1774401474701-0q65m6z",

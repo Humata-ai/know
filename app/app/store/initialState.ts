@@ -46,8 +46,7 @@ interface JsonDomain {
 interface JsonConcept {
   id: string
   name: string
-  propertyRefs?: { domainId: string; propertyId: string }[]
-  labelRefs?: { domainId: string; labelId: string }[] // backward compatibility
+  propertyRefs: { domainId: string; propertyId: string }[]
   createdAt: string
 }
 
@@ -104,14 +103,13 @@ function parseRangeValue(val: number | string): number {
  */
 function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
   return jsonDomains.map(domain => {
-    const propertyList = domain.properties || domain.labels || []
     return {
       ...domain,
       dimensions: domain.dimensions.map(dim => ({
         ...dim,
         range: toRangeTuple(dim.range.map(parseRangeValue)),
       })),
-      properties: propertyList.map(property => {
+      properties: domain.properties.map(property => {
         if (property.type === 'region') {
           return {
             type: 'region' as const,
@@ -149,19 +147,10 @@ function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
  * Parse JSON concepts into runtime Concept objects
  */
 function parseConcepts(jsonConcepts: JsonConcept[]): Concept[] {
-  return jsonConcepts.map(concept => {
-    // Handle backward compatibility: convert old labelRefs to new propertyRefs
-    const propertyRefs = concept.propertyRefs || (concept.labelRefs?.map(ref => ({
-      domainId: ref.domainId,
-      propertyId: ref.labelId // old field was labelId
-    })) || [])
-    
-    return {
-      ...concept,
-      propertyRefs,
-      createdAt: new Date(concept.createdAt),
-    }
-  })
+  return jsonConcepts.map(concept => ({
+    ...concept,
+    createdAt: new Date(concept.createdAt),
+  }))
 }
 
 /**
