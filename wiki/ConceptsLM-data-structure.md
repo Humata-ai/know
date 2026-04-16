@@ -35,16 +35,22 @@ export const QualityDomainSchema = z.object({
 To understand what is meant by "property" please see its [glossary definition](./Glossary.md#property).
 
 ```ts
-export const RegionDimensionRangeSchema = z.object({
-  dimensionId: z.string(),
-  range: NumberRangeTuple,
+export const PropertyRegionSchema = PropertyBaseSchema.extend({
+  type: z.literal('region'),
+  dimensions: z.array(PropertyDimensionRangeSchema),
 })
 
-export const PointDimensionValueSchema = z.object({
-  dimensionId: z.string(),
-  value: z.number(),
+export const PropertyPointSchema = PropertyBaseSchema.extend({
+  type: z.literal('point'),
+  dimensions: z.array(PointDimensionValueSchema),
 })
+
+export const PropertySchema = z.discriminatedUnion('type', [
+  PropertyRegionSchema,
+  PropertyPointSchema,
+])
 ```
+- [schemas.ts:17](/app/app/components/shared/schemas.ts#L17)
 
 ### Concept
 
