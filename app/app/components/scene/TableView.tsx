@@ -68,29 +68,29 @@ export default function TableView({ domain }: TableViewProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {domain.properties.map((label, index) => (
+                  {domain.properties.map((property, index) => (
                     <tr
-                      key={label.id}
+                      key={property.id}
                       className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                     >
                       <td className="px-4 py-3 border-b border-gray-200 font-medium">
-                        {label.name || '(unnamed)'}
+                        {property.name || '(unnamed)'}
                       </td>
                       <td className="px-4 py-3 border-b border-gray-200">
                         <span className={`px-2 py-1 text-xs rounded ${
-                          isRegion(label)
+                          isRegion(property)
                             ? 'bg-blue-100 text-blue-700'
                             : 'bg-green-100 text-green-700'
                         }`}>
-                          {isRegion(label) ? 'Region' : 'Point'}
+                          {isRegion(property) ? 'Region' : 'Point'}
                         </span>
                       </td>
                       {domain.dimensions.map((dimension) => {
-                        const labelDim = label.dimensions.find(
+                        const propertyDim = property.dimensions.find(
                           (d) => d.dimensionId === dimension.id
                         )
 
-                        if (!labelDim) {
+                        if (!propertyDim) {
                           return (
                             <td key={dimension.id} className="px-4 py-3 border-b border-gray-200 text-gray-400">
                               -
@@ -98,18 +98,18 @@ export default function TableView({ domain }: TableViewProps) {
                           )
                         }
 
-                        if ('range' in labelDim) {
+                        if ('range' in propertyDim) {
                           // For regions, show range
                           return (
                             <td key={dimension.id} className="px-4 py-3 border-b border-gray-200">
-                              [{labelDim.range[0]}, {labelDim.range[1]}]
+                              [{propertyDim.range[0]}, {propertyDim.range[1]}]
                             </td>
                           )
                         } else {
                           // For points, show single value
                           return (
                             <td key={dimension.id} className="px-4 py-3 border-b border-gray-200">
-                              {labelDim.value}
+                              {propertyDim.value}
                             </td>
                           )
                         }

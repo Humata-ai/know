@@ -172,14 +172,14 @@ export function calculateConceptLabelPositions(
 ): Vector3[] {
   const positions: Vector3[] = []
 
-  properties.forEach(label => {
-    const domain = domains.find(d => d.id === label.domainId)
+  properties.forEach(property => {
+    const domain = domains.find(d => d.id === property.domainId)
     if (!domain) return
 
     const domainPos = domainPositions.get(domain.id)
     if (!domainPos) return
 
-    const position = calculateLabelPosition(label, domain, domainPos, scale)
+    const position = calculateLabelPosition(property, domain, domainPos, scale)
     if (position) {
       positions.push(position)
     }

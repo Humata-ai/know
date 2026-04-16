@@ -43,7 +43,7 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
 
   const { selectConcept, selectInstance } = useQualityDomain()
 
-  const labels = getConceptProperties(concept.id)
+  const properties = getConceptProperties(concept.id)
   const instances = getConceptInstances(concept.id)
 
   const cursorHandlers = useCursorOnHover()
@@ -239,9 +239,9 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
   const { labelPositions, conceptPosition } = useMemo(() => {
     const positions: Array<{ propertyId: string; position: Vector3 }> = []
 
-    // Calculate positions for each label using shared utility
-    labels.forEach((property) => {
-      const domain = domains.find((d) => d.id === label.domainId)
+    // Calculate positions for each property using shared utility
+    properties.forEach((property) => {
+      const domain = domains.find((d) => d.id === property.domainId)
       if (!domain) return
 
       const domainPos = domainPositions.get(domain.id)
@@ -252,15 +252,15 @@ function ConceptVisualization3D({ concept, isSelected = false }: ConceptVisualiz
       // domain rendering scale, causing misalignment.
       const scale = domainScale
 
-      const worldPosition = calculateLabelPosition(label, domain, domainPos, scale)
+      const worldPosition = calculateLabelPosition(property, domain, domainPos, scale)
       if (worldPosition) {
-        positions.push({ propertyId: label.id, position: worldPosition })
+        positions.push({ propertyId: property.id, position: worldPosition })
       }
     })
 
     // Calculate centroid
-    const labelOnlyPositions = positions.map(p => p.position)
-    let centroid = calculateCentroid(labelOnlyPositions)
+    const propertyOnlyPositions = positions.map(p => p.position)
+    let centroid = calculateCentroid(propertyOnlyPositions)
     
     if (centroid) {
       // Place concept label 8 units above centroid

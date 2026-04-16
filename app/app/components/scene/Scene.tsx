@@ -60,9 +60,9 @@ function InspectCameraControls() {
       const property = domain?.properties.find(p => p.id === state.scene.selectedPropertyId)
       const domainPos = domainPositions.get(state.scene.selectedPropertyDomainId)
 
-      if (domain && label && domainPos) {
+      if (domain && property && domainPos) {
         const scale = 0.5
-        const position = calculateLabelPosition(label, domain, domainPos, scale)
+        const position = calculateLabelPosition(property, domain, domainPos, scale)
         if (position) {
           return position
         }

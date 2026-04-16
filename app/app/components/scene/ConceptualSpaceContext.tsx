@@ -126,7 +126,7 @@ export function ConceptualSpaceProvider({
           const domain = domains.find((d) => d.id === ref.domainId)
           if (!domain) return null
           const property = domain.properties.find((l) => l.id === ref.pointId)
-          return label && isPoint(label) ? label : null
+          return property && isPoint(property) ? property : null
         })
         .filter((p): p is QualityDomainPoint => p !== null)
     }
