@@ -38,15 +38,16 @@ interface JsonDomain {
   id: string
   name: string
   dimensions: JsonDimension[]
-  properties: JsonProperty[]
-  labels?: JsonProperty[] // backward compatibility
+  properties?: JsonProperty[]
+  labels?: JsonProperty[] // Old format - will be migrated
   createdAt: string
 }
 
 interface JsonConcept {
   id: string
   name: string
-  propertyRefs: { domainId: string; propertyId: string }[]
+  propertyRefs?: { domainId: string; propertyId: string }[]
+  labelRefs?: { domainId: string; labelId: string }[] // Old format - will be migrated
   createdAt: string
 }
 
@@ -103,13 +104,16 @@ function parseRangeValue(val: number | string): number {
  */
 function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
   return jsonDomains.map(domain => {
+    // Migrate old 'labels' field to 'properties'
+    const propertyList = domain.properties || domain.labels || []
+    
     return {
       ...domain,
       dimensions: domain.dimensions.map(dim => ({
         ...dim,
         range: toRangeTuple(dim.range.map(parseRangeValue)),
       })),
-      properties: domain.properties.map(property => {
+      properties: propertyList.map(property => {
         if (property.type === 'region') {
           return {
             type: 'region' as const,
@@ -147,10 +151,22 @@ function parseDomains(jsonDomains: JsonDomain[]): QualityDomain[] {
  * Parse JSON concepts into runtime Concept objects
  */
 function parseConcepts(jsonConcepts: JsonConcept[]): Concept[] {
-  return jsonConcepts.map(concept => ({
-    ...concept,
-    createdAt: new Date(concept.createdAt),
-  }))
+  return jsonConcepts.map(concept => {
+    // Migrate old 'labelRefs' with 'labelId' to 'propertyRefs' with 'propertyId'
+    let propertyRefs = concept.propertyRefs
+    if (!propertyRefs && concept.labelRefs) {
+      propertyRefs = concept.labelRefs.map(ref => ({
+        domainId: ref.domainId,
+        propertyId: ref.labelId
+      }))
+    }
+    
+    return {
+      ...concept,
+      propertyRefs: propertyRefs || [],
+      createdAt: new Date(concept.createdAt),
+    }
+  })
 }
 
 /**

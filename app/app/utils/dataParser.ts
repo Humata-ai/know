@@ -90,36 +90,10 @@ export function parseDomains(rawDomains: JsonQualityDomain[], version: number = 
       }))
     }
 
-    // Handle old format with "labels" field (backward compatibility)
-    if ((domain as any).properties) {
-      const oldLabels = ((domain as any).properties || []).map((label: any) => ({
-        ...label,
-        createdAt: new Date(label.createdAt),
-        dimensions: label.dimensions.map((d: JsonPropertyDimension) => {
-          // Handle region dimensions (with range)
-          if ('range' in d) {
-            return {
-              ...d,
-              range: [
-                convertInfinity(d.range[0]),
-                convertInfinity(d.range[1])
-              ] as const
-            }
-          }
-          // Handle point dimensions (with value)
-          return d
-        })
-      }))
-
-      // Migrate old labels to properties
-      return {
-        ...baseDomain,
-        properties: oldLabels.map(migrateLabelToProperty)
-      } as QualityDomain
-    }
-
-    // Handle new format with "properties" field
-    const properties = (domain.properties || []).map((property) => ({
+    // Migrate old 'labels' field to 'properties' if needed
+    const propertyList = domain.properties || (domain as any).labels || []
+    
+    const properties = propertyList.map((property: any) => ({
       ...property,
       createdAt: new Date(property.createdAt),
       dimensions: property.dimensions.map((d: JsonPropertyDimension) => {
@@ -158,21 +132,20 @@ export function parseDomains(rawDomains: JsonQualityDomain[], version: number = 
  */
 export function parseConcepts(rawConcepts: JsonConcept[], version: number = 4): Concept[] {
   return (rawConcepts || []).map((concept) => {
-    const baseConcept = {
+    // Migrate old 'labelRefs' with 'labelId' to 'propertyRefs' with 'propertyId'
+    let propertyRefs = concept.propertyRefs
+    if (!propertyRefs && (concept as any).labelRefs) {
+      propertyRefs = ((concept as any).labelRefs || []).map((ref: any) => ({
+        domainId: ref.domainId,
+        propertyId: ref.labelId || ref.propertyId
+      }))
+    }
+
+    return {
       ...concept,
+      propertyRefs: propertyRefs || [],
       createdAt: new Date(concept.createdAt)
     }
-
-    // Handle old format with propertyRefs (backward compatibility)
-    if ((concept as any).propertyRefs) {
-      return {
-        ...baseConcept,
-        propertyRefs: ((concept as any).propertyRefs || []).map(migrateLabelRefToPropertyRef)
-      } as Concept
-    }
-
-    // New format already has propertyRefs
-    return baseConcept as Concept
   })
 }
 
